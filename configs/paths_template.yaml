@@ -1,0 +1,3 @@
+fermi_data_dir: "/path/to/fermi/data"
+iem_dir: "/path/to/iem/models"
+output_dir: "../outputs"
