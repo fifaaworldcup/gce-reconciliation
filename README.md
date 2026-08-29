@@ -8,7 +8,7 @@ Yo guys, welcome to the central repository for the GCE (Galactic Center Excess) 
 
 ## Directory Structure & What Goes Where
 
-Right now, most of these folders are empty (containing only hidden `.gitkeep` files to preserve the structure on GitHub). As work progresses, use the following layout:
+Right now, folders are empty (containing only hidden `.gitkeep` files to preserve the structure on GitHub). As work progresses, use the following layout:
 
 * **`analysis/`**: Contains subdirectories for each gap team (`gap1`, `gap4`, `gap5`, `gap7`). Place all team-specific Python scripts, Jupyter notebooks, and local `README.md` files (following the Mini-Paper template) inside your designated folder.
 * **`configs/`**: Stores YAML configuration files for pipeline runs. Your local `paths.yaml` configuration file will live here.
@@ -51,5 +51,3 @@ The full Project Conventions and Mini-Paper Template are in the Google Doc. Alwa
 
 All the best for all of us! 
 
-The full Project Conventions and Mini-Paper Template are provided below for convenience, but the Google Doc remains the authoritative source. Always check the Google Doc for any updates.
-```
