@@ -1,0 +1,16 @@
+# Data and Outputs
+data/
+outputs/
+*.fits
+*.h5
+*.hdf5
+*.npy
+*.npz
+
+# Local configs
+configs/paths.yaml
+
+# Python/OS caches
+__pycache__/
+*.pyc
+.DS_Store
