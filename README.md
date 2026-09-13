@@ -18,7 +18,9 @@ Right now, folders are empty (containing only hidden `.gitkeep` files to preserv
 * **`masks/`**: Shared mask definitions (Mask A, B, and C) and code for generating them.
 * **`outputs/`**: Local destination for all generated results (FITS, HDF5, CSV) and logs. Ignored by Git.
 * **`templates/`**: Shared spatial templates (gNFW, HESTIA, VVV, etc.). Fermi Bubbles templates (sharp and fuzzy variants) are stored inside `templates/bubbles/`.
-* **`utils/`**: Shared utility scripts. The standard PSF convolution function (`psf.py`) lives here so all gap teams use the exact same implementation.
+* **`utils/`**: Shared utility scripts. (`psf.py`) is for shape measurement, SBI inputs, and plots. It is not used for fitting, since Fermipy handles PSF convolution automatically via gtsrcmaps.
+
+
 
 ---
 
