@@ -1,0 +1,541 @@
+{
+  "inputs": {
+    "ccube": "gap1_ccube.fits",
+    "expcube": "gap1_expcube.fits",
+    "photons": 4933089,
+    "bins_gev": [
+      [
+        1.0,
+        1.334
+      ],
+      [
+        1.334,
+        1.778
+      ],
+      [
+        1.778,
+        2.371
+      ],
+      [
+        2.371,
+        3.162
+      ],
+      [
+        3.162,
+        4.217
+      ],
+      [
+        4.217,
+        5.623
+      ],
+      [
+        5.623,
+        7.499
+      ],
+      [
+        7.499,
+        10.0
+      ]
+    ],
+    "exposure": {
+      "crop_offset_px": [
+        20,
+        20
+      ],
+      "planes_in_file": 9,
+      "energies_gev": [
+        1.0,
+        1.3335,
+        1.7783,
+        2.3714,
+        3.1623,
+        4.217,
+        5.6234,
+        7.4989,
+        10.0
+      ],
+      "bin_energies_gev": [
+        1.1548,
+        1.5399,
+        2.0535,
+        2.7384,
+        3.6517,
+        4.8697,
+        6.4938,
+        8.6596
+      ]
+    },
+    "mask": {
+      "mask": "B",
+      "catalog": "gll_psc_catalog.fit",
+      "kept_fraction": 0.8593
+    }
+  },
+  "components": {
+    "iem": {
+      "coverage_min": 1.0,
+      "planes": 28,
+      "energy_range_gev": [
+        0.05,
+        814.0083
+      ]
+    },
+    "gnfw": {
+      "file": "gnfw_gamma1.2.fits",
+      "coverage": 1.0
+    },
+    "hestia": {
+      "file": "gap1_hestia_G1.1_ang0_1deg.fits",
+      "coverage": 1.0
+    },
+    "vvv": {
+      "file": "gap1_bulge_coleman.fits",
+      "coverage": 1.0
+    }
+  },
+  "models": {
+    "gnfw": {
+      "TS": 1402.07,
+      "sigma": 37.44,
+      "lnL_total": 544924.94,
+      "lnL_without": 544223.905,
+      "delta_lnL_vs_no_signal": 701.035,
+      "model_photons": 151248.5,
+      "norms_per_bin": [
+        {
+          "energy_gev": 1.155,
+          "iso": 2.779968435050981e-13,
+          "gnfw": 2.3322076009072714e-13,
+          "iem": 7.988627117850442e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 1.54,
+          "iso": 1.561546460686111e-13,
+          "gnfw": 2.1261128575449825e-13,
+          "iem": 5.433632718966101e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 2.054,
+          "iso": 9.384308614786582e-14,
+          "gnfw": 1.5643911457057285e-13,
+          "iem": 3.706044299045809e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 2.738,
+          "iso": 6.277607857224303e-14,
+          "gnfw": 1.0427499958454932e-13,
+          "iem": 2.4925759143030646e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 3.652,
+          "iso": 3.7861289758915036e-14,
+          "gnfw": 7.384842118033106e-14,
+          "iem": 1.659222116876744e-12,
+          "bubbles": 8.081702040468832e-16
+        },
+        {
+          "energy_gev": 4.87,
+          "iso": 1.7962582470832965e-14,
+          "gnfw": 2.6165233558319215e-14,
+          "iem": 1.087066421517187e-12,
+          "bubbles": 1.6352047644576468e-14
+        },
+        {
+          "energy_gev": 6.494,
+          "iso": 1.6326387717886233e-14,
+          "gnfw": 8.03902150424694e-15,
+          "iem": 6.970435667810289e-13,
+          "bubbles": 1.3833945071452425e-14
+        },
+        {
+          "energy_gev": 8.66,
+          "iso": 1.5216920727535562e-14,
+          "gnfw": 9.6858671966405e-16,
+          "iem": 4.3915995216579415e-13,
+          "bubbles": 1.2261028277911056e-14
+        }
+      ],
+      "all_bins_converged": true,
+      "residual_mean_sigma": 0.0109,
+      "residual_std_sigma": 1.2236,
+      "shape_of_fitted_map": {
+        "0.30": {
+          "q": 1.0,
+          "c4": NaN,
+          "mean_radius_deg": 0.31,
+          "max_radius_deg": 0.45
+        },
+        "0.20": {
+          "q": 1.0,
+          "c4": NaN,
+          "mean_radius_deg": 0.41,
+          "max_radius_deg": 0.6
+        },
+        "0.10": {
+          "q": 1.0,
+          "c4": 0.0008,
+          "mean_radius_deg": 0.69,
+          "max_radius_deg": 1.01
+        },
+        "0.05": {
+          "q": 1.0,
+          "c4": -0.0069,
+          "mean_radius_deg": 1.11,
+          "max_radius_deg": 1.66
+        }
+      },
+      "shape_of_input_template": {
+        "0.30": {
+          "mean_radius_deg": 0.13,
+          "max_radius_deg": 0.16,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.20": {
+          "mean_radius_deg": 0.15,
+          "max_radius_deg": 0.21,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.10": {
+          "mean_radius_deg": 0.25,
+          "max_radius_deg": 0.35,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.05": {
+          "mean_radius_deg": 0.4,
+          "max_radius_deg": 0.57,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        }
+      }
+    },
+    "hestia": {
+      "TS": 2165.55,
+      "sigma": 46.54,
+      "lnL_total": 545306.678,
+      "lnL_without": 544223.905,
+      "delta_lnL_vs_no_signal": 1082.773,
+      "model_photons": 184870.8,
+      "norms_per_bin": [
+        {
+          "energy_gev": 1.155,
+          "iso": 2.7951664596412737e-13,
+          "hestia": 3.0443188509162465e-13,
+          "iem": 7.856865580878897e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 1.54,
+          "iso": 1.5979775539153857e-13,
+          "hestia": 2.511280164484189e-13,
+          "iem": 5.3401954291407934e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 2.054,
+          "iso": 9.650389863745186e-14,
+          "hestia": 1.83932974456129e-13,
+          "iem": 3.6375276504151385e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 2.738,
+          "iso": 6.483302893095534e-14,
+          "hestia": 1.2080396873048002e-13,
+          "iem": 2.4484324787485855e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 3.652,
+          "iso": 3.8185178573301813e-14,
+          "hestia": 8.783289391441965e-14,
+          "iem": 1.6251979412661624e-12,
+          "bubbles": 2.1837368850754668e-15
+        },
+        {
+          "energy_gev": 4.87,
+          "iso": 1.8504884585821154e-14,
+          "hestia": 3.522995620627313e-14,
+          "iem": 1.0716810271753991e-12,
+          "bubbles": 1.5396399657219446e-14
+        },
+        {
+          "energy_gev": 6.494,
+          "iso": 1.6889609261576556e-14,
+          "hestia": 1.3980134130886626e-14,
+          "iem": 6.897940828248361e-13,
+          "bubbles": 1.2301915437020221e-14
+        },
+        {
+          "energy_gev": 8.66,
+          "iso": 1.522065430339889e-14,
+          "hestia": 1.2743513428569166e-15,
+          "iem": 4.3863833923439487e-13,
+          "bubbles": 1.2240435682115858e-14
+        }
+      ],
+      "all_bins_converged": true,
+      "residual_mean_sigma": 0.0094,
+      "residual_std_sigma": 1.2211,
+      "shape_of_fitted_map": {
+        "0.30": {
+          "q": 0.6941,
+          "c4": -0.0005,
+          "mean_radius_deg": 3.02,
+          "max_radius_deg": 6.08
+        },
+        "0.20": {
+          "q": 0.695,
+          "c4": 0.0094,
+          "mean_radius_deg": 4.01,
+          "max_radius_deg": 7.66
+        },
+        "0.10": {
+          "q": 0.6203,
+          "c4": -0.0018,
+          "mean_radius_deg": 6.58,
+          "max_radius_deg": 13.48
+        },
+        "0.05": {
+          "q": null,
+          "c4": null,
+          "max_radius_deg": 20.04,
+          "skipped": "contour reaches the ROI edge; c4 would be a crop artifact"
+        }
+      },
+      "shape_of_input_template": {
+        "0.30": {
+          "mean_radius_deg": 2.81,
+          "max_radius_deg": 6.04,
+          "cropped": {
+            "q": 0.6983,
+            "c4": -0.0012
+          },
+          "uncropped": {
+            "q": 0.6983,
+            "c4": -0.0012,
+            "mean_radius_deg": 2.81
+          },
+          "roi_artifact_c4": -0.0
+        },
+        "0.20": {
+          "mean_radius_deg": 3.77,
+          "max_radius_deg": 7.37,
+          "cropped": {
+            "q": 0.6743,
+            "c4": 0.0107
+          },
+          "uncropped": {
+            "q": 0.6743,
+            "c4": 0.0107,
+            "mean_radius_deg": 3.77
+          },
+          "roi_artifact_c4": 0.0
+        },
+        "0.10": {
+          "mean_radius_deg": 6.18,
+          "max_radius_deg": 13.34,
+          "cropped": {
+            "q": 0.6305,
+            "c4": -0.001
+          },
+          "uncropped": {
+            "q": 0.6305,
+            "c4": -0.001,
+            "mean_radius_deg": 6.18
+          },
+          "roi_artifact_c4": 0.0
+        },
+        "0.05": {
+          "mean_radius_deg": 9.79,
+          "max_radius_deg": 20.51,
+          "cropped": null,
+          "note": "contour reaches the ROI edge; cropped value would be an artifact",
+          "uncropped": {
+            "q": 0.5316,
+            "c4": -0.0064,
+            "mean_radius_deg": 9.92
+          }
+        }
+      }
+    },
+    "vvv": {
+      "TS": 1986.1,
+      "sigma": 44.57,
+      "lnL_total": 545216.957,
+      "lnL_without": 544223.905,
+      "delta_lnL_vs_no_signal": 993.052,
+      "model_photons": 128266.3,
+      "norms_per_bin": [
+        {
+          "energy_gev": 1.155,
+          "iso": 3.6562121557651957e-13,
+          "vvv": 2.342021093372663e-13,
+          "iem": 7.883713426089962e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 1.54,
+          "iso": 2.310184725294145e-13,
+          "vvv": 1.7464546822688034e-13,
+          "iem": 5.3704948406267016e-12,
+          "bubbles": 0.0
+        },
+        {
+          "energy_gev": 2.054,
+          "iso": 1.4845324413198805e-13,
+          "vvv": 1.218076440945838e-13,
+          "iem": 3.662420272985423e-12,
+          "bubbles": 1.3320326209688816e-16
+        },
+        {
+          "energy_gev": 2.738,
+          "iso": 9.275830171429286e-14,
+          "vvv": 7.609657654450253e-14,
+          "iem": 2.461013138025768e-12,
+          "bubbles": 1.0555145147794447e-14
+        },
+        {
+          "energy_gev": 3.652,
+          "iso": 5.756502329569614e-14,
+          "vvv": 5.336097333746314e-14,
+          "iem": 1.6352373235017339e-12,
+          "bubbles": 1.108514376721326e-14
+        },
+        {
+          "energy_gev": 4.87,
+          "iso": 2.6957030705496212e-14,
+          "vvv": 2.2082126026665573e-14,
+          "iem": 1.0746561780267326e-12,
+          "bubbles": 1.8368053849488578e-14
+        },
+        {
+          "energy_gev": 6.494,
+          "iso": 2.1833945032290753e-14,
+          "vvv": 1.1241800054958812e-14,
+          "iem": 6.879635620004849e-13,
+          "bubbles": 1.2140921043318155e-14
+        },
+        {
+          "energy_gev": 8.66,
+          "iso": 1.6486478107954404e-14,
+          "vvv": 2.3202248800432406e-15,
+          "iem": 4.369225584987831e-13,
+          "bubbles": 1.1543606655983685e-14
+        }
+      ],
+      "all_bins_converged": true,
+      "residual_mean_sigma": 0.0102,
+      "residual_std_sigma": 1.2212,
+      "shape_of_fitted_map": {
+        "0.30": {
+          "q": 0.6002,
+          "c4": 0.0067,
+          "mean_radius_deg": 3.58,
+          "max_radius_deg": 6.65
+        },
+        "0.20": {
+          "q": 0.6001,
+          "c4": 0.0095,
+          "mean_radius_deg": 4.4,
+          "max_radius_deg": 8.39
+        },
+        "0.10": {
+          "q": 0.6007,
+          "c4": 0.0123,
+          "mean_radius_deg": 5.81,
+          "max_radius_deg": 11.55
+        },
+        "0.05": {
+          "q": null,
+          "c4": null,
+          "max_radius_deg": 15.67,
+          "skipped": "contour reaches the ROI edge; c4 would be a crop artifact"
+        }
+      },
+      "shape_of_input_template": {
+        "0.30": {
+          "mean_radius_deg": 3.49,
+          "max_radius_deg": 6.56,
+          "cropped": {
+            "q": 0.5921,
+            "c4": 0.0056
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.20": {
+          "mean_radius_deg": 4.31,
+          "max_radius_deg": 8.28,
+          "cropped": {
+            "q": 0.5896,
+            "c4": 0.0086
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.10": {
+          "mean_radius_deg": 5.7,
+          "max_radius_deg": 11.3,
+          "cropped": {
+            "q": 0.597,
+            "c4": 0.0122
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.05": {
+          "mean_radius_deg": 7.34,
+          "max_radius_deg": 15.38,
+          "cropped": null,
+          "note": "contour reaches the ROI edge; cropped value would be an artifact",
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "hestia_minus_gnfw": {
+      "delta_lnL": 381.738,
+      "delta_AIC": -763.476,
+      "favoured": "hestia",
+      "decisive_at_dAIC10": true
+    },
+    "vvv_minus_gnfw": {
+      "delta_lnL": 292.017,
+      "delta_AIC": -584.034,
+      "favoured": "vvv",
+      "decisive_at_dAIC10": true
+    },
+    "vvv_minus_hestia": {
+      "delta_lnL": -89.721,
+      "delta_AIC": 179.442,
+      "favoured": "hestia",
+      "decisive_at_dAIC10": true
+    }
+  },
+  "caveats": []
+}

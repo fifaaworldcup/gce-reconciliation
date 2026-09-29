@@ -1,0 +1,405 @@
+{
+  "mask": "B",
+  "kept_fraction": 0.8593,
+  "point_source_template": false,
+  "ps_norm_per_bin": null,
+  "lnL_background_only": 544223.9047653531,
+  "correlation_energy_gev": 1.1547819599387583,
+  "correlation_keys": [
+    "iem",
+    "iso",
+    "bubbles",
+    "gnfw_g1.2",
+    "hestia_G1.1_ang0",
+    "vvv",
+    "f98"
+  ],
+  "correlation": [
+    [
+      1.0,
+      0.1674,
+      0.3839,
+      0.3815,
+      0.4861,
+      0.5094,
+      0.4214
+    ],
+    [
+      0.1674,
+      1.0,
+      0.2738,
+      0.21,
+      0.2294,
+      0.127,
+      0.1267
+    ],
+    [
+      0.3839,
+      0.2738,
+      1.0,
+      0.7535,
+      0.6841,
+      0.6295,
+      0.6295
+    ],
+    [
+      0.3815,
+      0.21,
+      0.7535,
+      1.0,
+      0.9478,
+      0.9176,
+      0.9449
+    ],
+    [
+      0.4861,
+      0.2294,
+      0.6841,
+      0.9478,
+      1.0,
+      0.9432,
+      0.953
+    ],
+    [
+      0.5094,
+      0.127,
+      0.6295,
+      0.9176,
+      0.9432,
+      1.0,
+      0.9844
+    ],
+    [
+      0.4214,
+      0.1267,
+      0.6295,
+      0.9449,
+      0.953,
+      0.9844,
+      1.0
+    ]
+  ],
+  "condition_number_normalised_gram": 825.7290436267241,
+  "rows": [
+    {
+      "template": "hestia_G1.1_ang0",
+      "lnL": 545306.6780954523,
+      "TS": 2165.5466601983644,
+      "photons": 103154.50198701207,
+      "converged": true,
+      "dAIC_vs_vvv": -179.44192763185129
+    },
+    {
+      "template": "hestia_G1.1_ang30",
+      "lnL": 545281.1860694526,
+      "TS": 2114.5626081989612,
+      "photons": 105669.75041693021,
+      "converged": true,
+      "dAIC_vs_vvv": -128.45787563244812
+    },
+    {
+      "template": "hestia_G1.1_ang60",
+      "lnL": 545346.8434586261,
+      "TS": 2245.8773865459953,
+      "photons": 109793.94037947693,
+      "converged": true,
+      "dAIC_vs_vvv": -259.77265397948213
+    },
+    {
+      "template": "hestia_G1.1_ang90",
+      "lnL": 545241.8533360879,
+      "TS": 2035.8971414696425,
+      "photons": 100114.45290893753,
+      "converged": true,
+      "dAIC_vs_vvv": -49.7924089031294
+    },
+    {
+      "template": "hestia_G1.2_ang0",
+      "lnL": 545195.9717811118,
+      "TS": 1944.1340315174311,
+      "photons": 96035.78699726045,
+      "converged": true,
+      "dAIC_vs_vvv": 41.97070104908198
+    },
+    {
+      "template": "hestia_G1.2_ang30",
+      "lnL": 545240.4194917338,
+      "TS": 2033.0294527614024,
+      "photons": 106498.54599594504,
+      "converged": true,
+      "dAIC_vs_vvv": -46.92472019488923
+    },
+    {
+      "template": "hestia_G1.2_ang60",
+      "lnL": 545294.6369911951,
+      "TS": 2141.464451684151,
+      "photons": 113955.1546624004,
+      "converged": true,
+      "dAIC_vs_vvv": -155.35971911763772
+    },
+    {
+      "template": "hestia_G1.2_ang90",
+      "lnL": 545299.61885501,
+      "TS": 2151.4281793138944,
+      "photons": 118416.1765179939,
+      "converged": true,
+      "dAIC_vs_vvv": -165.32344674738124
+    },
+    {
+      "template": "hestia_G2.1_ang0",
+      "lnL": 545140.5279792618,
+      "TS": 1833.246427817503,
+      "photons": 116088.44794084522,
+      "converged": true,
+      "dAIC_vs_vvv": 152.85830474901013
+    },
+    {
+      "template": "hestia_G2.1_ang30",
+      "lnL": 545231.804063439,
+      "TS": 2015.798596171895,
+      "photons": 122762.12036984756,
+      "converged": true,
+      "dAIC_vs_vvv": -29.69386360538192
+    },
+    {
+      "template": "hestia_G2.1_ang60",
+      "lnL": 545247.2554686794,
+      "TS": 2046.7014066525735,
+      "photons": 122703.87066205825,
+      "converged": true,
+      "dAIC_vs_vvv": -60.596674086060375
+    },
+    {
+      "template": "hestia_G2.1_ang90",
+      "lnL": 545248.9437288344,
+      "TS": 2050.0779269626364,
+      "photons": 123171.83010740588,
+      "converged": true,
+      "dAIC_vs_vvv": -63.97319439612329
+    },
+    {
+      "template": "hestia_G2.2_ang0",
+      "lnL": 545267.3153857549,
+      "TS": 2086.8212408036925,
+      "photons": 95929.46846088998,
+      "converged": true,
+      "dAIC_vs_vvv": -100.71650823717937
+    },
+    {
+      "template": "hestia_G2.2_ang30",
+      "lnL": 545240.6098606522,
+      "TS": 2033.4101905983407,
+      "photons": 103853.34530927463,
+      "converged": true,
+      "dAIC_vs_vvv": -47.305458031827584
+    },
+    {
+      "template": "hestia_G2.2_ang60",
+      "lnL": 545237.931848102,
+      "TS": 2028.0541654978879,
+      "photons": 103389.25765506446,
+      "converged": true,
+      "dAIC_vs_vvv": -41.94943293137476
+    },
+    {
+      "template": "hestia_G2.2_ang90",
+      "lnL": 545280.757749147,
+      "TS": 2113.7059675878845,
+      "photons": 99948.58609440556,
+      "converged": true,
+      "dAIC_vs_vvv": -127.6012350213714
+    },
+    {
+      "template": "hestia_G3.1_ang0",
+      "lnL": 545113.5267187352,
+      "TS": 1779.2439067643136,
+      "photons": 97577.3143550676,
+      "converged": true,
+      "dAIC_vs_vvv": 206.86082580219954
+    },
+    {
+      "template": "hestia_G3.1_ang30",
+      "lnL": 545158.1900948676,
+      "TS": 1868.5706590290647,
+      "photons": 102286.1274714604,
+      "converged": true,
+      "dAIC_vs_vvv": 117.53407353744842
+    },
+    {
+      "template": "hestia_G3.1_ang60",
+      "lnL": 545198.7343729031,
+      "TS": 1949.6592151001096,
+      "photons": 100910.86814334746,
+      "converged": true,
+      "dAIC_vs_vvv": 36.445517466403544
+    },
+    {
+      "template": "hestia_G3.1_ang90",
+      "lnL": 545130.496952839,
+      "TS": 1813.184374971781,
+      "photons": 95446.8257602226,
+      "converged": true,
+      "dAIC_vs_vvv": 172.9203575947322
+    },
+    {
+      "template": "hestia_G3.2_ang0",
+      "lnL": 545058.8069488781,
+      "TS": 1669.8043670500629,
+      "photons": 84962.93807628598,
+      "converged": true,
+      "dAIC_vs_vvv": 316.30036551645026
+    },
+    {
+      "template": "hestia_G3.2_ang30",
+      "lnL": 544996.3283027908,
+      "TS": 1544.8470748753753,
+      "photons": 83383.01214384666,
+      "converged": true,
+      "dAIC_vs_vvv": 441.25765769113787
+    },
+    {
+      "template": "hestia_G3.2_ang60",
+      "lnL": 545060.0515584131,
+      "TS": 1672.2935861200094,
+      "photons": 87204.20494356341,
+      "converged": true,
+      "dAIC_vs_vvv": 313.8111464465037
+    },
+    {
+      "template": "hestia_G3.2_ang90",
+      "lnL": 545074.2564567598,
+      "TS": 1700.7033828133717,
+      "photons": 93511.54351361819,
+      "converged": true,
+      "dAIC_vs_vvv": 285.4013497531414
+    },
+    {
+      "template": "vvv",
+      "lnL": 545216.9571316363,
+      "TS": 1986.1047325665131,
+      "photons": 50168.371027729125,
+      "converged": true,
+      "dAIC_vs_vvv": -0.0
+    },
+    {
+      "template": "f98",
+      "lnL": 545221.0616685918,
+      "TS": 1994.3138064774685,
+      "photons": 44454.20612772119,
+      "converged": true,
+      "dAIC_vs_vvv": -8.20907391095534
+    },
+    {
+      "template": "gnfw_g0.8",
+      "lnL": 544778.0976134159,
+      "TS": 1108.3856961256824,
+      "photons": 111573.59334410878,
+      "converged": true,
+      "dAIC_vs_vvv": 877.7190364408307
+    },
+    {
+      "template": "gnfw_g0.8_th1",
+      "lnL": 544599.9888239636,
+      "TS": 752.1681172209792,
+      "photons": 91174.57633553621,
+      "converged": true,
+      "dAIC_vs_vvv": 1233.936615345534
+    },
+    {
+      "template": "gnfw_g0.9",
+      "lnL": 544833.8230195728,
+      "TS": 1219.8365084393881,
+      "photons": 101355.07403472702,
+      "converged": true,
+      "dAIC_vs_vvv": 766.268224127125
+    },
+    {
+      "template": "gnfw_g0.9_th1",
+      "lnL": 544686.1283071013,
+      "TS": 924.4470834964886,
+      "photons": 87110.55396849096,
+      "converged": true,
+      "dAIC_vs_vvv": 1061.6576490700245
+    },
+    {
+      "template": "gnfw_g1.0",
+      "lnL": 544879.3201037789,
+      "TS": 1310.8306768515613,
+      "photons": 91191.48580148128,
+      "converged": true,
+      "dAIC_vs_vvv": 675.2740557149518
+    },
+    {
+      "template": "gnfw_g1.0_th1",
+      "lnL": 544759.7678203778,
+      "TS": 1071.7261100495234,
+      "photons": 81204.60805129344,
+      "converged": true,
+      "dAIC_vs_vvv": 914.3786225169897
+    },
+    {
+      "template": "gnfw_g1.1",
+      "lnL": 544910.7588933234,
+      "TS": 1373.7082559405826,
+      "photons": 81119.8437761718,
+      "converged": false,
+      "dAIC_vs_vvv": 612.3964766259305
+    },
+    {
+      "template": "gnfw_g1.1_th1",
+      "lnL": 544815.3886329341,
+      "TS": 1182.9677351620048,
+      "photons": 73962.24341169471,
+      "converged": true,
+      "dAIC_vs_vvv": 803.1369974045083
+    },
+    {
+      "template": "gnfw_g1.2",
+      "lnL": 544924.939945749,
+      "TS": 1402.0703607918695,
+      "photons": 71280.92193711852,
+      "converged": true,
+      "dAIC_vs_vvv": 584.0343717746437
+    },
+    {
+      "template": "gnfw_g1.2_th1",
+      "lnL": 544848.5702566497,
+      "TS": 1249.3309825933538,
+      "photons": 65706.47474014475,
+      "converged": true,
+      "dAIC_vs_vvv": 736.7737499731593
+    },
+    {
+      "template": "gnfw_g1.3",
+      "lnL": 544920.0425212054,
+      "TS": 1392.275511704618,
+      "photons": 61427.645466142036,
+      "converged": true,
+      "dAIC_vs_vvv": 593.829220861895
+    },
+    {
+      "template": "gnfw_g1.3_th1",
+      "lnL": 544856.9092929858,
+      "TS": 1266.0090552654583,
+      "photons": 56763.246328889625,
+      "converged": true,
+      "dAIC_vs_vvv": 720.0956773010548
+    },
+    {
+      "template": "gnfw_g1.4",
+      "lnL": 544895.2918431252,
+      "TS": 1342.77415554435,
+      "photons": 51634.50603442329,
+      "converged": true,
+      "dAIC_vs_vvv": 643.3305770221632
+    },
+    {
+      "template": "gnfw_g1.4_th1",
+      "lnL": 544839.7754074481,
+      "TS": 1231.7412841899786,
+      "photons": 47533.38974688748,
+      "converged": true,
+      "dAIC_vs_vvv": 754.3634483765345
+    }
+  ]
+}
