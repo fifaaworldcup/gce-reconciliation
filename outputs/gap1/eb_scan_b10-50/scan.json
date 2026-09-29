@@ -1,0 +1,426 @@
+{
+  "mask": "B",
+  "kept_fraction": 0.9434,
+  "point_source_template": true,
+  "ps_norm_per_bin": [
+    0.5597072075166192,
+    0.515267044740579
+  ],
+  "lnL_background_only": -159402.621578925,
+  "correlation_energy_gev": 14.953487887446192,
+  "correlation_keys": [
+    "iem",
+    "iso",
+    "bubbles",
+    "gnfw_g1.2",
+    "gnfw_g0.9",
+    "hestia_G1.1_ang0",
+    "vvv",
+    "f98"
+  ],
+  "correlation": [
+    [
+      1.0,
+      0.0695,
+      0.3939,
+      0.4216,
+      0.4505,
+      0.5325,
+      0.5323,
+      0.4713
+    ],
+    [
+      0.0695,
+      1.0,
+      0.1237,
+      0.0267,
+      0.0521,
+      0.0335,
+      0.0102,
+      0.0118
+    ],
+    [
+      0.3939,
+      0.1237,
+      1.0,
+      0.6167,
+      0.731,
+      0.6226,
+      0.6339,
+      0.6455
+    ],
+    [
+      0.4216,
+      0.0267,
+      0.6167,
+      1.0,
+      0.9621,
+      0.9348,
+      0.9115,
+      0.903
+    ],
+    [
+      0.4505,
+      0.0521,
+      0.731,
+      0.9621,
+      1.0,
+      0.9616,
+      0.9359,
+      0.9464
+    ],
+    [
+      0.5325,
+      0.0335,
+      0.6226,
+      0.9348,
+      0.9616,
+      1.0,
+      0.967,
+      0.9649
+    ],
+    [
+      0.5323,
+      0.0102,
+      0.6339,
+      0.9115,
+      0.9359,
+      0.967,
+      1.0,
+      0.9867
+    ],
+    [
+      0.4713,
+      0.0118,
+      0.6455,
+      0.903,
+      0.9464,
+      0.9649,
+      0.9867,
+      1.0
+    ]
+  ],
+  "condition_number_normalised_gram": 1542.2245677062965,
+  "rows": [
+    {
+      "template": "hestia_G1.1_ang0",
+      "lnL": -159402.62157871964,
+      "TS": 4.10713255405426e-07,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 1.634238287806511e-06
+    },
+    {
+      "template": "hestia_G1.1_ang30",
+      "lnL": -159402.6215778817,
+      "TS": 2.086570020765066e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1618477553129196e-08
+    },
+    {
+      "template": "hestia_G1.1_ang60",
+      "lnL": -159402.6215778818,
+      "TS": 2.0863953977823257e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1443854570388794e-08
+    },
+    {
+      "template": "hestia_G1.1_ang90",
+      "lnL": -159402.62157788186,
+      "TS": 2.086278982460499e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.132743924856186e-08
+    },
+    {
+      "template": "hestia_G1.2_ang0",
+      "lnL": -159402.6215778817,
+      "TS": 2.086570020765066e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1618477553129196e-08
+    },
+    {
+      "template": "hestia_G1.2_ang30",
+      "lnL": -159402.62157788192,
+      "TS": 2.086162567138672e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1211023926734924e-08
+    },
+    {
+      "template": "hestia_G1.2_ang60",
+      "lnL": -159402.62157788203,
+      "TS": 2.085929736495018e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.0978193283081055e-08
+    },
+    {
+      "template": "hestia_G1.2_ang90",
+      "lnL": -159402.62157788212,
+      "TS": 2.0857551135122776e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.080357030034065e-08
+    },
+    {
+      "template": "hestia_G2.1_ang0",
+      "lnL": -159402.62157788192,
+      "TS": 2.086162567138672e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1211023926734924e-08
+    },
+    {
+      "template": "hestia_G2.1_ang30",
+      "lnL": -159402.62157788186,
+      "TS": 2.086278982460499e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.132743924856186e-08
+    },
+    {
+      "template": "hestia_G2.1_ang60",
+      "lnL": -159402.62157788174,
+      "TS": 2.0865118131041527e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.156026989221573e-08
+    },
+    {
+      "template": "hestia_G2.1_ang90",
+      "lnL": -159402.62157788186,
+      "TS": 2.086278982460499e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.132743924856186e-08
+    },
+    {
+      "template": "hestia_G2.2_ang0",
+      "lnL": -159402.62157862837,
+      "TS": 5.932524800300598e-07,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 1.4516990631818771e-06
+    },
+    {
+      "template": "hestia_G2.2_ang30",
+      "lnL": -159402.6215778821,
+      "TS": 2.085813321173191e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.086177796125412e-08
+    },
+    {
+      "template": "hestia_G2.2_ang60",
+      "lnL": -159402.62157788215,
+      "TS": 2.085696905851364e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.0745362639427185e-08
+    },
+    {
+      "template": "hestia_G2.2_ang90",
+      "lnL": -159402.62157788192,
+      "TS": 2.086162567138672e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1211023926734924e-08
+    },
+    {
+      "template": "hestia_G3.1_ang0",
+      "lnL": -159402.62157788203,
+      "TS": 2.085929736495018e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.0978193283081055e-08
+    },
+    {
+      "template": "hestia_G3.1_ang30",
+      "lnL": -159402.62157788215,
+      "TS": 2.085696905851364e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.0745362639427185e-08
+    },
+    {
+      "template": "hestia_G3.1_ang60",
+      "lnL": -159402.62157788218,
+      "TS": 2.0856386981904507e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.068715497851372e-08
+    },
+    {
+      "template": "hestia_G3.1_ang90",
+      "lnL": -159402.6215778821,
+      "TS": 2.085813321173191e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.086177796125412e-08
+    },
+    {
+      "template": "hestia_G3.2_ang0",
+      "lnL": -159402.6215779307,
+      "TS": 1.9886065274477005e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 5.634501576423645e-08
+    },
+    {
+      "template": "hestia_G3.2_ang30",
+      "lnL": -159402.62157790718,
+      "TS": 2.035638317465782e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 9.313225746154785e-09
+    },
+    {
+      "template": "hestia_G3.2_ang60",
+      "lnL": -159402.6215780261,
+      "TS": 1.7978018149733543e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 2.471497282385826e-07
+    },
+    {
+      "template": "hestia_G3.2_ang90",
+      "lnL": -159402.6215778822,
+      "TS": 2.085580490529537e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.062894731760025e-08
+    },
+    {
+      "template": "vvv",
+      "lnL": -159402.62157790252,
+      "TS": 2.044951543211937e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -0.0
+    },
+    {
+      "template": "f98",
+      "lnL": -159402.62157788262,
+      "TS": 2.0847655832767487e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -3.9814040064811707e-08
+    },
+    {
+      "template": "gnfw_g0.8",
+      "lnL": -159402.6215778817,
+      "TS": 2.086570020765066e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1618477553129196e-08
+    },
+    {
+      "template": "gnfw_g0.8_th1",
+      "lnL": -159402.62157788168,
+      "TS": 2.0866282284259796e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1676685214042664e-08
+    },
+    {
+      "template": "gnfw_g0.9",
+      "lnL": -159402.62157788168,
+      "TS": 2.0866282284259796e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.1676685214042664e-08
+    },
+    {
+      "template": "gnfw_g0.9_th1",
+      "lnL": -159402.62157788165,
+      "TS": 2.086686436086893e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.173489287495613e-08
+    },
+    {
+      "template": "gnfw_g1.0",
+      "lnL": -159402.62157881737,
+      "TS": 2.1525193005800247e-07,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 1.8296996131539345e-06
+    },
+    {
+      "template": "gnfw_g1.0_th1",
+      "lnL": -159402.6215786134,
+      "TS": 6.231712177395821e-07,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 1.4217803254723549e-06
+    },
+    {
+      "template": "gnfw_g1.1",
+      "lnL": -159402.62157810014,
+      "TS": 1.6497215256094933e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 3.952300176024437e-07
+    },
+    {
+      "template": "gnfw_g1.1_th1",
+      "lnL": -159402.62157802502,
+      "TS": 1.7999554984271526e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 2.449960447847843e-07
+    },
+    {
+      "template": "gnfw_g1.2",
+      "lnL": -159402.6215779257,
+      "TS": 1.998618245124817e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 4.6333298087120056e-08
+    },
+    {
+      "template": "gnfw_g1.2_th1",
+      "lnL": -159402.62157790412,
+      "TS": 2.0417501218616962e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": 3.2014213502407074e-09
+    },
+    {
+      "template": "gnfw_g1.3",
+      "lnL": -159402.6215778903,
+      "TS": 2.0693987607955933e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -2.444721758365631e-08
+    },
+    {
+      "template": "gnfw_g1.3_th1",
+      "lnL": -159402.62157788486,
+      "TS": 2.0802835933864117e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -3.5332050174474716e-08
+    },
+    {
+      "template": "gnfw_g1.4",
+      "lnL": -159402.62157788352,
+      "TS": 2.082961145788431e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -3.800960257649422e-08
+    },
+    {
+      "template": "gnfw_g1.4_th1",
+      "lnL": -159402.62157788212,
+      "TS": 2.0857551135122776e-06,
+      "photons": 0.0,
+      "converged": true,
+      "dAIC_vs_vvv": -4.080357030034065e-08
+    }
+  ]
+}

@@ -6,6 +6,37 @@ Yo guys, welcome to the central repository for the GCE (Galactic Center Excess) 
 
 ---
 
+## Start here: the diffuse-freedom test
+
+**`docs/diffuse_freedom_test.md`.** Macias and Di Mauro use the same bulge
+templates and the same gas maps and reach opposite conclusions about dark
+matter. That disagreement is reproduced here inside one pipeline on one
+dataset: a defensible change in how much the interstellar model is allowed to
+bend moves a detection from TS 3.8 to 306, with injection controls showing the
+test is not simply eating the signal.
+
+It is a shared module, `analysis/diffuse_freedom/`, meant to be run by every
+gap. Splits are fixed in `configs/diffuse_freedom.yaml` before any run and
+applied identically to every template, on the same footing as
+`configs/level2.yaml`.
+
+Two constraints from it that belong in the Conventions:
+
+* Mask D with a single-template IEM has almost no sensitivity and Mask A has
+  none at all, so Gap 1 cannot use either until a ring-decomposed IEM is
+  loaded. Gap 5 can, its IEMs are ring-decomposed by construction. Gaps 4 and
+  7 inherit it.
+* Daylan et al. 2016 define the axis ratio as the reciprocal of Di Mauro's and
+  Cholis's. Pooling them without inverting Daylan manufactures a trend.
+
+## Where the large data comes from
+
+Raw Fermi products and the external IEM libraries are not committed.
+`docs/data_provenance.md` says what each one is, where it comes from and
+whether it is reproducible, downloadable or unavailable.
+
+---
+
 ## Directory Structure & What Goes Where
 
 Right now, folders are empty (containing only hidden `.gitkeep` files to preserve the structure on GitHub). As work progresses, use the following layout:

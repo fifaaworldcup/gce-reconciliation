@@ -1,0 +1,18 @@
+# Level-2 iterative source-finding: STOPPING RULE, FIXED BEFORE ANY RUN.
+#
+# Conventions section 6 and the Gap 1 mini-paper both require that these are
+# set in advance and applied identically to every template. Tuning them per
+# template would manufacture exactly the bias Gap 1 exists to measure, and it
+# would be undetectable afterwards. Change this file only by agreement, and
+# never between two runs that get compared.
+#
+# Mirrors Di Mauro (2026): successive passes at decreasing TS threshold.
+passes: [100, 64, 36]        # residual TS required to add a source, per pass
+max_sources_per_pass: 40     # hard stop so a runaway pass cannot eat the ROI
+min_separation_deg: 0.30     # no new source this close to an existing one
+edge_margin_deg: 1.0         # ignore candidates within this of the ROI edge
+refit_every_source: true     # refit all normalisations after each addition
+seed: 42                     # Conventions section 10
+
+# Identical for every template, both levels, every mask and IEM.
+applies_to: all_templates

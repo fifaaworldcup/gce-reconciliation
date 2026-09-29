@@ -1,0 +1,51 @@
+# Diffuse-freedom test. Shared across gaps - fixed before any run and applied
+# identically to every template, like configs/level2.yaml.
+#
+# Each split tells the fit how the interstellar model may bend. The first must
+# be the rigid one: it is the baseline everything else is measured against.
+#
+#   bands       latitude edges in |b|, deg. Omit for one normalisation.
+#   hemisphere  separate north from south.
+#   lon_gate    inside | outside | null. Restricts the freedom to |l| <=
+#               lon_deg or to the rest, leaving the other part on a single
+#               normalisation. Use it to localise where the correction lands.
+
+seed: 42
+
+roi:
+  half_l_deg: 20.0
+  half_b_deg: 20.0
+
+control:
+  # the template injected to prove a split can still see a real signal
+  signal: vvv
+  # a split that keeps less than this fraction of the injected signal is
+  # degenerate with it and is not evidence either way
+  usable_injected_fraction: 0.5
+  # and it must still find a signal added to the real data by at least this
+  boosted_min_gain: 25.0
+
+splits:
+  - name: rigid
+    bands: null
+
+  - name: ns
+    bands: [0.0, 20.001]
+    hemisphere: true
+
+  - name: lat_outside
+    bands: [0.0, 2.0, 5.0, 10.0, 20.001]
+    lon_gate: outside
+    lon_deg: 10.0
+
+  - name: lat_inside
+    bands: [0.0, 2.0, 5.0, 10.0, 20.001]
+    lon_gate: inside
+    lon_deg: 10.0
+
+  - name: lat
+    bands: [0.0, 2.0, 5.0, 10.0, 20.001]
+
+  - name: lat_ns
+    bands: [0.0, 2.0, 5.0, 10.0, 20.001]
+    hemisphere: true

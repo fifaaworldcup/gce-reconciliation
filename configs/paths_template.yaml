@@ -1,3 +1,17 @@
-fermi_data_dir: "/path/to/fermi/data"
-iem_dir: "/path/to/iem/models"
-output_dir: "../outputs"
+# copy to configs/paths.yaml and fill in. paths.yaml is gitignored.
+# Conventions section 9: never hard-code absolute paths in analysis code.
+
+data:
+  events:    /path/to/gap1_gti.fits        # gtmktime output
+  spacecraft: /path/to/SC00.fits
+  ccube:     /path/to/gap1_ccube.fits      # gtbin CCUBE
+  expcube:   /path/to/gap1_expcube.fits    # gtexpcube2
+
+iem:
+  gll_iem_v07: /path/to/gll_iem_v07.fits
+  isotropic:   /path/to/iso_P8R3_SOURCE_V3_v1.txt
+  fl16y:       /path/to/FL16Y.fits
+
+hestia:
+  # Muru et al. 2025 private communication, 800x800 +-40 deg maps
+  root: /path/to/J-factors

@@ -1,0 +1,43 @@
+# Gap 1 selection, copied from scripts/run_chain.sh and run_ebins.sh so any
+# disagreement with our own fitter is method, not data. Do not tidy these.
+
+data:
+  evfile : events.txt          # the same @list gtselect was given
+  scfile : SC.fits             # set by run_fermipy_check.sh
+  ltcube : gap1_ltcube.fits    # reuse ours, energy independent
+
+binning:
+  roiwidth   : 40.0
+  binsz      : 0.1
+  binsperdec : 2               # 2 log sub-bins per conventions bin
+  coordsys   : GAL
+  projtype   : WCS
+  proj       : CAR
+
+selection:
+  emin    : 500
+  emax    : 50000
+  zmax    : 90
+  evclass : 128
+  evtype  : 3
+  tmin    : 239557417
+  tmax    : 760320000
+  filter  : 'DATA_QUAL>0 && LAT_CONFIG==1 && ABS(ROCK_ANGLE)<52'
+  glon    : 0.0
+  glat    : 0.0
+  target  : null
+
+gtlike:
+  edisp        : True
+  edisp_disable: ['isodiff', 'galdiff']
+  irfs         : 'P8R3_SOURCE_V3'
+
+model:
+  src_roiwidth : 50.0
+  galdiff  : 'gll_iem_v07.fits'
+  isodiff  : 'iso_P8R3_SOURCE_V3_v1.txt'
+  catalogs : ['4FGL-DR4']
+
+fileio:
+  outdir   : fermipy_out
+  usescratch : False
