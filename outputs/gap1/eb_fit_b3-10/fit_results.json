@@ -1,0 +1,407 @@
+{
+  "inputs": {
+    "ccube": "gap1_ccube_full.fits",
+    "expcube": "gap1_expcube_full.fits",
+    "photons": 915491,
+    "bins_gev": [
+      [
+        3.0,
+        5.477
+      ],
+      [
+        5.477,
+        10.0
+      ]
+    ],
+    "exposure": {
+      "crop_offset_px": [
+        20,
+        20
+      ],
+      "planes_in_file": 21,
+      "energies_gev": [
+        0.5,
+        0.6295,
+        0.7924,
+        0.9976,
+        1.2559,
+        1.5811,
+        1.9905,
+        2.5059,
+        3.1548,
+        3.9716,
+        5.0,
+        6.2946,
+        7.9245,
+        9.9763,
+        12.5594,
+        15.8114,
+        19.9054,
+        25.0594,
+        31.5479,
+        39.7164,
+        50.0
+      ],
+      "bin_energies_gev": [
+        4.0536,
+        7.4008
+      ]
+    },
+    "mask": {
+      "mask": "B",
+      "catalog": "gll_psc_catalog.fit",
+      "kept_fraction": 0.9037
+    }
+  },
+  "components": {
+    "iem": {
+      "coverage_min": 1.0,
+      "planes": 28,
+      "energy_range_gev": [
+        0.05,
+        814.0083
+      ]
+    },
+    "ps": {
+      "sources_placed": 715,
+      "note": "extended 4FGL sources placed as points"
+    },
+    "gnfw": {
+      "file": "gnfw_gamma1.2.fits",
+      "coverage": 1.0
+    },
+    "hestia": {
+      "file": "gap1_hestia_G1.1_ang0_1deg.fits",
+      "coverage": 1.0
+    },
+    "vvv": {
+      "file": "gap1_bulge_coleman.fits",
+      "coverage": 1.0
+    }
+  },
+  "models": {
+    "gnfw": {
+      "TS": 15.16,
+      "sigma": 3.89,
+      "lnL_total": 41651.491,
+      "lnL_without": 41643.912,
+      "delta_lnL_vs_no_signal": 7.579,
+      "model_photons": 5612.0,
+      "norms_per_bin": [
+        {
+          "energy_gev": 4.054,
+          "iso": 4.673208541725949e-14,
+          "gnfw": 2.959501565550198e-14,
+          "iem": 2.9439447970698625e-12,
+          "bubbles": 2.7451998580209606e-14,
+          "ps": 0.8760878627195162
+        },
+        {
+          "energy_gev": 7.401,
+          "iso": 2.5665682923915095e-14,
+          "gnfw": 0.0,
+          "iem": 1.1769594948966385e-12,
+          "bubbles": 2.523315376971476e-14,
+          "ps": 0.8080037784298243
+        }
+      ],
+      "all_bins_converged": true,
+      "residual_mean_sigma": 0.0028,
+      "residual_std_sigma": 1.0193,
+      "shape_of_fitted_map": {
+        "0.30": {
+          "q": 1.0,
+          "c4": NaN,
+          "mean_radius_deg": 0.21,
+          "max_radius_deg": 0.29
+        },
+        "0.20": {
+          "q": 1.0,
+          "c4": NaN,
+          "mean_radius_deg": 0.29,
+          "max_radius_deg": 0.43
+        },
+        "0.10": {
+          "q": 1.0,
+          "c4": NaN,
+          "mean_radius_deg": 0.48,
+          "max_radius_deg": 0.71
+        },
+        "0.05": {
+          "q": 1.0,
+          "c4": 0.0011,
+          "mean_radius_deg": 0.78,
+          "max_radius_deg": 1.16
+        }
+      },
+      "shape_of_input_template": {
+        "0.30": {
+          "mean_radius_deg": 0.13,
+          "max_radius_deg": 0.16,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.20": {
+          "mean_radius_deg": 0.15,
+          "max_radius_deg": 0.21,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.10": {
+          "mean_radius_deg": 0.25,
+          "max_radius_deg": 0.35,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.05": {
+          "mean_radius_deg": 0.4,
+          "max_radius_deg": 0.57,
+          "cropped": {
+            "q": 1.0,
+            "c4": NaN
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        }
+      }
+    },
+    "hestia": {
+      "TS": 58.27,
+      "sigma": 7.63,
+      "lnL_total": 41673.045,
+      "lnL_without": 41643.912,
+      "delta_lnL_vs_no_signal": 29.133,
+      "model_photons": 10643.7,
+      "norms_per_bin": [
+        {
+          "energy_gev": 4.054,
+          "iso": 4.9616465448379634e-14,
+          "hestia": 5.612548955578891e-14,
+          "iem": 2.9136040269980175e-12,
+          "bubbles": 2.022474337987408e-14,
+          "ps": 0.8714184222566908
+        },
+        {
+          "energy_gev": 7.401,
+          "iso": 2.5665619477438454e-14,
+          "hestia": 0.0,
+          "iem": 1.1769594774460302e-12,
+          "bubbles": 2.523317899569911e-14,
+          "ps": 0.808003767923622
+        }
+      ],
+      "all_bins_converged": true,
+      "residual_mean_sigma": 0.0025,
+      "residual_std_sigma": 1.0192,
+      "shape_of_fitted_map": {
+        "0.30": {
+          "q": 0.6934,
+          "c4": 0.0012,
+          "mean_radius_deg": 2.92,
+          "max_radius_deg": 5.98
+        },
+        "0.20": {
+          "q": 0.6825,
+          "c4": 0.0103,
+          "mean_radius_deg": 3.9,
+          "max_radius_deg": 7.47
+        },
+        "0.10": {
+          "q": 0.6263,
+          "c4": -0.0005,
+          "mean_radius_deg": 6.39,
+          "max_radius_deg": 13.36
+        },
+        "0.05": {
+          "q": null,
+          "c4": null,
+          "max_radius_deg": 20.1,
+          "skipped": "contour reaches the ROI edge; c4 would be a crop artifact"
+        }
+      },
+      "shape_of_input_template": {
+        "0.30": {
+          "mean_radius_deg": 2.81,
+          "max_radius_deg": 6.04,
+          "cropped": {
+            "q": 0.6983,
+            "c4": -0.0012
+          },
+          "uncropped": {
+            "q": 0.6983,
+            "c4": -0.0012,
+            "mean_radius_deg": 2.81
+          },
+          "roi_artifact_c4": -0.0
+        },
+        "0.20": {
+          "mean_radius_deg": 3.77,
+          "max_radius_deg": 7.37,
+          "cropped": {
+            "q": 0.6743,
+            "c4": 0.0107
+          },
+          "uncropped": {
+            "q": 0.6743,
+            "c4": 0.0107,
+            "mean_radius_deg": 3.77
+          },
+          "roi_artifact_c4": 0.0
+        },
+        "0.10": {
+          "mean_radius_deg": 6.18,
+          "max_radius_deg": 13.34,
+          "cropped": {
+            "q": 0.6305,
+            "c4": -0.001
+          },
+          "uncropped": {
+            "q": 0.6305,
+            "c4": -0.001,
+            "mean_radius_deg": 6.18
+          },
+          "roi_artifact_c4": 0.0
+        },
+        "0.05": {
+          "mean_radius_deg": 9.79,
+          "max_radius_deg": 20.51,
+          "cropped": null,
+          "note": "contour reaches the ROI edge; cropped value would be an artifact",
+          "uncropped": {
+            "q": 0.5316,
+            "c4": -0.0064,
+            "mean_radius_deg": 9.92
+          }
+        }
+      }
+    },
+    "vvv": {
+      "TS": 48.08,
+      "sigma": 6.93,
+      "lnL_total": 41667.954,
+      "lnL_without": 41643.912,
+      "delta_lnL_vs_no_signal": 24.042,
+      "model_photons": 6108.6,
+      "norms_per_bin": [
+        {
+          "energy_gev": 4.054,
+          "iso": 6.089133956892508e-14,
+          "vvv": 3.2332450935790824e-14,
+          "iem": 2.922293115219971e-12,
+          "bubbles": 2.6590618516163914e-14,
+          "ps": 0.8714685122071152
+        },
+        {
+          "energy_gev": 7.401,
+          "iso": 2.566575094707549e-14,
+          "vvv": 0.0,
+          "iem": 1.1769595119192067e-12,
+          "bubbles": 2.523312220945179e-14,
+          "ps": 0.8080037903069549
+        }
+      ],
+      "all_bins_converged": true,
+      "residual_mean_sigma": 0.0028,
+      "residual_std_sigma": 1.0192,
+      "shape_of_fitted_map": {
+        "0.30": {
+          "q": 0.5948,
+          "c4": 0.0068,
+          "mean_radius_deg": 3.53,
+          "max_radius_deg": 6.57
+        },
+        "0.20": {
+          "q": 0.5956,
+          "c4": 0.0086,
+          "mean_radius_deg": 4.34,
+          "max_radius_deg": 8.3
+        },
+        "0.10": {
+          "q": 0.5975,
+          "c4": 0.0122,
+          "mean_radius_deg": 5.74,
+          "max_radius_deg": 11.39
+        },
+        "0.05": {
+          "q": null,
+          "c4": null,
+          "max_radius_deg": 15.49,
+          "skipped": "contour reaches the ROI edge; c4 would be a crop artifact"
+        }
+      },
+      "shape_of_input_template": {
+        "0.30": {
+          "mean_radius_deg": 3.49,
+          "max_radius_deg": 6.56,
+          "cropped": {
+            "q": 0.5921,
+            "c4": 0.0056
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.20": {
+          "mean_radius_deg": 4.31,
+          "max_radius_deg": 8.28,
+          "cropped": {
+            "q": 0.5896,
+            "c4": 0.0086
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.10": {
+          "mean_radius_deg": 5.7,
+          "max_radius_deg": 11.3,
+          "cropped": {
+            "q": 0.597,
+            "c4": 0.0122
+          },
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        },
+        "0.05": {
+          "mean_radius_deg": 7.34,
+          "max_radius_deg": 15.38,
+          "cropped": null,
+          "note": "contour reaches the ROI edge; cropped value would be an artifact",
+          "uncropped": null,
+          "note_uncropped": "source map is only +-20 deg; no wider view exists"
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "hestia_minus_gnfw": {
+      "delta_lnL": 21.554,
+      "delta_AIC": -43.108,
+      "favoured": "hestia",
+      "decisive_at_dAIC10": true
+    },
+    "vvv_minus_gnfw": {
+      "delta_lnL": 16.463,
+      "delta_AIC": -32.926,
+      "favoured": "vvv",
+      "decisive_at_dAIC10": true
+    },
+    "vvv_minus_hestia": {
+      "delta_lnL": -5.091,
+      "delta_AIC": 10.182,
+      "favoured": "hestia",
+      "decisive_at_dAIC10": true
+    }
+  },
+  "caveats": []
+}

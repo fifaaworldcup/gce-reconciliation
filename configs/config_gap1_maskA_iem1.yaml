@@ -1,0 +1,65 @@
+# Gap 1 baseline: Mask A + IEM family 1, 1-10 GeV.
+# UNTESTED - written without a Fermitools install. Paths marked TODO must be
+# filled from configs/paths.yaml before running.
+
+data:
+  evfile : /TODO/data/gap1_gti.fits      # output of gtmktime (see PREREQS.md)
+  scfile : /TODO/data/SC00.fits
+  ltcube : null                          # let fermipy build it the first time
+
+binning:
+  roiwidth   : 40.0                      # Conventions section 2
+  binsz      : 0.1
+  coordsys   : GAL
+  proj       : CAR
+  binsperdec : 8                         # fit binning; reporting bins are coarser
+
+selection:
+  emin    : 1000                         # step 3: 1-10 GeV
+  emax    : 10000
+  zmax    : 90
+  evclass : 128
+  evtype  : 3
+  glon    : 0.0
+  glat    : 0.0
+  filter  : 'DATA_QUAL>0 && LAT_CONFIG==1 && ABS(ROCK_ANGLE)<52'
+
+gtlike:
+  irfs  : 'P8R3_SOURCE_V3'
+  edisp : true
+  edisp_disable : ['galdiff', 'isodiff']
+  # Mask A is applied as a LIKELIHOOD WEIGHTS MAP, not by deleting pixels.
+  # gtlike has no pixel-mask option; a 0/1 weights map is the supported way to
+  # exclude sky. Built by masks/make_mask_a.py -> masks/mask_a_wmap.fits
+  wmap  : /TODO/masks/mask_a_wmap.fits
+
+model:
+  src_roiwidth : 45.0                    # wider than the ROI so edge sources are modelled
+  galdiff  : /TODO/iem/gll_iem_v07.fits
+  isodiff  : /TODO/iem/iso_P8R3_SOURCE_V3_v1.txt   # filename disputed, see PREREQS.md
+  catalogs :
+    - /TODO/iem/FL16Y.fits               # 16-year source list; fermipy ships only 4FGL
+  sources  :
+    # Fermi Bubbles, free normalisation (Conventions section 4).
+    # regridded onto our grid by utils/regrid.py. NOTE the source files have
+    # CRPIX=40 rather than 40.5, so they sit half a pixel off centre and ~1%
+    # of the ROI (the l>+19.5 and b<-19.5 rims) has no bubbles data. harmless
+    # for a free-normalisation background at the ROI edge, but worth fixing at
+    # source if they get regenerated.
+    - name         : bubbles
+      SpatialModel : SpatialMap
+      Spatial_Filename : templates/gap1_bubbles_sharp.fits   # fuzzy variant: gap1_bubbles_fuzzy.fits
+      SpectrumType : PowerLaw
+      Index        : 2.0
+      Scale        : 3000.0
+
+optimizer:
+  optimizer  : MINUIT
+  max_iter   : 5000                      # Conventions section 6
+  tol        : 1e-3
+  min_fit_quality : 3
+
+fileio:
+  outdir    : /TODO/outputs/gap1/maskA_iem1_1_10GeV
+  logfile   : gap1_maskA_iem1_1_10GeV.log
+  usescratch: false

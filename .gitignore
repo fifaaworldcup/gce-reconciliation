@@ -1,16 +1,87 @@
-# Data and Outputs
+# Conventions section 8: raw data and results are not committed
 data/
-outputs/
-*.fits
-*.h5
-*.hdf5
-*.npy
-*.npz
+outputs/*
+!outputs/gap1/
+outputs/gap1/*
+# exceptions: the mini-paper cites these figures and the measurement table
+!outputs/gap1/hestia_shape_summary.png
+!outputs/gap1/fig2_flattening_and_calibration.png
+!outputs/gap1/shape_measurements.csv
+!outputs/gap1/section6_tables.md
 
-# Local configs
+# Conventions section 9: local paths are never committed
 configs/paths.yaml
 
-# Python/OS caches
 __pycache__/
 *.pyc
 .DS_Store
+
+# Fermi data products: made on a laptop by scripts/run_chain.sh, far too big
+# and entirely reproducible from the scripts that are committed
+*_ccube.fits
+*_expcube.fits
+*_ltcube.fits
+*_sel.fits
+*_gti.fits
+gll_iem_v07.fits
+gap1_iem_roi.fits
+gll_psc*.fit
+
+# project_template.py selftest drops this in cwd; the real one is in templates/
+/gnfw_gamma1.2.fits
+# section 6 cites these - small, and they are the results
+!outputs/gap1/fig3_fit_residuals_*.png
+!outputs/gap1/fig4_hestia_envelope.png
+!outputs/gap1/fit_fluxes.json
+!outputs/gap1/fit_maskA/
+!outputs/gap1/fit_maskB/
+!outputs/gap1/fit_maskB_ps/
+outputs/gap1/fit_mask*/*
+!outputs/gap1/fit_mask*/fit_results.json
+!outputs/gap1/scan_maskA/
+!outputs/gap1/scan_maskB/
+!outputs/gap1/scan_maskB_ps/
+outputs/gap1/scan_mask*/*
+!outputs/gap1/scan_mask*/scan.csv
+!outputs/gap1/scan_mask*/scan.json
+# gnfw gamma scan cache, regenerated in ~80 s
+templates/gnfw_scan/
+!outputs/gap1/fig5_envelope_by_energy.png
+!outputs/gap1/gap1_results_for_gap7.csv
+!outputs/gap1/eb_*/
+outputs/gap1/eb_*/*
+!outputs/gap1/eb_scan_*/scan.csv
+!outputs/gap1/eb_scan_*/scan.json
+!outputs/gap1/eb_fit_*/fit_results.json
+!outputs/gap1/tri_*/
+outputs/gap1/tri_*/*
+!outputs/gap1/tri_scan_*/scan.csv
+!outputs/gap1/tri_scan_*/scan.json
+!outputs/gap1/fig6_maskD.png
+!outputs/gap1/h0b_n5/
+outputs/gap1/h0b_n5/*
+!outputs/gap1/h0b_n5/injection_recovery.json
+!outputs/gap1/h0b_sparse/
+outputs/gap1/h0b_sparse/*
+!outputs/gap1/h0b_sparse/injection_recovery.json
+# sec 6.0 outputs cited by docs/diffuse_freedom_test.md
+!outputs/gap1/fig7_incompleteness.png
+!outputs/gap1/fig8_diffuse_freedom.png
+!outputs/gap1/diffuse_freedom_*/
+outputs/gap1/diffuse_freedom_*/*
+!outputs/gap1/diffuse_freedom_*/diffuse_freedom.json
+!outputs/gap1/incompleteness/
+outputs/gap1/incompleteness/*
+!outputs/gap1/incompleteness/calibration.json
+!outputs/gap1/measure_q_*/
+outputs/gap1/measure_q_*/*
+!outputs/gap1/measure_q_*/measure_q.json
+
+# external IEM libraries: multi-GB Zenodo archives, provenance in README.md
+iem/
+*.zip
+
+# from main: other heavy formats
+*.h5
+*.hdf5
+*.npz

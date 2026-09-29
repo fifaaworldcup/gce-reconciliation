@@ -1,0 +1,1051 @@
+<title>The Boxy Dark Matter Problem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#EDF0F3;
+  --surface:#FBFCFD;
+  --surface-2:#E4E8EE;
+  --ink:#0F151E;
+  --ink-2:#4B5768;
+  --ink-3:#788495;
+  --rule:#D3DAE3;
+  --rule-strong:#B6C0CD;
+  --accent:#B26A16;
+  --accent-soft:#F3E4CE;
+  --cool:#2A6B8C;
+  --cool-soft:#DCEAF1;
+  --alarm:#9C3A2F;
+  --alarm-soft:#F4E0DC;
+  --good:#3B6B4A;
+  --shadow:0 1px 2px rgba(15,21,30,.06),0 8px 24px -16px rgba(15,21,30,.18);
+  --measure:68ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1016;
+    --surface:#131A23;
+    --surface-2:#1B242F;
+    --ink:#E3E9F0;
+    --ink-2:#9EAABA;
+    --ink-3:#71808F;
+    --rule:#242F3B;
+    --rule-strong:#35424F;
+    --accent:#DFA24C;
+    --accent-soft:#2E2415;
+    --cool:#63A8C9;
+    --cool-soft:#14252E;
+    --alarm:#D97F71;
+    --alarm-soft:#2A1815;
+    --good:#7FB08C;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1016;
+  --surface:#131A23;
+  --surface-2:#1B242F;
+  --ink:#E3E9F0;
+  --ink-2:#9EAABA;
+  --ink-3:#71808F;
+  --rule:#242F3B;
+  --rule-strong:#35424F;
+  --accent:#DFA24C;
+  --accent-soft:#2E2415;
+  --cool:#63A8C9;
+  --cool-soft:#14252E;
+  --alarm:#D97F71;
+  --alarm-soft:#2A1815;
+  --good:#7FB08C;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:0;max-width:1180px;margin:0 auto}
+/* ---------- nav ---------- */
+nav{
+  position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;
+  padding:2.6rem 1.1rem 3rem 1.4rem;
+  border-right:1px solid var(--rule);
+  font-size:13px;line-height:1.45;
+}
+nav .navtitle{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:1rem;
+}
+nav ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.28rem}
+nav a{
+  display:grid;grid-template-columns:1.9rem 1fr;gap:.35rem;
+  color:var(--ink-2);text-decoration:none;padding:.2rem 0;border-radius:3px;
+}
+nav a span.n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3);padding-top:.12em}
+nav a:hover{color:var(--accent)}
+nav a:hover span.n{color:var(--accent)}
+nav a:focus-visible{outline:2px solid var(--cool);outline-offset:2px}
+nav .navgroup{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);margin:1.1rem 0 .35rem;padding-top:.7rem;border-top:1px solid var(--rule);
+}
+nav .navgroup:first-of-type{border-top:none;padding-top:0;margin-top:0}
+/* ---------- main ---------- */
+main{padding:2.6rem 2.6rem 6rem;min-width:0}
+.masthead{border-bottom:2px solid var(--ink);padding-bottom:1.5rem;margin-bottom:2.4rem}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:.9rem;
+}
+h1{
+  font-family:Spectral,Georgia,serif;font-weight:600;font-size:clamp(2.1rem,4.4vw,3.05rem);
+  line-height:1.08;letter-spacing:-.015em;margin:0 0 .7rem;text-wrap:balance;
+}
+.standfirst{font-size:1.08rem;color:var(--ink-2);max-width:60ch;margin:0}
+.meta{
+  display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:1.4rem;
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);
+}
+.meta b{color:var(--ink-2);font-weight:500}
+section{margin:0 0 3.4rem;scroll-margin-top:1.5rem}
+h2{
+  font-family:Spectral,Georgia,serif;font-weight:600;font-size:1.72rem;line-height:1.18;
+  letter-spacing:-.01em;margin:0 0 .3rem;text-wrap:balance;
+  display:grid;grid-template-columns:2.9rem 1fr;align-items:baseline;
+}
+h2 .n{
+  font-family:"IBM Plex Mono",monospace;font-size:.8rem;font-weight:500;color:var(--accent);
+  letter-spacing:.04em;
+}
+.h2sub{margin:0 0 1.4rem 2.9rem;color:var(--ink-3);font-size:.92rem;max-width:52ch}
+h3{
+  font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:1.03rem;
+  margin:2rem 0 .5rem;letter-spacing:-.005em;
+}
+h4{font-size:.82rem;font-family:"IBM Plex Mono",monospace;font-weight:500;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);margin:1.6rem 0 .5rem}
+p,ul,ol{max-width:var(--measure)}
+p{margin:0 0 1rem}
+ul,ol{margin:0 0 1rem;padding-left:1.15rem}
+li{margin-bottom:.42rem}
+li::marker{color:var(--ink-3)}
+strong{font-weight:600}
+em{font-style:italic}
+code{
+  font-family:"IBM Plex Mono",monospace;font-size:.855em;
+  background:var(--surface-2);padding:.1em .34em;border-radius:3px;
+}
+a{color:var(--cool);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--cool);outline-offset:2px}
+hr{border:none;border-top:1px solid var(--rule);margin:2.4rem 0}
+/* ---------- plain-words callout ---------- */
+.plain{
+  border-left:3px solid var(--cool);background:var(--cool-soft);
+  padding:.85rem 1.1rem .9rem;margin:1.3rem 0;max-width:var(--measure);
+  border-radius:0 4px 4px 0;
+}
+.plain .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--cool);display:block;margin-bottom:.35rem;
+}
+.plain p{margin:0;max-width:none}
+.plain p + p{margin-top:.6rem}
+/* ---------- warning ---------- */
+.warn{
+  border-left:3px solid var(--alarm);background:var(--alarm-soft);
+  padding:.85rem 1.1rem .9rem;margin:1.3rem 0;max-width:var(--measure);border-radius:0 4px 4px 0;
+}
+.warn .lbl{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--alarm);display:block;margin-bottom:.35rem;
+}
+.warn p{margin:0;max-width:none}
+.warn p + p{margin-top:.6rem}
+/* ---------- key number ---------- */
+.keynum{
+  display:flex;gap:1.1rem;align-items:baseline;margin:1.3rem 0;padding:.9rem 1.1rem;
+  background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure);
+}
+.keynum .v{
+  font-family:"IBM Plex Mono",monospace;font-size:1.5rem;font-weight:500;color:var(--accent);
+  white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.keynum .d{font-size:.92rem;color:var(--ink-2)}
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;margin:1.3rem 0;max-width:100%}
+table{border-collapse:collapse;font-size:.87rem;width:100%;min-width:520px}
+th{
+  text-align:left;font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  border-bottom:1px solid var(--rule-strong);padding:.45rem .8rem .45rem 0;vertical-align:bottom;
+}
+td{border-bottom:1px solid var(--rule);padding:.62rem .8rem .62rem 0;vertical-align:top;line-height:1.5}
+td:last-child,th:last-child{padding-right:0}
+tbody tr:last-child td{border-bottom:none}
+td code{white-space:nowrap}
+.t-term{font-family:"IBM Plex Mono",monospace;font-size:.83rem;color:var(--ink);white-space:nowrap}
+/* ---------- figures ---------- */
+figure{margin:1.9rem 0;max-width:100%}
+figure svg{display:block;width:100%;max-width:100%;height:auto;color:var(--ink-2)}
+figcaption{
+  font-size:.83rem;color:var(--ink-3);margin-top:.7rem;max-width:60ch;line-height:1.5;
+  border-top:1px solid var(--rule);padding-top:.55rem;
+}
+figcaption b{color:var(--ink-2);font-weight:500}
+/* ---------- glossary ---------- */
+.gloss{display:grid;grid-template-columns:minmax(9rem,13rem) 1fr;gap:.1rem 1.4rem;font-size:.9rem;max-width:none}
+.gloss dt{
+  font-family:"IBM Plex Mono",monospace;font-size:.82rem;color:var(--ink);
+  padding:.55rem 0;border-top:1px solid var(--rule);
+}
+.gloss dd{margin:0;padding:.55rem 0;border-top:1px solid var(--rule);color:var(--ink-2)}
+/* ---------- checklist ---------- */
+.steps{list-style:none;padding:0;counter-reset:s;max-width:var(--measure)}
+.steps li{
+  counter-increment:s;position:relative;padding-left:2.3rem;margin-bottom:1rem;
+}
+.steps li::before{
+  content:counter(s);position:absolute;left:0;top:.05rem;
+  font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--accent);
+  border:1px solid var(--rule-strong);border-radius:50%;width:1.6rem;height:1.6rem;
+  display:grid;place-items:center;
+}
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  nav{position:static;max-height:none;border-right:none;border-bottom:1px solid var(--rule);
+    padding:1.8rem 1.4rem 1.4rem}
+  nav ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.2rem 1rem}
+  main{padding:2rem 1.4rem 4rem}
+  .gloss{grid-template-columns:1fr;gap:0}
+  .gloss dd{border-top:none;padding-top:0;padding-bottom:.7rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<div class="shell">
+<nav>
+  <div class="navtitle">Contents</div>
+  <div class="navgroup">The argument</div>
+  <ol>
+    <li><a href="#s00"><span class="n">00</span><span>Start here</span></a></li>
+    <li><a href="#s01"><span class="n">01</span><span>Gamma rays &amp; the galactic centre</span></a></li>
+    <li><a href="#s02"><span class="n">02</span><span>Why dark matter glows</span></a></li>
+    <li><a href="#s03"><span class="n">03</span><span>The pulsar rival</span></a></li>
+    <li><a href="#s04"><span class="n">04</span><span>Shape becomes the referee</span></a></li>
+    <li><a href="#s05"><span class="n">05</span><span>HESTIA breaks the referee</span></a></li>
+    <li><a href="#s06"><span class="n">06</span><span>The pipeline problem</span></a></li>
+  </ol>
+  <div class="navgroup">The data</div>
+  <ol>
+    <li><a href="#s07"><span class="n">07</span><span>Fermi-LAT, decoded</span></a></li>
+    <li><a href="#s08"><span class="n">08</span><span>The map you fit</span></a></li>
+  </ol>
+  <div class="navgroup">The method</div>
+  <ol>
+    <li><a href="#s09"><span class="n">09</span><span>Template fitting from zero</span></a></li>
+    <li><a href="#s10"><span class="n">10</span><span>The PSF</span></a></li>
+    <li><a href="#s11"><span class="n">11</span><span>Masks</span></a></li>
+    <li><a href="#s12"><span class="n">12</span><span>Diffuse background models</span></a></li>
+    <li><a href="#s13"><span class="n">13</span><span>The five templates</span></a></li>
+    <li><a href="#s14"><span class="n">14</span><span>Level 1 vs Level 2</span></a></li>
+    <li><a href="#s15"><span class="n">15</span><span>Injection &amp; recovery</span></a></li>
+  </ol>
+  <div class="navgroup">Doing it</div>
+  <ol>
+    <li><a href="#s16"><span class="n">16</span><span>Reproducibility plumbing</span></a></li>
+    <li><a href="#s17"><span class="n">17</span><span>What I verified</span></a></li>
+    <li><a href="#s18"><span class="n">18</span><span>Glossary</span></a></li>
+    <li><a href="#s19"><span class="n">19</span><span>Your first week</span></a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="masthead">
+  <div class="eyebrow">GCE Reconciliation · Gap 1 · Ground-up primer</div>
+  <h1>The Boxy Dark&nbsp;Matter Problem</h1>
+  <p class="standfirst">Everything behind Gap 1, starting from nothing: what the Galactic Center Excess is, why its <em>shape</em> became the deciding evidence, and why the shape argument may have just broken — twice.</p>
+  <div class="meta">
+    <span><b>For</b> Oren / Gap 1</span>
+    <span><b>Assumes</b> no prior astrophysics</span>
+    <span><b>Read</b> in order, ~45 min</span>
+    <span><b>Status</b> primer v1</span>
+  </div>
+</header>
+
+<section id="s00">
+  <h2><span class="n">00</span><span>Start here</span></h2>
+  <p class="h2sub">The whole gap in six sentences, so the rest has somewhere to land.</p>
+
+  <p>There is a glow of gamma rays coming from the middle of our galaxy that nobody can account for. Two explanations survive: <strong>dark matter particles annihilating</strong>, or <strong>thousands of faint dead stars called millisecond pulsars</strong>. Their energy spectra are nearly identical, so for fifteen years the field has used <em>shape</em> as the tiebreaker — the excess looks squashed and boxy like the galaxy's stellar bulge, and dark matter was assumed to be round, so boxy meant stars.</p>
+
+  <p>In 2025, Muru and collaborators showed with the HESTIA simulations that the inner dark matter halo of a realistic Milky Way is <em>not</em> round — infalling gas drags it into a flattened, boxy shape too. That removes the tiebreaker. Meanwhile Di Mauro's 2026 analysis reports the excess is nearly spherical, but it gets there by repeatedly hunting for and subtracting new point sources — and that procedure has a suspicious ability to eat exactly the kind of lumpy, off-axis structure a boxy signal would produce.</p>
+
+  <p><strong>Gap 1 is the test of both claims at once:</strong> fit a real HESTIA boxy dark-matter template head-to-head against the stellar bulge template, and separately prove whether the high-precision pipeline can recover a boxy signal at all when you feed it one on purpose.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>People said "the glow is boxy, dark matter is round, therefore it's not dark matter." Someone just showed dark matter can be boxy. And the study claiming the glow is round might be rounding it off itself. Your job is to check both.</p>
+  </div>
+</section>
+
+<section id="s01">
+  <h2><span class="n">01</span><span>Gamma rays and the galactic centre</span></h2>
+  <p class="h2sub">What the telescope actually collects, and why this patch of sky.</p>
+
+  <h3>Gamma rays are just extremely violent light</h3>
+  <p>Light comes in packets called photons, and the only thing that distinguishes radio waves from visible light from X-rays is how much energy each packet carries. Gamma rays are the top of that ladder. Physicists measure photon energy in <strong>electron volts (eV)</strong>. Visible light is about 2 eV per photon. The gamma rays in this project run from 500 <strong>MeV</strong> (million eV) up to 50 <strong>GeV</strong> (billion eV) — so between 250 million and 25 billion times more energetic than a photon of visible light.</p>
+
+  <p>Nothing makes gamma rays by being hot. A star's surface, however hot, tops out in the ultraviolet. Gamma rays require particle physics: matter annihilating into energy, particles accelerated to nearly light speed slamming into gas, or extreme magnetic fields. That is precisely why they are interesting — <em>if you see a GeV photon, something violent happened.</em></p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Radio, visible light, X-rays and gamma rays are all the same stuff, just at different energies. Gamma rays are the most energetic, and ordinary warm objects can't make them. So a map of the gamma-ray sky is a map of where violent physics is happening.</p>
+  </div>
+
+  <h3>Why point at the centre of the galaxy</h3>
+  <p>We sit in a spiral galaxy roughly 8 kiloparsecs (about 26,000 light-years) from its centre. A <strong>parsec</strong> is 3.26 light-years; a <strong>kiloparsec (kpc)</strong> is a thousand of those. Everything in the galaxy — stars, gas, and dark matter — is densest at that centre.</p>
+
+  <p>If dark matter annihilates, the signal scales with density <em>squared</em> (section 02), so the galactic centre is by far the brightest place to look. It is the single most promising target in the sky for a dark matter detection. It is also, unfortunately, the most crowded and most confusing place in the sky, which is the entire reason this project exists.</p>
+
+  <h3>The excess itself</h3>
+  <p>Around 2009–2011, Hooper and Goodenough took the gamma-ray data, subtracted the best available model of all <em>known</em> emission — cosmic rays hitting gas, known pulsars, known catalogued sources — and found leftover light. A smooth, roughly symmetric glow centred on the galactic centre, extending outward roughly 10–15 degrees, with a spectrum that peaks at a few GeV. This is the <strong>Galactic Center Excess (GCE)</strong>. It has survived every attempt to make it go away for fifteen years.</p>
+
+  <div class="keynum">
+    <span class="v">~10&ndash;15&deg;</span>
+    <span class="d">Angular extent of the excess. For scale, the full Moon is 0.5&deg; across, so the GCE spans roughly 20&ndash;30 Moon-widths of sky. This is why the region of interest is a 40&deg; &times; 40&deg; box.</span>
+  </div>
+</section>
+
+<section id="s02">
+  <h2><span class="n">02</span><span>Why dark matter would glow, and why it goes as &rho;&sup2;</span></h2>
+  <p class="h2sub">The single most important equation in this gap, and it is not complicated.</p>
+
+  <h3>What dark matter is</h3>
+  <p>Galaxies rotate too fast for the matter we can see. Their outer stars orbit at speeds that should fling them off, unless there is roughly five times more mass present than we observe in stars and gas. That extra mass does not emit, absorb, or reflect light — hence "dark." It shows up in galaxy rotation curves, in how clusters bend light behind them, and in the pattern of the cosmic microwave background. The evidence that <em>something</em> is there is overwhelming; what it is made of is unknown.</p>
+
+  <p>The most-studied candidate is the <strong>WIMP</strong> — Weakly Interacting Massive Particle. The appeal is a numerical coincidence called the "WIMP miracle": if you take a stable particle with roughly the mass of a heavy atom (tens of GeV) and a weak-force-scale interaction rate, the amount of it left over from the early universe comes out right, without tuning anything. The characteristic annihilation rate that produces that leftover amount is called the <strong>thermal relic cross-section</strong>, about 3&times;10<sup>&minus;26</sup> cm&sup3;/s.</p>
+
+  <h3>Why annihilation makes gamma rays</h3>
+  <p>WIMPs are typically their own antiparticle. When two meet, they annihilate and their combined mass converts to energy — usually into quarks, which immediately shower into a spray of other particles including neutral pions, which decay into two gamma rays each. The resulting gamma-ray spectrum peaks at roughly a tenth of the WIMP's mass.</p>
+
+  <div class="keynum">
+    <span class="v">30&ndash;60 GeV</span>
+    <span class="d">WIMP mass whose annihilation spectrum peaks where the GCE peaks, at a thermal relic cross-section. That two independently-motivated numbers landed on the observed signal is why the GCE got so much attention.</span>
+  </div>
+
+  <h3>The &rho;&sup2; rule</h3>
+  <p>Annihilation requires <em>two</em> particles to find each other. The rate of that per unit volume is proportional to (number of particles) &times; (number of particles) — that is, density squared. So:</p>
+
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.95rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure)">annihilation signal &prop; &rho;&sup2;</p>
+
+  <p>To predict what you would <em>see</em>, you stand at Earth, pick a direction on the sky, and add up &rho;&sup2; along the entire line of sight through the galaxy in that direction. That integral is called the <strong>J-factor</strong>, and a map of it across the sky is your dark-matter template.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Dark matter only lights up where it's crowded, and crowding counts double because two particles have to collide. So you square the density map, then you look through the galaxy in every direction and add up everything you'd see stacked along that sight-line. That gives you a picture of what the sky should look like if dark matter is the answer. Everything Gap 1 does starts with building that picture correctly.</p>
+  </div>
+
+  <p>Two consequences follow, and both matter to you. First, squaring makes the signal far more centrally concentrated than the underlying dark matter — small differences in the inner density profile become large differences on the sky. Second, squaring also <em>exaggerates shape</em>: if the halo is flattened, the &rho;&sup2; map is more flattened still. That is good news for Gap 1, because it means a boxy halo produces an even boxier signal than you might guess.</p>
+</section>
+
+<section id="s03">
+  <h2><span class="n">03</span><span>The pulsar rival, and why spectrum cannot settle it</span></h2>
+  <p class="h2sub">The competing explanation, and the coincidence that made shape the only referee.</p>
+
+  <h3>What a millisecond pulsar is</h3>
+  <p>When a massive star dies, its core collapses into a <strong>neutron star</strong> — roughly the mass of the Sun packed into a city-sized sphere, with a magnetic field trillions of times Earth's. If it spins, its magnetic poles sweep beams of radiation around like a lighthouse: a <strong>pulsar</strong>.</p>
+
+  <p>Ordinary pulsars slow down and go quiet over millions of years. But if the neutron star has a binary companion, it can siphon gas off that companion; the infalling gas carries angular momentum and spins the neutron star back up — hundreds of rotations per second. That is a <strong>millisecond pulsar (MSP)</strong>: an old, recycled, extremely stable, gamma-ray-bright object. Because they need time to be recycled, MSPs trace <em>old</em> stellar populations — exactly the kind of stars that make up the galactic bulge.</p>
+
+  <h3>The coincidence that ruined everything</h3>
+  <p>Millisecond pulsars emit gamma rays through curvature radiation in their magnetospheres, which produces a spectrum that rises, peaks at a few GeV, and cuts off sharply above about 10 GeV.</p>
+
+  <p>A 30–60 GeV WIMP annihilating to quarks produces a spectrum that rises, peaks at a few GeV, and falls off above about 10 GeV.</p>
+
+  <div class="warn">
+    <span class="lbl">The core difficulty</span>
+    <p>These two spectra are, given Fermi-LAT's energy resolution and the background uncertainties, effectively indistinguishable. Two completely unrelated physical mechanisms happen to produce the same curve. This is not a small inconvenience — it is why the entire field pivoted to arguing about <em>morphology</em> (shape) instead of spectrum, and therefore why Gap 1 exists at all.</p>
+  </div>
+
+  <p>There is a second discriminator in principle: a population of many faint point sources produces a "grainier" photon distribution than a genuinely smooth diffuse signal, and that graininess can be measured with photon-count statistics (NPTF). That approach produced strong claims for point sources in 2016, and then Leane &amp; Slatyer showed in 2020 that the method can manufacture false point-source signals when the background model is slightly wrong. That literature is Gap 5's territory; it is enough for you to know that the graininess route is contested, which leaves shape carrying the argument.</p>
+</section>
+
+<section id="s04">
+  <h2><span class="n">04</span><span>Shape becomes the referee</span></h2>
+  <p class="h2sub">How "boxy" got promoted from a detail to the deciding evidence.</p>
+
+  <h3>The Milky Way's bulge is not a ball</h3>
+  <p>The middle of our galaxy contains a dense concentration of old stars called the <strong>bulge</strong>. It is not spherical. The Milky Way has a <strong>bar</strong> — an elongated straight structure of stars running through the centre — and bars are unstable in a specific way: they buckle out of the plane, like a ruler bent until it snaps upward. The result is a <strong>boxy/peanut bulge</strong>: seen edge-on it looks like a rounded box, or a peanut, or an X.</p>
+
+  <p>Mapping this in three dimensions is hard because the galactic centre is behind enormous amounts of dust. Infrared light penetrates dust, so the <strong>VVV survey</strong> (VISTA Variables in the Vía Láctea) imaged the bulge in the near-infrared and used <strong>red clump giants</strong> as standard candles — a type of evolved star whose intrinsic brightness is nearly constant, so how faint it looks tells you how far away it is. Millions of them give you a 3-D density map of the bulge. Coleman et al. (2019) turned that into the template you will be fitting.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>The VVV template is not a theory. It's a measurement: astronomers found millions of stars whose true brightness they already knew, measured how dim each one looked, worked out its distance, and built a 3-D model of where the bulge stars actually are. Then they flattened that model onto the sky. It's boxy because the real bulge is boxy.</p>
+  </div>
+
+  <h3>The argument that made this the main event</h3>
+  <p>Macias et al. (2016), then Bartels et al. (2018) and others, fitted the excess with a boxy stellar-bulge template instead of a round dark-matter template — and the bulge won, decisively. The logic assembled itself:</p>
+
+  <ol>
+    <li>The excess is boxy, not round.</li>
+    <li>Old stars in the bulge are boxy. Millisecond pulsars come from old stars.</li>
+    <li>Dark matter halos are round.</li>
+    <li>Therefore the excess is millisecond pulsars.</li>
+  </ol>
+
+  <p><strong>Step 3 is the load-bearing assumption</strong>, and it is the one nobody checked properly for a decade. It came from dark-matter-only simulations — simulations that contain no gas, no stars, no baryons at all. Those produce roughly spherical halos. Real galaxies have baryons.</p>
+
+  <h3>A subtlety that turns out to matter enormously</h3>
+  <p>"Round versus boxy" is usually tested by giving the template an <strong>axis ratio</strong> — one number saying how squashed an ellipse is. Di Mauro (2026) does exactly this, scanning a parameter <em>r</em> alongside the inner slope, and reports <em>r</em> = 1.10 ± 0.05: an ellipse almost exactly as tall as it is wide.</p>
+
+  <p>But an axis ratio can only ever describe an ellipse. <em>Boxiness is a different kind of deformation entirely</em> — it is what happens when the contours flatten out along their sides and sharpen at their corners, and a shape can be perfectly boxy while having an axis ratio of 1. Measuring <em>r</em> ≈ 1 and concluding "not boxy" is a category error, in the same way that measuring a square's width-to-height ratio (1.0) does not tell you it isn't a square.</p>
+  <figure>
+    <svg viewBox="0 0 750 235" role="img" aria-label="Three shapes: a circle, an ellipse with axis ratio 1.10, and a boxy shape whose axis ratio is also near 1. An axis-ratio parameter can describe the first two but not the third.">
+      <g fill="none" stroke="currentColor" stroke-width="1.6">
+        <polygon points="188.0,120.0 188.0,118.0 187.9,116.0 187.7,113.9 187.4,111.9 187.1,109.9 186.7,107.9 186.3,106.0 185.8,104.0 185.2,102.1 184.5,100.2 183.8,98.3 183.0,96.4 182.1,94.6 181.2,92.8 180.2,91.0 179.2,89.3 178.1,87.6 176.9,85.9 175.7,84.3 174.4,82.7 173.1,81.2 171.7,79.7 170.3,78.3 168.8,76.9 167.3,75.6 165.7,74.3 164.1,73.1 162.4,71.9 160.7,70.8 159.0,69.8 157.2,68.8 155.4,67.9 153.6,67.0 151.7,66.2 149.8,65.5 147.9,64.8 146.0,64.2 144.0,63.7 142.1,63.3 140.1,62.9 138.1,62.6 136.1,62.3 134.0,62.1 132.0,62.0 130.0,62.0 128.0,62.0 126.0,62.1 123.9,62.3 121.9,62.6 119.9,62.9 117.9,63.3 116.0,63.7 114.0,64.2 112.1,64.8 110.2,65.5 108.3,66.2 106.4,67.0 104.6,67.9 102.8,68.8 101.0,69.8 99.3,70.8 97.6,71.9 95.9,73.1 94.3,74.3 92.7,75.6 91.2,76.9 89.7,78.3 88.3,79.7 86.9,81.2 85.6,82.7 84.3,84.3 83.1,85.9 81.9,87.6 80.8,89.3 79.8,91.0 78.8,92.8 77.9,94.6 77.0,96.4 76.2,98.3 75.5,100.2 74.8,102.1 74.2,104.0 73.7,106.0 73.3,107.9 72.9,109.9 72.6,111.9 72.3,113.9 72.1,116.0 72.0,118.0 72.0,120.0 72.0,122.0 72.1,124.0 72.3,126.1 72.6,128.1 72.9,130.1 73.3,132.1 73.7,134.0 74.2,136.0 74.8,137.9 75.5,139.8 76.2,141.7 77.0,143.6 77.9,145.4 78.8,147.2 79.8,149.0 80.8,150.7 81.9,152.4 83.1,154.1 84.3,155.7 85.6,157.3 86.9,158.8 88.3,160.3 89.7,161.7 91.2,163.1 92.7,164.4 94.3,165.7 95.9,166.9 97.6,168.1 99.3,169.2 101.0,170.2 102.8,171.2 104.6,172.1 106.4,173.0 108.3,173.8 110.2,174.5 112.1,175.2 114.0,175.8 116.0,176.3 117.9,176.7 119.9,177.1 121.9,177.4 123.9,177.7 126.0,177.9 128.0,178.0 130.0,178.0 132.0,178.0 134.0,177.9 136.1,177.7 138.1,177.4 140.1,177.1 142.1,176.7 144.0,176.3 146.0,175.8 147.9,175.2 149.8,174.5 151.7,173.8 153.6,173.0 155.4,172.1 157.2,171.2 159.0,170.2 160.7,169.2 162.4,168.1 164.1,166.9 165.7,165.7 167.3,164.4 168.8,163.1 170.3,161.7 171.7,160.3 173.1,158.8 174.4,157.3 175.7,155.7 176.9,154.1 178.1,152.4 179.2,150.7 180.2,149.0 181.2,147.2 182.1,145.4 183.0,143.6 183.8,141.7 184.5,139.8 185.2,137.9 185.8,136.0 186.3,134.0 186.7,132.1 187.1,130.1 187.4,128.1 187.7,126.1 187.9,124.0 188.0,122.0"/>
+        <polygon points="438.8,120.0 438.8,118.0 438.6,116.0 438.5,113.9 438.2,111.9 437.8,109.9 437.4,107.9 436.9,106.0 436.3,104.0 435.7,102.1 435.0,100.2 434.2,98.3 433.3,96.4 432.3,94.6 431.3,92.8 430.3,91.0 429.1,89.3 427.9,87.6 426.6,85.9 425.3,84.3 423.9,82.7 422.4,81.2 420.9,79.7 419.3,78.3 417.7,76.9 416.0,75.6 414.3,74.3 412.5,73.1 410.7,71.9 408.8,70.8 406.9,69.8 405.0,68.8 403.0,67.9 400.9,67.0 398.9,66.2 396.8,65.5 394.7,64.8 392.6,64.2 390.4,63.7 388.3,63.3 386.1,62.9 383.9,62.6 381.7,62.3 379.5,62.1 377.2,62.0 375.0,62.0 372.8,62.0 370.5,62.1 368.3,62.3 366.1,62.6 363.9,62.9 361.7,63.3 359.6,63.7 357.4,64.2 355.3,64.8 353.2,65.5 351.1,66.2 349.1,67.0 347.0,67.9 345.0,68.8 343.1,69.8 341.2,70.8 339.3,71.9 337.5,73.1 335.7,74.3 334.0,75.6 332.3,76.9 330.7,78.3 329.1,79.7 327.6,81.2 326.1,82.7 324.7,84.3 323.4,85.9 322.1,87.6 320.9,89.3 319.7,91.0 318.7,92.8 317.7,94.6 316.7,96.4 315.8,98.3 315.0,100.2 314.3,102.1 313.7,104.0 313.1,106.0 312.6,107.9 312.2,109.9 311.8,111.9 311.5,113.9 311.4,116.0 311.2,118.0 311.2,120.0 311.2,122.0 311.4,124.0 311.5,126.1 311.8,128.1 312.2,130.1 312.6,132.1 313.1,134.0 313.7,136.0 314.3,137.9 315.0,139.8 315.8,141.7 316.7,143.6 317.7,145.4 318.7,147.2 319.7,149.0 320.9,150.7 322.1,152.4 323.4,154.1 324.7,155.7 326.1,157.3 327.6,158.8 329.1,160.3 330.7,161.7 332.3,163.1 334.0,164.4 335.7,165.7 337.5,166.9 339.3,168.1 341.2,169.2 343.1,170.2 345.0,171.2 347.0,172.1 349.1,173.0 351.1,173.8 353.2,174.5 355.3,175.2 357.4,175.8 359.6,176.3 361.7,176.7 363.9,177.1 366.1,177.4 368.3,177.7 370.5,177.9 372.8,178.0 375.0,178.0 377.2,178.0 379.5,177.9 381.7,177.7 383.9,177.4 386.1,177.1 388.3,176.7 390.4,176.3 392.6,175.8 394.7,175.2 396.8,174.5 398.9,173.8 400.9,173.0 403.0,172.1 405.0,171.2 406.9,170.2 408.8,169.2 410.7,168.1 412.5,166.9 414.3,165.7 416.0,164.4 417.7,163.1 419.3,161.7 420.9,160.3 422.4,158.8 423.9,157.3 425.3,155.7 426.6,154.1 427.9,152.4 429.1,150.7 430.3,149.0 431.3,147.2 432.3,145.4 433.3,143.6 434.2,141.7 435.0,139.8 435.7,137.9 436.3,136.0 436.9,134.0 437.4,132.1 437.8,130.1 438.2,128.1 438.5,126.1 438.6,124.0 438.8,122.0"/>
+      </g>
+      <polygon points="685.0,120.0 684.9,109.9 684.9,106.0 684.8,103.0 684.7,100.5 684.5,98.3 684.3,96.4 684.0,94.6 683.7,93.0 683.4,91.5 683.1,90.1 682.7,88.7 682.2,87.5 681.7,86.3 681.2,85.2 680.7,84.1 680.1,83.1 679.4,82.2 678.7,81.3 678.0,80.4 677.2,79.6 676.4,78.8 675.5,78.1 674.6,77.4 673.6,76.7 672.6,76.1 671.6,75.5 670.4,74.9 669.3,74.4 668.0,73.9 666.7,73.4 665.3,73.0 663.9,72.6 662.3,72.2 660.7,71.9 659.0,71.6 657.1,71.3 655.2,71.0 653.0,70.8 650.7,70.6 648.2,70.5 645.4,70.4 642.2,70.3 638.3,70.2 633.1,70.1 620.0,70.1 606.9,70.1 601.7,70.2 597.8,70.3 594.6,70.4 591.8,70.5 589.3,70.6 587.0,70.8 584.8,71.0 582.9,71.3 581.0,71.6 579.3,71.9 577.7,72.2 576.1,72.6 574.7,73.0 573.3,73.4 572.0,73.9 570.7,74.4 569.6,74.9 568.4,75.5 567.4,76.1 566.4,76.7 565.4,77.4 564.5,78.1 563.6,78.8 562.8,79.6 562.0,80.4 561.3,81.3 560.6,82.2 559.9,83.1 559.3,84.1 558.8,85.2 558.3,86.3 557.8,87.5 557.3,88.7 556.9,90.1 556.6,91.5 556.3,93.0 556.0,94.6 555.7,96.4 555.5,98.3 555.3,100.5 555.2,103.0 555.1,106.0 555.1,109.9 555.0,120.0 555.1,130.1 555.1,134.0 555.2,137.0 555.3,139.5 555.5,141.7 555.7,143.6 556.0,145.4 556.3,147.0 556.6,148.5 556.9,149.9 557.3,151.3 557.8,152.5 558.3,153.7 558.8,154.8 559.3,155.9 559.9,156.9 560.6,157.8 561.3,158.7 562.0,159.6 562.8,160.4 563.6,161.2 564.5,161.9 565.4,162.6 566.4,163.3 567.4,163.9 568.4,164.5 569.6,165.1 570.7,165.6 572.0,166.1 573.3,166.6 574.7,167.0 576.1,167.4 577.7,167.8 579.3,168.1 581.0,168.4 582.9,168.7 584.8,169.0 587.0,169.2 589.3,169.4 591.8,169.5 594.6,169.6 597.8,169.7 601.7,169.8 606.9,169.9 620.0,169.9 633.1,169.9 638.3,169.8 642.2,169.7 645.4,169.6 648.2,169.5 650.7,169.4 653.0,169.2 655.2,169.0 657.1,168.7 659.0,168.4 660.7,168.1 662.3,167.8 663.9,167.4 665.3,167.0 666.7,166.6 668.0,166.1 669.3,165.6 670.4,165.1 671.6,164.5 672.6,163.9 673.6,163.3 674.6,162.6 675.5,161.9 676.4,161.2 677.2,160.4 678.0,159.6 678.7,158.7 679.4,157.8 680.1,156.9 680.7,155.9 681.2,154.8 681.7,153.7 682.2,152.5 682.7,151.3 683.1,149.9 683.4,148.5 683.7,147.0 684.0,145.4 684.3,143.6 684.5,141.7 684.7,139.5 684.8,137.0 684.9,134.0 684.9,130.1" fill="none" stroke="var(--accent)" stroke-width="2.4"/>
+      <g font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor" text-anchor="middle">
+        <text x="130" y="205">r = 1.00</text>
+        <text x="375" y="205">r = 1.10</text>
+        <text x="620" y="205" fill="var(--accent)">r &#8776; 1.05</text>
+      </g>
+      <g font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="currentColor" text-anchor="middle">
+        <text x="130" y="226" opacity="0.68">spherical</text>
+        <text x="375" y="226" opacity="0.68">mildly elongated</text>
+        <text x="620" y="226" fill="var(--accent)">boxy &#8212; and invisible to r</text>
+      </g>
+      <g stroke="currentColor" stroke-width="1" opacity="0.3">
+        <line x1="252" y1="34" x2="252" y2="188"/>
+        <line x1="497" y1="34" x2="497" y2="188"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="currentColor" opacity="0.55" text-anchor="middle" letter-spacing="1">
+        <text x="252" y="26">AXIS RATIO CAN SAY THIS</text>
+        <text x="620" y="26" fill="var(--accent)" opacity="1">BUT NOT THIS</text>
+      </g>
+    </svg>
+    <figcaption><b>An axis ratio cannot detect boxiness.</b> Di Mauro (2026) tests sphericity by scanning an elliptical axis ratio <em>r</em> and finds <em>r</em>&nbsp;=&nbsp;1.10&nbsp;&plusmn;&nbsp;0.05. The third shape here has an axis ratio near 1 and is plainly not round — boxiness lives in the flatness of the sides, which no axis ratio parameter can express. This is a large part of why "the GCE is approximately spherical" and "the GCE is boxy" can both be true statements about the same data.</figcaption>
+  </figure>
+  <p>This gives Gap 1 a sharper motivation than "let's try another template." The existing high-precision sphericity measurement is made with a parameter that is structurally incapable of finding the thing you are looking for.</p>
+</section>
+
+<section id="s05">
+  <h2><span class="n">05</span><span>HESTIA breaks the referee</span></h2>
+  <p class="h2sub">Why the assumption that dark matter is round was wrong, and what you can actually download.</p>
+
+  <h3>Baryonic contraction</h3>
+  <p>"Baryons" means ordinary matter — gas and stars. Dark matter cannot shed energy, so on its own it settles into a puffy, roughly round halo. Gas <em>can</em> shed energy: it radiates, cools, and sinks toward the centre. As it piles up there, it deepens the gravitational well, and the dark matter orbiting through that well gets pulled inward with it. This is <strong>adiabatic</strong> or <strong>baryonic contraction</strong>.</p>
+
+  <p>The contraction does two things. It makes the inner dark matter denser — which brightens the predicted signal, since signal goes as &rho;&sup2;. And it makes the inner dark matter take on the <em>shape</em> of the baryons that pulled it in. If the baryons formed a bar and a boxy/peanut bulge, the inner dark matter is dragged into something boxy too.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Gas can cool down and fall to the middle; dark matter can't. So the gas gets there first, forms a bar-shaped bulge, and its gravity then reshapes the dark matter around it into roughly the same shape. Dark matter ends up boxy not because it wants to be, but because the stars made it that way.</p>
+  </div>
+
+  <h3>What HESTIA is</h3>
+  <p><strong>HESTIA</strong> — High-resolution Environmental Simulations of The Immediate Area — is a suite of cosmological simulations with a specific and unusual feature: <em>constrained initial conditions</em>. Ordinary cosmological simulations grow a random universe and you go looking for something Milky-Way-ish in it. HESTIA instead takes the measured velocities of real nearby galaxies (from the CosmicFlows survey) and tunes the starting conditions so that the simulation grows <em>our</em> Local Group — a Milky Way and an Andromeda, at about the right masses, separation and approach velocity. It uses the AREPO code and the Auriga galaxy-formation physics.</p>
+
+  <p>Muru, Silk, Libeskind, Gottlöber &amp; Hoffman (2025, published in <em>Physical Review Letters</em>) took six Milky-Way-like galaxies from three HESTIA simulations, placed a virtual observer 8 kpc from each centre in the disc plane, and produced three kinds of projected map: dark matter density, dark matter density <em>squared</em> (the annihilation signal), and the density of stars older than 3 Gyr (a stand-in for where millisecond pulsars would be).</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Quantity</th><th>Value</th><th>What it means for you</th></tr></thead>
+    <tbody>
+      <tr><td class="t-term">MW-like galaxies</td><td>6, from 3 simulations</td><td>Your conventions say "three realizations" — that is the three simulations. There are six candidate halos available.</td></tr>
+      <tr><td class="t-term">DM mass resolution</td><td>1.5&times;10<sup>5</sup> M<sub>&#9737;</sub></td><td>Each simulation particle stands in for 150,000 Suns of dark matter.</td></tr>
+      <tr><td class="t-term">Softening length</td><td>220 pc</td><td>The smallest spatial scale the gravity solver resolves. See the warning below — this is the most important practical number in the entire gap.</td></tr>
+      <tr><td class="t-term">Observer distance</td><td>8 kpc</td><td>Your conventions use R<sub>&#9737;</sub> = 8.2 kpc. Minor, but you must not silently mix them.</td></tr>
+      <tr><td class="t-term">Isodensity axis ratio</td><td>down to ~0.67</td><td>The projected shapes reach roughly 2:3 at the outer bulge — strongly flattened, not round.</td></tr>
+      <tr><td class="t-term">Headline claim</td><td>DM and MSP morphologies <em>indistinguishable</em></td><td>This is the sentence Gap 1 is testing against real data.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="warn">
+    <span class="lbl">Do the angular arithmetic before you do anything else</span>
+    <p>A 220 pc softening length, viewed from 8 kpc, subtends <strong>220 / 8000 radians = 1.6 degrees</strong>. Your analysis grid has 0.1&deg; pixels. That means the HESTIA maps carry <em>no trustworthy information</em> on scales below roughly 1.6&deg; — and the real effective resolution of a density field is typically a few times the softening, so call it 2&ndash;3&deg; to be safe.</p>
+    <p>The GCE is 10&ndash;15&deg; across. So you have perhaps five to ten genuine resolution elements across the whole signal. Any fine structure you see in a HESTIA template at 0.1&deg; is interpolation, not physics. Report this number in your mini-paper, smooth every competing template to the same floor before comparing, and state an inner exclusion radius. If you skip this, a reviewer will find it and it will cost you the paper.</p>
+  </div>
+
+  <h3>Where to actually get the maps</h3>
+  <p>The Muru et al. paper carries a data statement pointing at a public repository:</p>
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.86rem;padding:.7rem .9rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure);overflow-wrap:anywhere">gitlab.aip.de/muru/gce_in_hestia</p>
+  <p>That repository holds the analysis and plotting code. Whether it also contains the projected &rho;&sup2; maps themselves, or only the scripts that generate them from HESTIA snapshots you do not have, is the thing to establish on day one. If it is code-only, you need either the snapshots (a collaboration request to AIP) or the projected maps directly from the authors. <strong>Email Moorits Muru and Noam Libeskind this week.</strong> A polite request from a student, citing the PRL and asking for the projected &rho;&sup2; maps for the six halos, is completely normal practice and is usually answered.</p>
+
+  <div class="warn">
+    <span class="lbl">On "Hussein et al. 2025"</span>
+    <p>Your project conventions cite HESTIA &rho;&sup2; maps from "Muru et al. (2025) / Hussein et al. (2025)". I could not find a Hussein et al. 2025 paper on HESTIA dark-matter morphology. It may be a companion paper I cannot see, a preprint under another name, or a slip. Ask the project lead for the reference before you build methods around it — do not cite a paper you have not read.</p>
+  </div>
+</section>
+
+<section id="s06">
+  <h2><span class="n">06</span><span>The pipeline problem</span></h2>
+  <p class="h2sub">Why a more precise analysis can give a <em>less</em> correct answer about shape.</p>
+
+  <p>The second half of Gap 1 has nothing to do with dark matter simulations. It is a question about method.</p>
+
+  <p>Di Mauro (2026) is the most precise GCE measurement to date, and it gets there honestly: leftover residuals in earlier analyses were 30–40% of the data, which is embarrassing, and this pipeline drives them below about 10%. It does that by <strong>iterative source-finding</strong> — fit the model, look at what is left over, find places where the leftover light is statistically significant, declare a new point source there, add it to the model, refit, repeat.</p>
+
+  <p>Concretely, that paper runs a staged search at successively lower thresholds of TS &gt; 100, then TS &gt; 64, then TS &gt; 36, also testing whether each new source is spatially extended out to 2°. It finds roughly 30–50 new sources, mostly along the galactic plane. Then it reports the excess is nearly spherical: γ = 1.15 ± 0.02, r = 1.10 ± 0.05.</p>
+
+  <h3>Why this should worry you</h3>
+  <p>An extended, asymmetric, lumpy signal that is <em>not in your template list</em> does not simply sit there being ignored. It shows up as leftover light — and leftover light is exactly what the source-finder is hunting for. A boxy excess sticks out along the galactic plane, on either side of the centre, which is precisely where the paper says most of its new sources were found.</p>
+
+  <p>The procedure has no way to distinguish "there is a real point source here" from "my template is the wrong shape here." Both look like a positive residual. And once you have converted the boxy overhang into a handful of point sources with free normalizations, what remains for the diffuse template to explain is rounder than what you started with.</p>
+  <figure>
+    <svg viewBox="0 0 750 232" role="img" aria-label="Four-panel mechanism: a boxy injected signal is fitted with a round template, the boxy overhang appears as residuals at the ends, the source-finder converts those residuals into point sources, and the refitted diffuse component is left looking spherical.">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"/>
+        </marker>
+      </defs>
+      <rect x="8" y="30" width="148" height="130" rx="3" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.28" stroke-width="1"/><rect x="196" y="30" width="148" height="130" rx="3" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.28" stroke-width="1"/><rect x="384" y="30" width="148" height="130" rx="3" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.28" stroke-width="1"/><rect x="572" y="30" width="148" height="130" rx="3" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.28" stroke-width="1"/>
+      <polygon points="128.0,95.0 128.0,88.2 127.9,85.5 127.8,83.5 127.6,81.8 127.4,80.3 127.2,79.0 126.9,77.9 126.6,76.8 126.2,75.8 125.8,74.8 125.3,74.0 124.8,73.2 124.2,72.4 123.6,71.7 122.9,71.0 122.2,70.4 121.4,69.8 120.6,69.3 119.7,68.8 118.7,68.3 117.7,67.9 116.6,67.5 115.5,67.1 114.2,66.8 112.9,66.5 111.5,66.2 110.0,65.9 108.3,65.7 106.5,65.5 104.5,65.4 102.3,65.2 99.7,65.1 96.6,65.1 92.5,65.0 82.0,65.0 71.5,65.0 67.4,65.1 64.3,65.1 61.7,65.2 59.5,65.4 57.5,65.5 55.7,65.7 54.0,65.9 52.5,66.2 51.1,66.5 49.8,66.8 48.5,67.1 47.4,67.5 46.3,67.9 45.3,68.3 44.3,68.8 43.4,69.3 42.6,69.8 41.8,70.4 41.1,71.0 40.4,71.7 39.8,72.4 39.2,73.2 38.7,74.0 38.2,74.8 37.8,75.8 37.4,76.8 37.1,77.9 36.8,79.0 36.6,80.3 36.4,81.8 36.2,83.5 36.1,85.5 36.0,88.2 36.0,95.0 36.0,101.8 36.1,104.5 36.2,106.5 36.4,108.2 36.6,109.7 36.8,111.0 37.1,112.1 37.4,113.2 37.8,114.2 38.2,115.2 38.7,116.0 39.2,116.8 39.8,117.6 40.4,118.3 41.1,119.0 41.8,119.6 42.6,120.2 43.4,120.7 44.3,121.2 45.3,121.7 46.3,122.1 47.4,122.5 48.5,122.9 49.8,123.2 51.1,123.5 52.5,123.8 54.0,124.1 55.7,124.3 57.5,124.5 59.5,124.6 61.7,124.8 64.3,124.9 67.4,124.9 71.5,125.0 82.0,125.0 92.5,125.0 96.6,124.9 99.7,124.9 102.3,124.8 104.5,124.6 106.5,124.5 108.3,124.3 110.0,124.1 111.5,123.8 112.9,123.5 114.2,123.2 115.5,122.9 116.6,122.5 117.7,122.1 118.7,121.7 119.7,121.2 120.6,120.7 121.4,120.2 122.2,119.6 122.9,119.0 123.6,118.3 124.2,117.6 124.8,116.8 125.3,116.0 125.8,115.2 126.2,114.2 126.6,113.2 126.9,112.1 127.2,111.0 127.4,109.7 127.6,108.2 127.8,106.5 127.9,104.5 128.0,101.8" fill="var(--accent)" fill-opacity="0.22" stroke="var(--accent)" stroke-width="2"/>
+      <polygon points="316.0,95.0 316.0,88.2 315.9,85.5 315.8,83.5 315.6,81.8 315.4,80.3 315.2,79.0 314.9,77.9 314.6,76.8 314.2,75.8 313.8,74.8 313.3,74.0 312.8,73.2 312.2,72.4 311.6,71.7 310.9,71.0 310.2,70.4 309.4,69.8 308.6,69.3 307.7,68.8 306.7,68.3 305.7,67.9 304.6,67.5 303.5,67.1 302.2,66.8 300.9,66.5 299.5,66.2 298.0,65.9 296.3,65.7 294.5,65.5 292.5,65.4 290.3,65.2 287.7,65.1 284.6,65.1 280.5,65.0 270.0,65.0 259.5,65.0 255.4,65.1 252.3,65.1 249.7,65.2 247.5,65.4 245.5,65.5 243.7,65.7 242.0,65.9 240.5,66.2 239.1,66.5 237.8,66.8 236.5,67.1 235.4,67.5 234.3,67.9 233.3,68.3 232.3,68.8 231.4,69.3 230.6,69.8 229.8,70.4 229.1,71.0 228.4,71.7 227.8,72.4 227.2,73.2 226.7,74.0 226.2,74.8 225.8,75.8 225.4,76.8 225.1,77.9 224.8,79.0 224.6,80.3 224.4,81.8 224.2,83.5 224.1,85.5 224.0,88.2 224.0,95.0 224.0,101.8 224.1,104.5 224.2,106.5 224.4,108.2 224.6,109.7 224.8,111.0 225.1,112.1 225.4,113.2 225.8,114.2 226.2,115.2 226.7,116.0 227.2,116.8 227.8,117.6 228.4,118.3 229.1,119.0 229.8,119.6 230.6,120.2 231.4,120.7 232.3,121.2 233.3,121.7 234.3,122.1 235.4,122.5 236.5,122.9 237.8,123.2 239.1,123.5 240.5,123.8 242.0,124.1 243.7,124.3 245.5,124.5 247.5,124.6 249.7,124.8 252.3,124.9 255.4,124.9 259.5,125.0 270.0,125.0 280.5,125.0 284.6,124.9 287.7,124.9 290.3,124.8 292.5,124.6 294.5,124.5 296.3,124.3 298.0,124.1 299.5,123.8 300.9,123.5 302.2,123.2 303.5,122.9 304.6,122.5 305.7,122.1 306.7,121.7 307.7,121.2 308.6,120.7 309.4,120.2 310.2,119.6 310.9,119.0 311.6,118.3 312.2,117.6 312.8,116.8 313.3,116.0 313.8,115.2 314.2,114.2 314.6,113.2 314.9,112.1 315.2,111.0 315.4,109.7 315.6,108.2 315.8,106.5 315.9,104.5 316.0,101.8" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-opacity="0.5"/>
+      <circle cx="270" cy="95" r="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="4 3"/>
+      <ellipse cx="234" cy="95" rx="11" ry="7" fill="var(--alarm)" opacity="0.75"/><ellipse cx="306" cy="95" rx="11" ry="7" fill="var(--alarm)" opacity="0.75"/>
+      <circle cx="458" cy="95" r="30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="4 3"/>
+      <circle cx="418" cy="95" r="3.4" fill="var(--alarm)"/><circle cx="428" cy="87" r="3.4" fill="var(--alarm)"/><circle cx="431" cy="102" r="3.4" fill="var(--alarm)"/><circle cx="486" cy="89" r="3.4" fill="var(--alarm)"/><circle cx="491" cy="101" r="3.4" fill="var(--alarm)"/><circle cx="499" cy="94" r="3.4" fill="var(--alarm)"/>
+      <circle cx="646" cy="95" r="30" fill="var(--cool)" fill-opacity="0.25" stroke="var(--cool)" stroke-width="2"/>
+      <g stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)">
+        <line x1="160" y1="95" x2="190" y2="95"/>
+        <line x1="348" y1="95" x2="378" y2="95"/>
+        <line x1="536" y1="95" x2="566" y2="95"/>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="9.5" fill="currentColor" opacity="0.62" text-anchor="middle">
+        <text x="175" y="85">fit</text>
+        <text x="363" y="85">TS&gt;100,64,36</text>
+        <text x="551" y="85">refit</text>
+      </g>
+      <g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="currentColor" text-anchor="middle" font-weight="500">
+        <text x="82" y="182">Truth: boxy signal</text>
+        <text x="270" y="182">Round template fits</text>
+        <text x="458" y="182">Residuals become sources</text>
+        <text x="646" y="182">Reported: spherical</text>
+      </g>
+      <g font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity="0.6" text-anchor="middle">
+        <text x="82" y="199">what you injected</text>
+        <text x="270" y="199">overhang left at both ends</text>
+        <text x="458" y="199">30&#8211;50 new point sources</text>
+        <text x="646" y="199">&#947; = 1.15, r = 1.10</text>
+      </g>
+      <g font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity="0.45" text-anchor="middle" letter-spacing="1">
+        <text x="82" y="22">01</text><text x="270" y="22">02</text><text x="458" y="22">03</text><text x="646" y="22">04</text>
+      </g>
+    </svg>
+    <figcaption><b>The failure mode Gap 1 is built to detect.</b> Nothing here is a bug — every step is defensible on its own. The boxiness is never deleted; it is <em>reclassified</em> as point sources, and the diffuse component that remains is genuinely rounder than the sky it came from. The only way to tell whether this happened is to run a signal of known shape through the identical pipeline and look at what comes out the other end.</figcaption>
+  </figure>
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Imagine gravy with lumps in it. You're asked whether the gravy is smooth. You spoon out every lump you can find, then look at what's left and announce that the gravy is smooth. You aren't lying — the stuff in the bowl really is smooth now. But the answer you gave isn't about the gravy you were handed.</p>
+  </div>
+
+  <div class="warn">
+    <span class="lbl">Be fair to the paper you are challenging</span>
+    <p>Di Mauro (2026) also finds the bulge-only model fails badly on <em>brightness</em>, not just shape — a bulge alone under-predicts the measured surface brightness by about a factor of 2 at 1–2° from the centre and a factor of 10 at 15°. That is an independent argument against the stellar interpretation that survives regardless of what you find about boxiness. Your result, whichever way it goes, does not overturn that; it addresses the morphology claim only. Say so in the mini-paper.</p>
+  </div>
+</section>
+
+<section id="s07">
+  <h2><span class="n">07</span><span>Fermi-LAT, decoded line by line</span></h2>
+  <p class="h2sub">Every entry in section 1 of your project conventions, and why it is there.</p>
+
+  <h3>How the telescope works</h3>
+  <p>You cannot focus gamma rays. They pass straight through mirrors and lenses. So the <strong>Large Area Telescope (LAT)</strong> aboard the Fermi Gamma-ray Space Telescope (launched 2008) does something else entirely: <strong>pair conversion</strong>.</p>
+
+  <ol class="steps">
+    <li>An incoming gamma ray hits a thin tungsten foil and converts into an electron–positron pair.</li>
+    <li>Layers of silicon strip detectors record the tracks of those two particles. Extrapolating the tracks backward gives the direction the gamma ray came from.</li>
+    <li>A caesium-iodide calorimeter at the bottom absorbs the pair and measures the total energy deposited — that is the photon's energy.</li>
+    <li>An anticoincidence detector wrapped around the outside vetoes charged cosmic rays, which outnumber gamma rays by roughly 10,000 to 1.</li>
+  </ol>
+
+  <p>Two consequences run through everything you will do. First, <strong>the LAT is a photon-counting instrument</strong>: it does not record brightness, it records individual photons, each with a direction, an energy, an arrival time, and a set of quality flags. Second, <strong>angular resolution depends strongly on energy</strong>. A low-energy pair scatters more as it travels through the tracker, so its reconstructed direction is worse. This is section 10, and it is the reason your energy range starts where it does.</p>
+
+  <h3>Every conventions line, translated</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Convention</th><th>What it literally is</th><th>Why it's there</th></tr></thead>
+    <tbody>
+      <tr><td class="t-term">Pass 8</td><td>The eighth version of the event reconstruction software, applied retroactively to all data ever taken.</td><td>Not a hardware change. Better algorithms recover more photons and reconstruct them more accurately. Always use the latest pass.</td></tr>
+      <tr><td class="t-term">P8R3_SOURCE_V3</td><td>An <em>instrument response function</em> (IRF) set: the telescope's calibration — effective area, point-spread function and energy dispersion, all as functions of energy and incidence angle.</td><td>Fitting requires knowing how the instrument distorts the sky. The IRF is that knowledge. Data and IRF must always match.</td></tr>
+      <tr><td class="t-term">Event class SOURCE<br><code>evclass=128</code></td><td>A purity setting. Tighter classes (CLEAN, ULTRACLEAN, SOURCEVETO) reject more cosmic-ray contamination but throw away real photons; looser ones (TRANSIENT) keep more of both.</td><td>SOURCE is the standard compromise for point-source and diffuse analysis. See the warning below about a mismatch with Di Mauro 2026.</td></tr>
+      <tr><td class="t-term"><code>evtype=3</code></td><td>FRONT + BACK combined. The tracker's front section has thin converters (better direction, fewer conversions); the back has thick ones (more conversions, worse direction).</td><td>Using both maximises photon count. Splitting them gives better PSF at the cost of statistics — a possible refinement later, not now.</td></tr>
+      <tr><td class="t-term">MJD 54682&ndash;60710<br>(16.7 years)</td><td>Modified Julian Date — a running count of days used to avoid calendar ambiguity. 54682 is the start of science operations in August 2008.</td><td>More time means more photons means smaller error bars. The GCE is faint; you need every photon.</td></tr>
+      <tr><td class="t-term">500 MeV &ndash; 50 GeV</td><td>The energy window.</td><td><b>Bottom:</b> below ~500 MeV the PSF is degrees-wide and morphology is hopeless. <b>Top:</b> above 50 GeV there are almost no photons and the GCE has faded anyway.</td></tr>
+      <tr><td class="t-term">4 energy bins</td><td>0.5&ndash;1, 1&ndash;3, 3&ndash;10, 10&ndash;50 GeV.</td><td>The PSF and the background composition change enormously across this range, so you cannot treat all photons alike. Binning also lets you check that a morphology result is not driven by one narrow band.</td></tr>
+      <tr><td class="t-term">Zenith &lt; 90&deg;</td><td>Reject photons arriving from directions close to the Earth below the spacecraft.</td><td>Cosmic rays hitting Earth's atmosphere produce an intensely bright gamma-ray ring called the <em>Earth limb</em>. Without this cut it swamps everything.</td></tr>
+      <tr><td class="t-term">Rocking angle &lt; 52&deg;</td><td>Fermi surveys by rocking north and south on alternate orbits. Reject intervals where it rocked unusually far.</td><td>Extreme rocking brings the Earth's limb into the field of view. Same problem, different cause.</td></tr>
+      <tr><td class="t-term"><code>DATA_QUAL&gt;0 &amp;&amp; LAT_CONFIG==1</code></td><td>Good-time-interval flags: the instrument was in standard science configuration and the data passed quality review.</td><td>Excludes calibration runs, safe-hold periods, passages through the South Atlantic Anomaly, and anything the LAT team flagged as suspect.</td></tr>
+      <tr><td class="t-term">FL16Y transients excluded</td><td>FL16Y is the Fermi-LAT 16-year source list. Transients are sources that flared temporarily.</td><td>A blazar that flared for three months inside your ROI would inject a bright blob into a 16-year average, and you would be fitting a template to it.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="warn">
+    <span class="lbl">A real discrepancy in your conventions, worth raising now</span>
+    <p>Your Level 2 is meant to replicate the Di Mauro (2026) pipeline. But that paper uses the <strong>SOURCEVETO</strong> event class and <strong>0.08°</strong> pixels, and does its morphology analysis in <strong>1–10 GeV</strong>. Your conventions specify SOURCE, 0.1° pixels, and 0.5–50 GeV.</p>
+    <p>Those are defensible choices for a project that must merge results across four gap teams — but they mean your Level 2 is a <em>reimplementation</em>, not a replication. If you find a discrepancy with Di Mauro's result, someone will immediately ask whether it came from your injected-boxiness test or from your different event selection. Flag this to the project lead, and consider running one Level 2 configuration that matches Di Mauro exactly, purely as a validation point.</p>
+  </div>
+</section>
+
+<section id="s08">
+  <h2><span class="n">08</span><span>The map you actually fit</span></h2>
+  <p class="h2sub">Coordinates, projection, pixels, and what a counts cube is.</p>
+
+  <h3>Galactic coordinates</h3>
+  <p>Astronomers usually use right ascension and declination — the sky equivalent of longitude and latitude, tied to the Earth's rotation axis. For anything about the Milky Way that is useless, so you use <strong>galactic coordinates</strong> instead:</p>
+  <ul>
+    <li><strong>l</strong> (galactic longitude): angle around the galactic plane. l = 0° points at the galactic centre.</li>
+    <li><strong>b</strong> (galactic latitude): angle above or below the plane. b = 0° is the plane itself.</li>
+  </ul>
+  <p>So <code>|l| &lt; 20°, |b| &lt; 20°</code> is a 40° × 40° square centred exactly on the galactic centre. It is big enough to contain the whole excess with room left over — and that margin is not decorative. You need sky where the excess is faint or absent so the fit can pin down the background normalizations.</p>
+
+  <h3>The projection</h3>
+  <p>The sky is a sphere; your array is flat. A <strong>projection</strong> is the rule mapping one onto the other, and every projection distorts something. <strong>CAR</strong> (plate carrée) is the simplest possible one: put l on the x-axis, b on the y-axis, done. It badly distorts areas near the poles — but you are working within 20° of the galactic equator, where the distortion is small and manageable. Simplicity wins.</p>
+
+  <div class="keynum">
+    <span class="v">400 &times; 400</span>
+    <span class="d">40&deg; of sky at 0.1&deg; per pixel. The pixel size is chosen to match the LAT's best angular resolution — finer pixels would just spread the same photons more thinly without adding information.</span>
+  </div>
+
+  <h3>What a counts cube is</h3>
+  <p>You take every surviving photon and drop it into the bin matching its position and energy. The result is a three-dimensional array — 400 × 400 × 4 — where each cell holds an <em>integer</em>: how many photons landed there. That is your data. Nothing else.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Picture a 400-by-400 grid of tiny buckets laid over that patch of sky, four grids deep (one per energy bin). Over 16 years, each photon that arrives falls into one bucket. Your data is just the count in every bucket. Most buckets in the high-energy bin contain zero, one, or two photons.</p>
+  </div>
+
+  <p>That last point is not a detail — it drives the entire statistical method. When bins contain single-digit counts you cannot use averages, standard deviations, or χ². You have to use the statistics of counting rare events, which is Poisson. Section 09.</p>
+</section>
+
+<section id="s09">
+  <h2><span class="n">09</span><span>Template fitting, from zero</span></h2>
+  <p class="h2sub">The method behind essentially every number in this field.</p>
+
+  <h3>The idea</h3>
+  <p>You cannot ask the data "what shape is the excess?" directly. What you can do is propose a complete model of the sky, predict how many photons should land in every bin, compare to how many actually did, and score the result. Then try a different model and see whether the score improves.</p>
+
+  <p>A model is built from <strong>templates</strong>. A template is a map — one number per pixel — giving the <em>shape</em> of one physical component, with its overall brightness left free. The predicted count in pixel <em>i</em> is:</p>
+
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.95rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure)">&mu;<sub>i</sub> = N<sub>1</sub>&middot;T<sub>1</sub>(i) + N<sub>2</sub>&middot;T<sub>2</sub>(i) + &hellip; + N<sub>k</sub>&middot;T<sub>k</sub>(i)</p>
+
+  <p>The maps <em>T</em> are fixed by physics or by measurement. The numbers <em>N</em> are free, and fitting means finding the values of <em>N</em> that best reproduce the data.</p>
+
+  <figure>
+    <svg viewBox="0 0 750 268" role="img" aria-label="The observed counts map is modelled as a weighted sum of five component templates, each with one free brightness knob: interstellar emission, isotropic background, Fermi bubbles, catalogued point sources, and the GCE candidate template.">
+      <defs>
+        <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"/>
+        </marker>
+        <clipPath id="cl"><rect x="0" y="0" width="30" height="30"/></clipPath>
+      </defs>
+
+      <rect x="10" y="52" width="118" height="140" rx="3" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.35"/>
+      <g opacity="0.5" fill="currentColor">
+        <rect x="22" y="112" width="94" height="18" opacity="0.55"/>
+        <circle cx="69" cy="121" r="16" opacity="0.5"/>
+        <circle cx="42" cy="88" r="2"/><circle cx="96" cy="150" r="2"/><circle cx="58" cy="160" r="2"/>
+        <circle cx="88" cy="76" r="2"/><circle cx="34" cy="146" r="2"/>
+      </g>
+      <text x="69" y="208" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="500" fill="currentColor" text-anchor="middle">counts map</text>
+      <text x="69" y="223" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="currentColor" opacity="0.6" text-anchor="middle">what arrived</text>
+      <text x="148" y="128" font-family="IBM Plex Mono, monospace" font-size="20" fill="currentColor" text-anchor="middle">=</text>
+
+      <g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="currentColor">
+        <g transform="translate(178,28)">
+          <rect width="30" height="30" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.35"/>
+          <g clip-path="url(#cl)" fill="currentColor" opacity="0.55"><rect x="0" y="11" width="30" height="8"/></g>
+          <text x="46" y="20" font-family="IBM Plex Mono, monospace" font-size="12">&#215;</text>
+          <rect x="62" y="8" width="48" height="14" rx="7" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"/>
+          <circle cx="94" cy="15" r="5" fill="currentColor" opacity="0.6"/>
+          <text x="124" y="15">Interstellar emission (IEM)</text>
+          <text x="124" y="28" font-size="10.5" opacity="0.6">cosmic rays hitting gas &#8212; the great majority of photons here</text>
+        </g>
+        <g transform="translate(178,74)">
+          <rect width="30" height="30" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.35"/>
+          <g clip-path="url(#cl)" fill="currentColor" opacity="0.28"><rect width="30" height="30"/></g>
+          <text x="46" y="20" font-family="IBM Plex Mono, monospace" font-size="12">&#215;</text>
+          <rect x="62" y="8" width="48" height="14" rx="7" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"/>
+          <circle cx="80" cy="15" r="5" fill="currentColor" opacity="0.6"/>
+          <text x="124" y="15">Isotropic background</text>
+          <text x="124" y="28" font-size="10.5" opacity="0.6">unresolved distant galaxies + leftover particle contamination</text>
+        </g>
+        <g transform="translate(178,120)">
+          <rect width="30" height="30" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.35"/>
+          <g clip-path="url(#cl)" fill="currentColor" opacity="0.4"><ellipse cx="15" cy="7" rx="9" ry="7"/><ellipse cx="15" cy="23" rx="9" ry="7"/></g>
+          <text x="46" y="20" font-family="IBM Plex Mono, monospace" font-size="12">&#215;</text>
+          <rect x="62" y="8" width="48" height="14" rx="7" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"/>
+          <circle cx="72" cy="15" r="5" fill="currentColor" opacity="0.6"/>
+          <text x="124" y="15">Fermi bubbles</text>
+          <text x="124" y="28" font-size="10.5" opacity="0.6">two giant lobes above and below the centre; sharp and fuzzy edge variants</text>
+        </g>
+        <g transform="translate(178,166)">
+          <rect width="30" height="30" rx="2" fill="var(--surface)" stroke="currentColor" stroke-opacity="0.35"/>
+          <g clip-path="url(#cl)" fill="currentColor" opacity="0.7">
+            <circle cx="8" cy="9" r="2"/><circle cx="21" cy="6" r="2"/><circle cx="14" cy="17" r="2"/>
+            <circle cx="24" cy="22" r="2"/><circle cx="6" cy="24" r="2"/>
+          </g>
+          <text x="46" y="20" font-family="IBM Plex Mono, monospace" font-size="12">&#215;</text>
+          <rect x="62" y="8" width="48" height="14" rx="7" fill="var(--surface-2)" stroke="currentColor" stroke-opacity="0.3"/>
+          <circle cx="88" cy="15" r="5" fill="currentColor" opacity="0.6"/>
+          <text x="124" y="15">Catalogued point sources (FL16Y)</text>
+          <text x="124" y="28" font-size="10.5" opacity="0.6">or removed entirely by a mask &#8212; section 11</text>
+        </g>
+        <g transform="translate(178,212)">
+          <rect width="30" height="30" rx="2" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4"/>
+          <g clip-path="url(#cl)"><circle cx="15" cy="15" r="9" fill="var(--accent)" opacity="0.75"/></g>
+          <text x="46" y="20" font-family="IBM Plex Mono, monospace" font-size="12" fill="var(--accent)">&#215;</text>
+          <rect x="62" y="8" width="48" height="14" rx="7" fill="var(--accent-soft)" stroke="var(--accent)" stroke-opacity="0.5"/>
+          <circle cx="76" cy="15" r="5" fill="var(--accent)"/>
+          <text x="124" y="15" fill="var(--accent)" font-weight="500">GCE candidate &#8212; the one under test</text>
+          <text x="124" y="28" font-size="10.5" opacity="0.7">HESTIA boxy DM, or VVV bulge, or gNFW. Swap it and rescore.</text>
+        </g>
+      </g>
+    </svg>
+    <figcaption><b>What "fitting" actually adjusts.</b> The five maps are fixed in advance; only the five brightness knobs move. Gap 1 changes exactly one thing — which map goes in the bottom slot — and asks which choice lets the other four knobs reproduce the data best. Everything hard about this field lives in the top row: the interstellar emission model is both the largest component and the least certain one.</figcaption>
+  </figure>
+
+  <h3>Scoring a fit: Poisson likelihood</h3>
+  <p>Photon arrivals are independent rare events, which is the textbook definition of a <strong>Poisson process</strong>. If your model predicts an average of μ photons in a bin and you observed <em>n</em>, the probability of that outcome is</p>
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.95rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure)">P(n | &mu;) = &mu;<sup>n</sup> e<sup>&minus;&mu;</sup> / n!</p>
+  <p>Multiply that across all 640,000 bins and you have the <strong>likelihood</strong> of the whole dataset under your model. In practice you work with its logarithm (sums are easier than products, and the numbers stay representable). Fitting = finding the knob settings that maximise ln&thinsp;<em>L</em>. <strong>MINUIT2</strong> is the numerical routine that hunts for that maximum; the 5000-iteration cap in your conventions is a safety valve against a fit that will not converge.</p>
+
+  <h3>TS: is this component real?</h3>
+  <p>The <strong>test statistic</strong> compares two fits — one with your component, one without:</p>
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.95rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure)">TS = 2 &times; ( ln L<sub>with</sub> &minus; ln L<sub>without</sub> )</p>
+  <p>As a rule of thumb, √TS is roughly the significance in sigma. TS = 25 is about 5σ, which is why "TS &gt; 25" appears as a detection threshold in your Mask B definition and throughout the source catalogues.</p>
+
+  <h3>AIC: which of two models is better?</h3>
+  <p>TS answers "is this thing there?" It cannot answer "is HESTIA better than VVV?", because those two are not <em>nested</em> — neither is a special case of the other, so a likelihood-ratio test is not valid. For that you use the <strong>Akaike Information Criterion</strong>:</p>
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.95rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure)">AIC = 2k &minus; 2 ln L&nbsp;&nbsp;&nbsp;(k = number of free parameters)</p>
+  <p>Lower is better. The <em>2k</em> term is a penalty for complexity — a model with more knobs must fit meaningfully better to earn its keep. Only differences are meaningful: ΔAIC of about 2 is noise, around 4–7 is a hint, and 10 or more is conventionally strong. Your mini-paper pre-registers ΔAIC ≥ 10 as the bar.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Build a fake sky out of a handful of maps with brightness dials. Turn the dials until the fake sky matches the real one as closely as possible. Write down the score. Now swap one map for a different one, redo it, and compare scores. AIC is the scoring rule that stops you from winning just by adding more dials.</p>
+  </div>
+</section>
+
+<section id="s10">
+  <h2><span class="n">10</span><span>The PSF, and why it can fake your answer</span></h2>
+  <p class="h2sub">One shared function, in one file, validated once.</p>
+
+  <p>The <strong>point-spread function</strong> is what the telescope does to a perfect point of light. Feed the LAT a single infinitely sharp source and the photons come back smeared into a blob. The PSF is the shape of that blob, and it depends strongly on energy — roughly 3.5° across at 100 MeV, tightening to about 0.1° above 10 GeV. That thousandfold difference across the band is why you bin in energy at all.</p>
+
+  <p>Comparing a model to data therefore requires <strong>blurring the model to match the instrument</strong> — never sharpening the data. That operation is <em>convolution</em>: replace every point in your template with a copy of the PSF blob, scaled by the brightness there, and add them all up.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>The telescope has blurry vision. You can't fix blurry data, so instead you take your perfectly sharp theoretical map and blur it by exactly the same amount before comparing. If you blur it by the wrong amount, the comparison is meaningless.</p>
+  </div>
+
+  <div class="warn">
+    <span class="lbl">Why this is in your pitfalls table</span>
+    <p>Blurring makes everything rounder. A boxy template blurred too much becomes indistinguishable from a spherical one; a spherical template blurred too little stays artificially crisp. Since Gap 1's entire result is a comparison between a boxy shape and a round shape, <strong>a PSF error does not add noise to your answer — it directly manufactures or erases the effect you are measuring.</strong></p>
+    <p>Two rules follow. Every template goes through the identical <code>utils/psf.py</code> — no gap-local copies, no "I just used a Gaussian." And that shared function gets validated against Fermitools <code>gtpsf</code> before Week 2, with the check written into <code>utils/README.md</code>. A common-mode error in a shared file will not show up as disagreement between gap teams; everyone will be wrong together and confidently.</p>
+  </div>
+
+  <p>The related instruction to normalise every template to <strong>unit integral over the ROI</strong> is bookkeeping hygiene: it makes each fitted normalization <em>N</em> mean "total photons attributed to this component", so the numbers are comparable across templates and across teams. It does not affect the fit quality, but it makes every downstream comparison interpretable.</p>
+</section>
+
+<section id="s11">
+  <h2><span class="n">11</span><span>Masks</span></h2>
+  <p class="h2sub">Three ways of dealing with contamination, and why you run all three.</p>
+
+  <p>The inner galaxy is full of individually catalogued gamma-ray sources — pulsars, supernova remnants, and background blazars shining through. You have two options: model each one explicitly, or cut its patch of sky out of the analysis entirely. Cutting is a <strong>mask</strong>.</p>
+
+  <p>"95% containment radius" means the circle that would catch 95% of a point source's photons given the PSF at that energy. Mask A cuts that circle plus another 0.5° of margin.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Mask</th><th>What it removes</th><th>Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td class="t-term">A &mdash; aggressive</td><td>Every FL16Y source at 95% containment + 0.5&deg;.</td><td>Cleanest possible sky. But it deletes a lot of area, and if the GCE really <em>is</em> a swarm of faint point sources, aggressive masking removes part of the signal you are trying to measure.</td></tr>
+      <tr><td class="t-term">B &mdash; minimal</td><td>Only sources with TS &gt; 25 <em>and</em> flux &gt; 5&times;10<sup>&minus;9</sup> ph cm<sup>&minus;2</sup> s<sup>&minus;1</sup>.</td><td>Keeps nearly all the sky and all the statistics. Risks leaving faint real sources in the map, which the Level 2 source-finder will then chase.</td></tr>
+      <tr><td class="t-term">C &mdash; robust plane</td><td>Mask A, plus a latitude cut: |b| &lt; 2&deg; for |l| &lt; 15&deg;, tapering to |b| &lt; 0.5&deg; at |l| = 20&deg;.</td><td>Also removes the galactic plane, where the interstellar emission is brightest and worst-modelled. Safest against background error, but it cuts out the plane &mdash; and the plane is exactly where a boxy signal extends. Read that sentence twice.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="warn">
+    <span class="lbl">Mask C is not neutral for Gap 1</span>
+    <p>A boxy/peanut bulge is elongated <em>along the galactic plane</em>. Mask C removes a latitude strip centred on the plane. So Mask C preferentially removes the region where boxy and spherical templates differ most, which will systematically weaken your ability to distinguish them.</p>
+    <p>This is not a reason to drop Mask C — it is a reason to expect and explain a specific pattern in your results. If |&Delta;AIC| shrinks toward zero under Mask C while staying large under A and B, that is the expected behaviour of a real boxy signal, not a failure. Predict it in section 4 of the mini-paper <em>before</em> you run, so it reads as understanding rather than as an excuse afterwards.</p>
+  </div>
+
+  <p>Running all three is not thoroughness for its own sake. Zhong &amp; Cholis (2024) is an entire paper about how GCE conclusions move when you change the masking. <strong>If your answer flips when you change the mask, your answer is about masking, not about astrophysics</strong> — and the honest report is a systematics flag handed to Gap 7, not a claim.</p>
+</section>
+
+<section id="s12">
+  <h2><span class="n">12</span><span>Diffuse background models &mdash; the biggest systematic in the field</span></h2>
+  <p class="h2sub">Why three families, and why the standard one has a conflict of interest.</p>
+
+  <h3>Where most of the photons come from</h3>
+  <p>The great majority of gamma rays from the inner galaxy have nothing to do with the GCE. They come from cosmic rays — protons and electrons accelerated to near light speed by supernovae — interacting with the ordinary contents of the galaxy, by three mechanisms:</p>
+  <ul>
+    <li><strong>&pi;<sup>0</sup> decay:</strong> a cosmic-ray proton hits an interstellar gas nucleus, producing neutral pions that each decay into two gamma rays. This is the dominant channel.</li>
+    <li><strong>Bremsstrahlung:</strong> cosmic-ray electrons decelerating in the electric fields of gas nuclei, radiating as they slow.</li>
+    <li><strong>Inverse Compton:</strong> cosmic-ray electrons colliding with ordinary starlight or infrared photons and kicking them up to gamma-ray energies.</li>
+  </ul>
+
+  <p>An <strong>interstellar emission model (IEM)</strong> predicts all of that. Building one means specifying where cosmic rays are produced, how they diffuse through the galaxy's magnetic field, where all the gas is in three dimensions, and what the interstellar radiation field looks like. Codes like <strong>GALPROP</strong> do this. Every one of those inputs is uncertain.</p>
+
+  <div class="keynum">
+    <span class="v">X<sub>CO</sub></span>
+    <span class="d">The conversion factor from observed carbon-monoxide brightness to molecular hydrogen mass. H<sub>2</sub> is invisible, so you count CO and multiply. That factor is uncertain by tens of percent and varies with galactocentric radius &mdash; and it sets how much gas, and therefore how much gamma-ray emission, your model puts near the centre.</span>
+  </div>
+
+  <div class="warn">
+    <span class="lbl">The standard model has a conflict of interest</span>
+    <p><code>gll_iem_v07.fits</code> is the official Fermi diffuse model, and it is excellent — but it was <em>fitted to the gamma-ray data itself</em>, including the galactic centre region, with the GCE not modelled as a separate component. Any part of the excess that the fit could absorb into the diffuse model, it did.</p>
+    <p>So using it alone risks subtracting away part of the signal you are measuring. This is exactly why your conventions demand three independent IEM families, and why Calore, Cholis &amp; Weniger (2015) concluded that background systematics, not photon statistics, dominate the GCE's error budget.</p>
+  </div>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Family</th><th>What it is</th><th>Role in Gap 1</th></tr></thead>
+    <tbody>
+      <tr><td class="t-term">1 &mdash; Standard GALPROP</td><td><code>gll_iem_v07.fits</code> + <code>iso_P8R3_SOURCE_V3_V7.txt</code> + bubbles.</td><td>The comparison point. Everyone else's published numbers use it, so you need it even though it is the least independent choice.</td></tr>
+      <tr><td class="t-term">2 &mdash; Extreme library</td><td>12 models from McDermott, Zhong &amp; Cholis, deliberately spanning extremes of gas-ring normalization, cosmic-ray propagation and inverse-Compton treatment. Gap 5 is selecting the exact subset.</td><td>Brackets the systematic. If your boxy-vs-bulge conclusion survives all twelve, it is not a background artifact.</td></tr>
+      <tr><td class="t-term">3 &mdash; Galp21 / Pohl22</td><td><code>galp21.fits</code> + a Pohl22 isotropic file + bubbles. Built on different gas maps and propagation assumptions.</td><td>An independent cross-check. Note your conventions flag the exact isotropic filename as unconfirmed &#8212; Gap 5 owes you that.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>Two further components ride along with every family. The <strong>isotropic</strong> template is flat across the sky and absorbs the unresolved extragalactic gamma-ray background plus residual charged-particle contamination. The <strong>Fermi bubbles</strong> are two enormous lobes of gamma-ray emission extending roughly 50° above and below the galactic centre, discovered in 2010 and still not fully explained; their edges are genuinely disputed, which is why you carry both a sharp-edged and a fuzzy-edged variant and let the fit choose.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>Roughly nine out of ten photons you collect are ordinary galactic fog, and nobody knows the fog's exact shape. The excess you care about is a small ripple on top. Change your fog model slightly and the ripple changes shape. That's the whole reason this field has been arguing for fifteen years, and it's why you run every fit against nine different fog assumptions instead of one.</p>
+  </div>
+</section>
+
+<section id="s13">
+  <h2><span class="n">13</span><span>The templates you are comparing</span></h2>
+  <p class="h2sub">Where each map comes from, and what its free parameters mean.</p>
+
+  <h3>Spherical gNFW &mdash; the benchmark</h3>
+  <p>The <strong>NFW profile</strong> (Navarro–Frenk–White) is the shape dark-matter-only simulations produce for halos. The <em>generalised</em> version adds one free parameter:</p>
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.92rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--rule);border-radius:4px;max-width:var(--measure);overflow-x:auto">&rho;(r) &prop; (r/r<sub>s</sub>)<sup>&minus;&gamma;</sup> (1 + r/r<sub>s</sub>)<sup>&minus;(3&minus;&gamma;)</sup></p>
+  <ul>
+    <li><strong>&gamma;</strong> is the <em>inner slope</em> — how steeply density rises toward the centre. γ = 1 is standard NFW. Larger γ means a sharper spike. Your conventions leave it free in [0.8, 1.4]; Di Mauro (2026) measures γ = 1.15 ± 0.02.</li>
+    <li><strong>r<sub>s</sub> = 20 kpc</strong> is the scale radius, where the profile bends. Fixed, because at 20° from the centre you are nowhere near it and the data cannot constrain it.</li>
+    <li><strong>R<sub>&#9737;</sub> = 8.2 kpc</strong> is the Sun's distance from the galactic centre — the observer's position for the line-of-sight integral.</li>
+  </ul>
+  <p>Remember that you square this before projecting. The template is a map of the integrated &rho;&sup2;, not of &rho;.</p>
+
+  <h3>HESTIA boxy DM &mdash; the hypothesis under test</h3>
+  <p>Not a formula: a simulation output. Particle positions from a HESTIA snapshot, binned into a 3-D density grid, squared, then integrated along sight-lines from an observer at 8 kpc in the disc plane. Three simulations, six candidate Milky-Way analogues, each with a bar whose orientation relative to your sight-line is a choice you have to make and then vary.</p>
+
+  <h3>VVV bulge &mdash; the competitor</h3>
+  <p>Coleman et al. (2019), built from red-clump giant distances as described in section 04. Where possible the <strong>nuclear bulge</strong> (a compact, distinct component within the innermost few hundred parsecs) is separated from the <strong>boxy/peanut bulge</strong>, because they are different stellar populations with different histories and there is no reason their gamma-ray brightness ratio should be fixed.</p>
+
+  <h3>Triaxial DM &mdash; the bridge to Gap 4</h3>
+  <p>Hu, Cholis &amp; Zhong (2026): an analytic halo squashed along three different axes, with axis ratios q<sub>1</sub> = 0.6 and q<sub>2</sub> = 0.8 and a rotation θ = 25°, in standard and flipped orientations. It is a parametric stand-in for a non-spherical halo. Useful to you as a cross-check, and as the thing Steph and Zineb are fitting — if HESTIA and triaxial behave differently, that difference is informative, because triaxial is smooth and elliptical while HESTIA is genuinely boxy.</p>
+
+  <h3>Galactic bar &mdash; the confounder you must not forget</h3>
+  <p>Macias et al. (2019), a gas-correlated bar template. It matters because the bar is boxy <em>and</em> traces gas <em>and</em> sits exactly where your signal is. If you leave it out, its flux has to go somewhere, and it will go into whichever of your two contenders happens to look most like it. Let it float.</p>
+
+  <div class="warn">
+    <span class="lbl">Compute the correlation matrix before you interpret anything</span>
+    <p>HESTIA, VVV, the Macias bar and a mildly-elongated gNFW are all centrally concentrated blobs of similar size in the same 40&deg; box. They will be strongly correlated with one another pixel-by-pixel. Two templates that are, say, 95% correlated inside your mask cannot be separated at <em>any</em> statistical significance, and a &Delta;AIC computed between them is not measuring what you think it is.</p>
+    <p>So: compute pixel-space correlations between every pair of templates under every mask, report the condition number of the template matrix, and publish those alongside the &Delta;AIC grid. If the correlation is near-degenerate, the honest headline is "morphology cannot discriminate at this resolution" &#8212; which is outcome D in your mini-paper, and a real result.</p>
+  </div>
+</section>
+
+<section id="s14">
+  <h2><span class="n">14</span><span>Level 1 versus Level 2</span></h2>
+  <p class="h2sub">The same data, two philosophies, and why you run both.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>Level 1 &mdash; single pass</th><th>Level 2 &mdash; iterative</th></tr></thead>
+    <tbody>
+      <tr><td class="t-term">Source list</td><td>Fixed at FL16Y. Nothing added.</td><td>Grows during the fit as new sources are found.</td></tr>
+      <tr><td class="t-term">Procedure</td><td>Fit once. Report.</td><td>Fit &rarr; residual TS map &rarr; add sources above threshold &rarr; refit &rarr; repeat until residuals fall below the stopping criterion.</td></tr>
+      <tr><td class="t-term">Residuals</td><td>Typically 30&ndash;40% in earlier literature.</td><td>Below ~10% in Di Mauro (2026).</td></tr>
+      <tr><td class="t-term">Strength</td><td>Transparent and reproducible. Every published comparison uses something like it, so your numbers are directly comparable to the literature.</td><td>Genuinely more accurate background subtraction. Large residuals are a real problem and this fixes them.</td></tr>
+      <tr><td class="t-term">Weakness</td><td>Leaves real mismodelling in place, which can masquerade as signal.</td><td>Has a preferred failure mode: any unmodelled extended asymmetric structure can be converted into point sources. Section 06.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The one rule that makes the comparison valid</h3>
+  <p>The Level 2 pipeline must be configured <em>identically</em> for every template — same TS thresholds, same stopping criterion, same extension testing, same iteration cap — fixed in <code>configs/</code> before you run anything. If you tune the stopping rule while looking at HESTIA results and then apply a different one to VVV, you will manufacture exactly the bias you set out to detect, and you will not be able to tell that you did.</p>
+
+  <p>Report &Delta;AIC <em>as a function of iteration number</em>, not only at the end. A reader can then see whether the preference between the two templates drifts steadily as sources are added — which would itself be evidence of absorption — or stays flat until convergence.</p>
+</section>
+
+<section id="s15">
+  <h2><span class="n">15</span><span>Injection and recovery</span></h2>
+  <p class="h2sub">The closed-loop test. This is the part of Gap 1 that nobody else has done.</p>
+
+  <p>Every fit to real data has the same problem: you do not know the right answer, so you cannot tell a good method from a bad one. Injection–recovery removes that problem by constructing a sky where you <em>do</em> know the answer.</p>
+
+  <ol class="steps">
+    <li><strong>Build a synthetic sky.</strong> Take your background model, add a boxy HESTIA-shaped signal at a chosen brightness, and draw Poisson random photon counts from the total (seed = 42, per conventions). You now have a fake dataset whose true content you specified.</li>
+    <li><strong>Run the identical Level 2 pipeline on it.</strong> Same configuration, same thresholds, no special handling because you know it is a simulation.</li>
+    <li><strong>Measure what came back.</strong> Compare the recovered morphology to what you injected. Define a boxiness statistic in advance and report B<sub>recovered</sub> / B<sub>injected</sub>.</li>
+    <li><strong>Repeat at several brightnesses</strong> bracketing the real GCE flux &mdash; bias can be strongly flux-dependent, appearing only when the signal is comparable to the source-detection threshold.</li>
+    <li><strong>Run the spherical control.</strong> Inject a spherical gNFW signal of matched total flux through the same pipeline.</li>
+  </ol>
+
+  <div class="warn">
+    <span class="lbl">Why step 5 is not optional</span>
+    <p>Suppose you inject boxy and recover spherical. On its own that proves nothing &#8212; the pipeline might mangle every morphology it is handed, in which case you have found a general reconstruction failure, not a bias toward roundness.</p>
+    <p>The claim "iterative source-finding preferentially destroys boxiness" requires <em>both</em> boxy&#8202;&rarr;&#8202;spherical <em>and</em> spherical&#8202;&rarr;&#8202;spherical to hold at the same time. Only that pair isolates the bias as directional.</p>
+  </div>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Inject boxy &rarr;</th><th>Inject spherical &rarr;</th><th>What you have shown</th></tr></thead>
+    <tbody>
+      <tr><td>recover boxy</td><td>recover spherical</td><td>Pipeline is faithful. Its spherical result on real data stands, and your Level 2 &Delta;AIC means what it says.</td></tr>
+      <tr><td>recover spherical</td><td>recover spherical</td><td><b>Directional bias.</b> The pipeline rounds things off. Di Mauro (2026)'s morphology conclusion is an artifact of method. This is the headline outcome.</td></tr>
+      <tr><td>recover spherical</td><td>recover boxy or garbage</td><td>General reconstruction failure. Not a morphology story &#8212; debug the pipeline before claiming anything.</td></tr>
+      <tr><td>recover boxy</td><td>recover boxy</td><td>The pipeline invents boxiness. Unexpected, but it would equally invalidate the comparison &#8212; and it would be worth a paper of its own.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>The mechanistic diagnostic</h3>
+  <p>Beyond the recovered shape, log <em>where the new sources landed</em> — position and flux of every source the iteration added, in every run. If boxy injections systematically place new sources along the major axis of the injected boxiness, and spherical injections scatter them evenly, you have not merely observed the bias: you have shown the mechanism producing it. That is the difference between a suggestive result and a convincing one.</p>
+
+  <div class="plain">
+    <span class="lbl">In plain words</span>
+    <p>You can't grade the pipeline on real data because nobody knows the right answer. So you build a fake sky where you decided the answer yourself, run it through the same machine, and see whether the machine gives your answer back. Then you do it again with a round signal, to prove the machine isn't just broken in general. Then you check whether the fake "sources" it invented are sitting exactly where the boxy bits used to be.</p>
+  </div>
+</section>
+
+<section id="s16">
+  <h2><span class="n">16</span><span>Reproducibility plumbing</span></h2>
+  <p class="h2sub">The unglamorous conventions, and the reason each one exists.</p>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Convention</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td class="t-term">Fixed random seeds<br>(42 / 123 / 7)</td><td>Simulations draw random photon counts. Without a fixed seed, re-running gives slightly different numbers and no one can reproduce your table &#8212; or tell whether a difference is real or noise. Seeds make randomness repeatable.</td></tr>
+      <tr><td class="t-term">No hard-coded absolute paths</td><td>Your <code>/Users/oren/...</code> does not exist on anyone else's machine, and committing it breaks the repo for the whole collaboration. Everything goes through <code>configs/paths.yaml</code>, which is <em>not</em> committed; <code>paths_template.yaml</code> is.</td></tr>
+      <tr><td class="t-term">Naming scheme<br><code>gap1_{mask}_{iem}_{template}_{ebin}.fits</code></td><td>You will produce hundreds of output files across 3 masks &times; 3 IEM families &times; several templates &times; 4 energy bins &times; 2 levels. A scheme means anyone can find any result, and scripts can glob for them, without a spreadsheet mapping filenames to meanings.</td></tr>
+      <tr><td class="t-term">Git commit hash in every log</td><td>Six months from now a reviewer asks why two numbers disagree. The answer is almost always "different code version." Recording the commit hash with each run turns that from an argument into a lookup.</td></tr>
+      <tr><td class="t-term">FITS / HDF5 for arrays, CSV for tables</td><td><strong>FITS</strong> is the astronomy standard: a plain-text header of keyword-value pairs followed by binary data. Its <em>WCS</em> keywords record exactly which sky coordinate each pixel corresponds to, so a FITS template is self-describing &#8212; anyone can open it and know where on the sky it sits. HDF5 is for large numeric arrays that are not sky maps. CSV is for small human-readable tables.</td></tr>
+      <tr><td class="t-term">A README per gap folder</td><td>What was run, with which config, on what date, at which commit, and how to reproduce it. Write it as you go; nobody has ever successfully written one afterwards.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="s17">
+  <h2><span class="n">17</span><span>What I verified, and what is shaky</span></h2>
+  <p class="h2sub">Separating what I checked against sources from what I am inferring.</p>
+
+  <h4>Checked against the papers</h4>
+  <ul>
+    <li><strong>Muru et al. 2025</strong> is real and published in <em>Physical Review Letters</em>. Authors: Muru, Silk, Libeskind, Gottlöber, Hoffman. Six Milky-Way-like galaxies from three HESTIA simulations; DM mass resolution 1.5×10<sup>5</sup> M<sub>&#9737;</sub>; softening 220 pc; observer at 8 kpc; ρ, ρ² and old-stellar maps; projected axis ratios reaching ~0.67; explicit claim that DM and MSP morphologies are indistinguishable. Code repository at <code>gitlab.aip.de/muru/gce_in_hestia</code>.</li>
+    <li><strong>Di Mauro 2026</strong> is real. ~16 years of data, P8R3_SOURCEVETO, 40°×40°, 0.08° pixels, 1–10 GeV for morphology, nine GALPROP IEMs, staged source-finding at TS &gt; 100 / 64 / 36 with extension tests to 2°, ~30–50 new sources, residuals ≲10%, γ = 1.15 ± 0.02 and r = 1.10 ± 0.05, and a bulge-only model that under-predicts brightness by factors of ~2 and ~10.</li>
+    <li><strong>Manconi, Eckner, Calore &amp; Donato</strong> published a stellar-bulge-favouring analysis that <em>cites</em> Muru et al. but explicitly states it remains confined to spherically symmetric DM profiles. That is direct external confirmation that Gap 1's central test has not been done.</li>
+  </ul>
+
+  <h4>Not verified &mdash; treat as open</h4>
+  <ul>
+    <li><strong>"Hussein et al. 2025"</strong> &#8212; I could not find this paper. Get the reference from the project lead before building methods on it.</li>
+    <li><strong>Whether the GitLab repository contains the projected &rho;&sup2; maps</strong> or only the code that makes them from snapshots you do not have. This is your day-one question and it gates the whole week.</li>
+    <li><strong>Exact arXiv identifiers</strong> for several 2026 papers in the shared reading list. Verify each before it goes in a reference list.</li>
+  </ul>
+
+  <h4>My inference, not a published claim</h4>
+  <ul>
+    <li>The argument in section 04 that an elliptical axis-ratio parameter is structurally incapable of expressing boxiness is my reasoning about what <em>r</em> can and cannot represent. It is, I think, straightforwardly correct — but it is an argument you should make in your own words and be ready to defend, not cite.</li>
+    <li>The 220 pc &rarr; 1.6&deg; conversion is arithmetic (220 / 8000 radians), not a quoted result. Redo it yourself.</li>
+  </ul>
+</section>
+
+<section id="s18">
+  <h2><span class="n">18</span><span>Glossary</span></h2>
+  <p class="h2sub">Everything you will hear in a meeting and be expected to already know.</p>
+
+  <dl class="gloss">
+    <dt>AIC</dt><dd>Akaike Information Criterion. Model-comparison score with a penalty for free parameters. Lower is better; only differences matter.</dd>
+    <dt>Baryons</dt><dd>Ordinary matter — gas and stars, as opposed to dark matter.</dd>
+    <dt>Boxy/peanut bulge</dt><dd>The X- or peanut-shaped structure a buckled galactic bar produces. The Milky Way has one.</dd>
+    <dt>Bremsstrahlung</dt><dd>Radiation from a charged particle decelerating in another particle's electric field. One of three ways cosmic rays make gamma rays.</dd>
+    <dt>Containment radius</dt><dd>The circle holding a stated fraction (usually 68% or 95%) of a point source's photons, given the PSF.</dd>
+    <dt>Counts cube</dt><dd>The data: photon counts binned by position and energy. Integers.</dd>
+    <dt>Effective area</dt><dd>How much collecting area the instrument effectively presents, as a function of energy and angle. Part of the IRF.</dd>
+    <dt>Einasto</dt><dd>An alternative DM density profile with a gradually changing slope. A common cross-check against NFW.</dd>
+    <dt>Energy dispersion</dt><dd>The instrument's energy measurement error. Part of the IRF.</dd>
+    <dt>evclass / evtype</dt><dd>Fermitools numeric codes for event purity class and conversion type. 128 = SOURCE; 3 = FRONT+BACK.</dd>
+    <dt>Fermi bubbles</dt><dd>Two vast gamma-ray lobes extending ~50° above and below the galactic centre. Origin still debated; edge sharpness disputed, hence two template variants.</dd>
+    <dt>Fermipy</dt><dd>Python wrapper around Fermitools that makes likelihood analysis scriptable and configurable via YAML.</dd>
+    <dt>Fermitools</dt><dd>The official Fermi-LAT analysis software suite (gtselect, gtbin, gtpsf, gtlike, and friends).</dd>
+    <dt>FITS</dt><dd>Flexible Image Transport System. The astronomy file format: text header plus binary data, with WCS keywords tying pixels to sky coordinates.</dd>
+    <dt>FL16Y</dt><dd>The Fermi-LAT 16-year source list. Your catalogue of known point sources.</dd>
+    <dt>GALPROP</dt><dd>The code that propagates cosmic rays through a galaxy model and predicts the resulting diffuse gamma-ray emission.</dd>
+    <dt>GCE</dt><dd>Galactic Center Excess. The unexplained gamma-ray glow this whole project is about.</dd>
+    <dt>gNFW</dt><dd>Generalised NFW profile with the inner slope &gamma; left free.</dd>
+    <dt>GTI</dt><dd>Good Time Interval. Periods when the instrument was operating normally and the data are usable.</dd>
+    <dt>HESTIA</dt><dd>High-resolution Environmental Simulations of The Immediate Area. Cosmological simulations with initial conditions constrained to reproduce our actual Local Group.</dd>
+    <dt>IEM</dt><dd>Interstellar Emission Model. The predicted gamma-ray fog from cosmic rays interacting with the galaxy. Your dominant systematic.</dd>
+    <dt>Inverse Compton</dt><dd>A fast electron colliding with a low-energy photon and boosting it to gamma-ray energies.</dd>
+    <dt>IRF</dt><dd>Instrument Response Function. The telescope's calibration: effective area, PSF, energy dispersion.</dd>
+    <dt>Isotropic template</dt><dd>A flat all-sky component absorbing the unresolved extragalactic background and residual particle contamination.</dd>
+    <dt>J-factor</dt><dd>The line-of-sight integral of &rho;&sup2; in a given direction. Your DM template is a map of it.</dd>
+    <dt>kpc</dt><dd>Kiloparsec, 3,262 light-years. The Sun sits ~8.2 kpc from the galactic centre.</dd>
+    <dt>l, b</dt><dd>Galactic longitude and latitude. (0, 0) is the galactic centre.</dd>
+    <dt>Likelihood</dt><dd>The probability of observing your actual data under a given model. Fitting maximises it.</dd>
+    <dt>MJD</dt><dd>Modified Julian Date. A continuous day count avoiding calendar ambiguity.</dd>
+    <dt>MSP</dt><dd>Millisecond pulsar. An old neutron star spun up by accretion; gamma-ray bright; traces old stellar populations.</dd>
+    <dt>NFW</dt><dd>Navarro–Frenk–White. The standard DM halo density profile from simulations.</dd>
+    <dt>NPTF</dt><dd>Non-Poissonian Template Fitting. Uses photon-count statistics to distinguish a smooth signal from many faint point sources. Contested — Gap 5's territory.</dd>
+    <dt>Pass 8</dt><dd>The current Fermi-LAT event reconstruction version, applied retroactively to all data.</dd>
+    <dt>&pi;<sup>0</sup> decay</dt><dd>Cosmic-ray protons hitting gas produce neutral pions that decay to two gamma rays. The dominant diffuse emission channel.</dd>
+    <dt>PSF</dt><dd>Point-Spread Function. How the telescope blurs a point of light. Strongly energy-dependent.</dd>
+    <dt>Red clump giant</dt><dd>An evolved star with nearly constant intrinsic brightness. A standard candle; how the VVV bulge was mapped.</dd>
+    <dt>ROI</dt><dd>Region of Interest. Here, |l| &lt; 20°, |b| &lt; 20°.</dd>
+    <dt>&rho;&sup2;</dt><dd>Dark matter density squared. Annihilation needs two particles, so signal scales this way.</dd>
+    <dt>skyFACT</dt><dd>A flexible template-fitting tool that lets template shapes vary within controlled bounds, rather than holding them rigid.</dd>
+    <dt>Softening length</dt><dd>The smallest scale a simulation's gravity solver resolves. HESTIA's is 220 pc — about 1.6° at 8 kpc.</dd>
+    <dt>Thermal relic cross-section</dt><dd>~3&times;10<sup>&minus;26</sup> cm&sup3;/s. The annihilation rate that leaves the observed amount of dark matter after the Big Bang.</dd>
+    <dt>TS</dt><dd>Test Statistic. 2&times;(ln L<sub>with</sub> &minus; ln L<sub>without</sub>). &radic;TS &asymp; significance in &sigma;; TS = 25 &asymp; 5&sigma;.</dd>
+    <dt>VVV</dt><dd>VISTA Variables in the Vía Láctea. The near-infrared survey that mapped the bulge in 3-D.</dd>
+    <dt>WIMP</dt><dd>Weakly Interacting Massive Particle. The leading dark matter candidate.</dd>
+    <dt>X<sub>CO</sub></dt><dd>The conversion factor from CO brightness to molecular hydrogen mass. A major source of IEM uncertainty.</dd>
+    <dt>Zenith cut</dt><dd>Rejecting photons from directions near Earth, to exclude the bright gamma-ray Earth limb.</dd>
+  </dl>
+</section>
+
+<section id="s19">
+  <h2><span class="n">19</span><span>Your first week, concretely</span></h2>
+  <p class="h2sub">In dependency order. The first item gates everything else.</p>
+
+  <ol class="steps">
+    <li><strong>Establish whether you can get the HESTIA maps.</strong> Clone <code>gitlab.aip.de/muru/gce_in_hestia</code> and find out whether it ships projected &rho;&sup2; maps or only the code that generates them. In parallel — not afterwards — email Muru and Libeskind asking for the projected &rho;&sup2; maps for the six halos, citing the PRL. Everything else in Gap 1 waits on this, so start it on day one and do the rest while you wait.</li>
+    <li><strong>Do the resolution arithmetic and write it down.</strong> 220 pc at 8 kpc is 1.6°. Decide your common smoothing floor and your inner exclusion radius now, before you have results to be tempted by, and put both in the mini-paper's methods.</li>
+    <li><strong>Set up the repository skeleton</strong> exactly as the conventions specify, with <code>configs/paths_template.yaml</code> committed and <code>configs/paths.yaml</code> in <code>.gitignore</code>.</li>
+    <li><strong>Write the projection code against a case you can check.</strong> Do not debug on HESTIA. Build the line-of-sight integration and CAR projection using an analytic gNFW where you can compute the answer independently, confirm your template reproduces it, and only then point the same code at simulation data.</li>
+    <li><strong>Validate <code>utils/psf.py</code> against Fermitools <code>gtpsf</code></strong> and record the comparison in <code>utils/README.md</code>. This is shared infrastructure — if it is wrong, every gap team is wrong together.</li>
+    <li><strong>Produce one working template FITS</strong> with correct WCS keywords, normalised to unit integral over the ROI, PSF-convolved. That is the week's stated deliverable.</li>
+    <li><strong>Raise the two discrepancies with the project lead:</strong> the missing Hussein et al. reference, and the SOURCE / SOURCEVETO and 0.1° / 0.08° mismatches between your conventions and the Di Mauro pipeline you intend to replicate.</li>
+  </ol>
+
+  <div class="plain">
+    <span class="lbl">If you only remember three things</span>
+    <p><strong>One.</strong> Signal goes as density squared, which is why the galactic centre and why shape matters so much.</p>
+    <p><strong>Two.</strong> The HESTIA maps are blurry at about 1.6°, and pretending otherwise is the easiest way to get this paper rejected.</p>
+    <p><strong>Three.</strong> The injection–recovery test with a spherical control is the original contribution. The template bake-off is table stakes; that test is the paper.</p>
+  </div>
+</section>
+
+</main>
+</div>
