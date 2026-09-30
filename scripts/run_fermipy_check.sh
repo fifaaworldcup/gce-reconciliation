@@ -14,7 +14,7 @@ if ! python -c "from fermipy.gtanalysis import GTAnalysis" 2>/dev/null; then
   echo "fermitools together so their versions match (one time, several"
   echo "minutes)."
   conda install -y -c conda-forge fermipy fermitools || {
-    echo "!!! fermipy install failed - stop and tell claude what it printed"
+    echo "!!! fermipy install failed - stop and keep what it printed"
     exit 1; }
 fi
 python - <<'EOF' || exit 1
@@ -63,10 +63,10 @@ rc=$?
 echo "================ finished $(date), exit $rc ================"
 echo
 if [ $rc -eq 0 ]; then
-  echo "Section 6.4 survives an independent fitter. Send claude"
+  echo "Section 6.4 survives an independent fitter. Keep"
   echo "fermipy_check_results.json."
 else
-  echo "Either the run failed or fermipy disagrees. Either way send claude"
-  echo "fermipy_check.log - do not edit section 6.4 yourself."
+  echo "Either the run failed or fermipy disagrees. Either way keep"
+  echo "fermipy_check.log and diagnose before touching section 6.4."
 fi
 exit $rc

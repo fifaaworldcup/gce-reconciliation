@@ -12,7 +12,7 @@ conda activate fermi || exit 1
 command -v gtbin >/dev/null || { echo "env not active"; exit 1; }
 
 for f in gap1_gti.fits gap1_ltcube.fits; do
-  [ -s "$f" ] && [ -f ".done_$f" ] || { echo "missing or unfinished $f - tell claude"; exit 1; }
+  [ -s "$f" ] && [ -f ".done_$f" ] || { echo "missing or unfinished $f - rerun run_chain.sh first"; exit 1; }
 done
 echo "reusing gap1_gti.fits and gap1_ltcube.fits"
 
@@ -63,7 +63,7 @@ print(f"stitched gap1_ccube_full.fits: {cube.shape}")
 for a, b, pl in zip(lo, hi, cube):
     print(f"   {a/1e6:7.3f} - {b/1e6:7.3f} GeV   {pl.sum():>11,.0f}")
 if (cube.reshape(len(lo), -1).sum(1) == 0).any():
-    print("EMPTY BIN - STOP, TELL CLAUDE"); raise SystemExit(1)
+    print("EMPTY BIN - STOP, DO NOT USE THIS CUBE"); raise SystemExit(1)
 PY
 
 # ---- 3. exposure, finely sampled; the fit interpolates to bin centres itself

@@ -3,7 +3,7 @@
 #
 # the livetime cube depends only on the spacecraft file and the good-time
 # intervals, neither of which depends on energy, so this is very likely the
-# same file the new download will need. claude checks the GTIs match before
+# same file the new download will need. the GTIs are checked to match before
 # reusing it. worst case it gets rebuilt and we lost nothing but idle time.
 #
 # does NOT touch the photon files or rerun gtselect/gtmktime/gtbin.
@@ -54,7 +54,7 @@ step gap1_iem_roi.fits "3/3 reduce_iem" \
   python reduce_iem.py gll_iem_v07.fits gap1_iem_roi.fits || exit 1
 
 echo
-echo "================ done - tell claude ================"
+echo "================ done - report the output ================"
 for f in gap1_ccube.fits gap1_expcube.fits gap1_iem_roi.fits gap1_ltcube.fits; do
   printf '%-26s %s\n' "$f" "$([ -s "$f" ] && du -h "$f" | cut -f1 || echo MISSING)"
 done

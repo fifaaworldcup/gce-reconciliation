@@ -86,7 +86,7 @@ def main():
         raise SystemExit(
             f"\ncould not load fermipy.gtanalysis: {type(exc).__name__}: {exc}\n"
             f"  {have}\n  {st}\n"
-            "Send the traceback above to claude. The usual cause is fermipy "
+            "Send the traceback above with the log. The usual cause is fermipy "
             "and fermitools being different versions in the same env, not a "
             "missing package.")
 

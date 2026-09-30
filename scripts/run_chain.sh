@@ -159,7 +159,7 @@ for i in range(c.shape[0]):
     if s == 0:
         bad += 1
     print(f"  bin {i}: {lo:6.3f} - {hi:6.3f} GeV   {s:>12,.0f}{flag}")
-print("ALL BINS POPULATED" if bad == 0 else f"{bad} EMPTY BINS - STOP, TELL CLAUDE")
+print("ALL BINS POPULATED" if bad == 0 else f"{bad} EMPTY BINS - STOP, DO NOT USE THIS CUBE")
 for f in ("gap1_expcube.fits", "gap1_iem_roi.fits"):
     d = fits.getdata(f)
     print(f"{f}: {d.shape} sum={np.nansum(d):.6g}")
