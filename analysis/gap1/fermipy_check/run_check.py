@@ -67,12 +67,28 @@ def main():
 
     try:
         from fermipy.gtanalysis import GTAnalysis
-    except ImportError:
+    except Exception as exc:
+        # fermipy.gtanalysis pulls in the Science Tools (pyLikelihood, GtApp),
+        # so this fails for reasons that have nothing to do with fermipy being
+        # absent. Print what actually went wrong instead of guessing.
+        import traceback
+        traceback.print_exc()
+        try:
+            import fermipy
+            have = f"fermipy {fermipy.__version__} imports fine"
+        except Exception as e2:
+            have = f"fermipy itself will not import: {e2}"
+        try:
+            import pyLikelihood          # noqa: F401
+            st = "pyLikelihood imports fine"
+        except Exception as e3:
+            st = f"pyLikelihood (Science Tools) will not import: {e3}"
         raise SystemExit(
-            "fermipy is not installed in this environment.\n"
-            "  conda activate fermi\n"
-            "  conda install -c conda-forge fermipy\n"
-            "then run this again.")
+            f"\ncould not load fermipy.gtanalysis: {type(exc).__name__}: {exc}\n"
+            f"  {have}\n  {st}\n"
+            "Send the traceback above to claude. The usual cause is fermipy "
+            "and fermitools being different versions in the same env, not a "
+            "missing package.")
 
     gta = GTAnalysis(a.config, logging={"verbosity": 3})
     gta.setup()
