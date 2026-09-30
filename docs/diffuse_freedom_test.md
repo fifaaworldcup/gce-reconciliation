@@ -144,3 +144,109 @@ python analysis/gap1/make_diffuse_figure.py \
 ```
 
 Full records including every template and every sky: `outputs/gap1/diffuse_freedom_*/diffuse_freedom.json`.
+
+---
+
+## 7. With a real ring decomposition: Pohl22
+
+**Added 2026-09-30.** §1–6 used one all-sky template and split it geometrically,
+and said the fix was a diffuse model whose freedom comes from gas astronomy.
+Pohl et al. 2022 (Zenodo 6276721) supplies one: four H I rings, four H₂ rings,
+six inverse-Compton rings, a dust residual map and Loop I, plus separate
+nuclear-bulge and boxy-bulge templates. All regridded to the 0.1° CAR grid
+(`analysis/gap1/fit_rings.py`; the IC rings are all-sky with longitude
+ascending through the ROI edge, so they are wrapped rather than clipped —
+getting that wrong silently fills half the ROI with an edge column).
+
+The ladder is now physical rather than geometric.
+
+**Table 12.** Mask B + PS, 1–10 GeV, observed TS.
+
+| diffuse model | components | gNFW γ=1.2 | HESTIA G1.1 | VVV |
+|---|---|---|---|---|
+| `gll_iem_v07`, one normalisation per bin | 1 | 113.5 | 270.7 | 226.4 |
+| Pohl22 by species: H I, H₂, IC, dust, Loop I | 5 | 521.2 | 657.2 | **2365.0** |
+| Pohl22, every ring free | 16 | 128.7 | 78.6 | 867.3 |
+| + nuclear bulge | 17 | **13.2** | **4.3** | 620.5 |
+| + nuclear and boxy bulge | 18 | 31.4 | 13.9 | 200.6 |
+
+Three things, and the third is the one that matters.
+
+**A ring model is not a small correction.** Swapping one all-sky template for
+Pohl's rings moves the VVV detection from 226 to between 867 and 2365, and it
+rescues Mask D: with `gll_iem_v07` that mask had no sensitivity at all (§3.6),
+and with the rings it reaches TS 480–1048. The ×80 of §3.2 was measured
+*within* one template family. Between families it moves again.
+
+**Adding the nuclear bulge collapses the dark-matter templates.** gNFW falls
+from 128.7 to 13.2 and HESTIA from 78.6 to 4.3, while the stellar bulge holds
+at 620.5. Taken at face value that is Macias's result — NFW² losing its
+significance once the nuclear bulge and the X-bulge are in the model — and it
+is far below Di Mauro's stated TS_DM of 8×10² to 1.5×10⁴ with the same two
+components included.
+
+**But the control says that configuration can no longer see dark matter that
+is there.** Injecting a gNFW signal at a *fixed* reference flux — 7.263×10⁻⁸
+ph cm⁻² s⁻¹, the flux the `gll_iem_v07` fit attributed to it — into a sky built
+from each model's own background:
+
+**Table 13.** gNFW injected at a common flux into each model's own background.
+
+| diffuse model | observed TS | injected TS | boosted ΔTS | can it see a real signal? |
+|---|---|---|---|---|
+| `gll_iem_v07` | 113.5 | 88.5 | +305.3 | yes |
+| Pohl22 by species | 521.2 | 80.4 | +475.7 | yes |
+| Pohl22, rings free | 128.7 | 29.2 | +141.4 | marginally |
+| + nuclear bulge | 13.2 | **16.5** | +17.2 | **no** |
+| + nuclear and boxy bulge | 31.4 | **−138.1** | −31.4 | **no, and not converging** |
+
+Injecting at each level's *own* fitted flux — the first version of this test —
+is vacuous exactly where it matters: where the observed flux has collapsed the
+injection is tiny and recovering it only shows the fit is self-consistent. The
+fixed reference flux asks the question that counts, could this background have
+seen a signal of the size the baseline found, and with the nuclear bulge in it
+the answer is no.
+
+**So the collapse in Table 12 is not evidence against dark matter.** It is a
+configuration that has stopped being able to tell. The two are easy to confuse
+and they have opposite implications.
+
+The last row is worse than uninformative. A negative injected TS means the fit
+with the signal came out below the fit without it, which cannot happen at a
+true optimum: with 18 near-degenerate diffuse components plus a signal, our
+optimiser is not reliably converging. Reported rather than interpreted, and a
+limit on how far this can be pushed without a better-conditioned fitter.
+
+### What this adds to the paper's thesis
+
+§1 said a defensible change in how much the background may bend moves a
+detection by eighty. Section 7 says the same thing about *which* background,
+and adds the part that generalises: **a null result obtained by adding
+components to the background means nothing without an injection control, and
+the configuration that reproduces the published null does not pass one here.**
+Macias's NFW² falling from 17.6σ to 2.4σ with the nuclear and X-bulge included
+is exactly that kind of null. We are not claiming it is wrong — our
+implementation is not theirs, this is Level 1, one mask, four energy bins, our
+own fitter and no energy dispersion. We are claiming the control belongs with
+the result, and that it is cheap.
+
+### Limits specific to this section
+
+- `Dust_Negative_Residuals` is unused: the fitter constrains normalisations to
+  be non-negative, so a map meant to be subtracted cannot carry its sign.
+- Pohl's isotropic and Bubbles components are not used; ours are kept, so this
+  is Pohl's gas and IC inside our pipeline rather than Pohl's analysis.
+- The nuclear-bulge and boxy-bulge templates are Pohl's, not Macias's.
+- 18 components is past where our fitter is trustworthy (Table 13, last row).
+
+### Reproducing
+
+```bash
+python analysis/gap1/fit_rings.py --ccube gap1_ccube_full.fits \
+  --expcube gap1_expcube_full.fits --iem gap1_iem_roi.fits \
+  --catalog gll_psc_catalog.fit --rings iem/pohl22/regridded \
+  --mask B --ps --control gnfw1.2 --out outputs/gap1/rings_maskB_ps
+```
+
+`--control` picks the injected template and `--inject-flux-from` the level
+whose fitted flux sets its strength; the default baseline is `gll_iem_v07`.
