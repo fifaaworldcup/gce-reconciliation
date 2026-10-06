@@ -47,6 +47,18 @@ Four properties of these files, each of which corrupts the template silently if 
 
 Code: `analysis/gap1/hestia_to_template.py` (reader, regridder, shape statistics) and `analysis/gap1/project_template.py` (analytic gNFW builder and geometry self-tests). Both self-test with no data present.
 
+**The particle file names are swapped within each pair.** The six Arrow files are named `HESTIA_{sim}_8192_G{xy}_minimal_particles.arrow`, and the file named `G11` holds the halo sitting at G1.2's AHF centre; G31/G32 likewise, 850+ kpc apart. `reduce.py` ignores the names and identifies each file by matching its dark-matter centroid to the AHF centres in the data readme — `whichcentre.py` prints the match. The *map* files carry the simulation and halo ID inside their names and map to G-labels the same way Muru's own `scripts/plot_6_galaxy_projections.jl` groups them, so §6.1's per-galaxy split does not come from the renamed particle files. It also cannot be checked: §3 of `docs/muru_conventions.md` shows his 24 maps correlate with each other at mean r = 0.81 in shape and 0.966 raw, so no map-level test can establish which halo is which. The ordering rests on his filenames.
+
+### 3.1 J-factor against squared column: the Comment, answered
+
+The published HESTIA maps are `dm2`, the square of the projected column, and the maps our fits use are those. Abazajian, Kumar & Macias (arXiv:2609.34155) object that this is not the annihilation morphology, which is ∫ρ² ds with the squaring done before projection. They are right twice over, and the size of the error is now measured.
+
+The first half is exact. Muru's axis ratio is the min/max singular value of the pixels at or above a fraction of the map's peak (`notebooks/azimuthal_analysis_erebos.jl`). The set `{m² ≥ f·max(m²)}` *is* the set `{m ≥ √f·max(m)}`, so q(m², f) = q(m, √f) identically: squaring a finished column map does not produce a new morphology, it relabels the level sequence. Under his estimator `dm2` and `dm` are the same one-parameter family of shapes, verified to the last bit in `muru_match.selftest()`. Whatever squaring the column is doing, it is not adding morphological information.
+
+The second half is a measurement. We built the real thing from the particle data he supplied — local density at each dark-matter particle from its 32nd nearest neighbour, floored at the 220 pc softening, then Σ mᵢρᵢ along each sight line in the same angular cone that gives Σ mᵢ for the column, so both carry the same geometry and the comparison isolates the squaring. Over six galaxies and four viewing angles at the 50% isophote, **the J-factor map is flatter than the squared column by q(J) − q(col²) = −0.032 ± 0.020, the same sign in 22 of 24 cases**; under a disc normal 47° away it is −0.041 ± 0.016, the same sign in 24 of 24. The result does not depend on the frame, which is what makes it quotable while the frame itself is unresolved (§3 of the memo).
+
+So the squared column over-rounds the halo, by about 0.03–0.04 in q. That is below the scatter of any current GCE morphology measurement and well below the factor-of-eighty background systematic in §6.0, so no conclusion in the HESTIA paper turns on it. It is not below the precision a q measurement is quoted to, so templates built from `dm2` should not be used to claim a flattening to better than about 0.05, and Gap 4 and Gap 7 should build from ∫ρ² ds directly now that the particle data are in hand. `analysis/gap1/muru_match.py`, `docs/muru_conventions.md`.
+
 ### Analysis steps specific to this gap
 
 1. **Two analysis levels on identical data.** *Level 1* — single pass, source list fixed. *Level 2* — iterative source-finding replicating Di Mauro (2026): fit → residual TS map → add sources above threshold → refit, with thresholds and stopping rule fixed in `configs/` in advance and applied identically to every template.
@@ -130,6 +142,8 @@ The direct axis-ratio fit makes the same point from the other side. Running the 
 ### 6.1 Headline result
 
 > **Withdrawn 2026-09-28 (§6.0).** The correlation below is computed at one arbitrary point on a background-model range that moves the detection by a factor of eighty, and a flattened template is exactly what a rigid diffuse model recruits to fix its plane residual. Kept as written so the correction is visible. Re-run when a ring-decomposed IEM lands.
+
+> **Second withdrawal, 2026-10-06 — the shape statistic is not robust either.** ρ moves from −0.65 to +0.46 with the isophote alone, on the same maps against the same fits: +0.656 at 5% of peak on the uncropped map (as published), +0.268 at the same level on the cropped ROI, +0.463 at 10%, −0.251 at 50% where Muru himself measures, −0.653 at 2% where every level set has reached the ROI edge. Letting q vary per viewing angle instead of per galaxy drops it to +0.217. Within a single galaxy, across its four angles, ρ is +0.4, +0.4, +0.4, −0.4, −0.2, 0.0. The correlation is the between-galaxy spread of six numbers and the honest n is 6, where p = 0.07. Afeefa's four-way run at 5% of peak: squared column / current reconstruction +0.428 (p 0.037), J-factor / current +0.047, squared column / matched +0.223, J-factor / matched −0.062. None reproduces +0.73. `docs/muru_conventions.md` §4.
 
 **The Fermi data select a flattening, and do not care where it comes from.**
 

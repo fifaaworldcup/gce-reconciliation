@@ -90,3 +90,4 @@ iem/
 !outputs/gap1/rings_*/
 outputs/gap1/rings_*/*
 !outputs/gap1/rings_*/fit_rings.json
+!outputs/gap1/muru_match_tables.md
