@@ -78,15 +78,20 @@ template, which sec 6.0 showed is the dominant systematic. Replacing it with
 Pohl22's sixteen-component ring decomposition removes the correlation
 altogether.
 
-| q used, Pohl22 rings_free, Mask B + PS, 1-10 GeV | rho | p |
+| background and q recipe | rho | p |
 |---|---|---|
-| Table 1 q — the published recipe | **-0.056** | 0.79 |
-| per-angle q, 5% of peak | +0.400 | 0.053 |
-| per-angle q, 10% of peak | +0.028 | 0.90 |
-| per-angle q, 50% of peak | +0.383 | 0.064 |
+| `rings_species` Mask B + PS, Table 1 q — the published recipe | **-0.190** | 0.37 |
+| `rings_species` Mask B + PS, per-angle 5% of peak | +0.253 | 0.23 |
+| `rings_species` Mask B + PS, per-angle 50% of peak | +0.363 | 0.081 |
+| `rings_free` Mask B + PS, Table 1 q | -0.056 | 0.79 |
+| `rings_species` Mask D + PS, Table 1 q | +0.063 | 0.77 |
+| `rings_species` Mask D + PS, per-angle 5% of peak | +0.457 | 0.025 |
 
-The published recipe gives nothing. Two other recipes give a marginal positive
-at p ~ 0.05-0.06, which is what one expects from four looks at a null.
+The published recipe gives nothing under any of them. One cell out of six
+looks reaches p = 0.03, which is what six looks at a null produce.
+`rings_species` is the level at which every template passes its own injection
+control; `rings_free` is admissible for the HESTIA templates but not for
+gNFW (Table R2).
 
 The reason is visible in the fit itself rather than the correlation. On the
 ring background VVV reaches TS 794 and the best of the 24 HESTIA templates
