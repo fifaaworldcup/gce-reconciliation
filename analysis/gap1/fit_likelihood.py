@@ -166,10 +166,12 @@ def fit_one_bin(counts, exposure, templates, energy_gev, mask=None, x0=None,
                                       "em_converged": it < max_iter,
                                       "newton_iterations": pol["iterations"],
                                       "lnL_gap_bound": pol["gap"],
+                                      "rank": pol["rank"],
+                                      "free_parameters": pol["free_parameters"],
                                       "converged": pol["converged"]}
 
 
-def _newton_polish(N, A, n, max_iter=200, gap_tol=1e-6):
+def _newton_polish(N, A, n, max_iter=400, gap_tol=1e-6, rcond=1e-10):
     """Projected Newton on the Poisson likelihood, from the EM solution.
 
     lnL(N) = sum_i n_i ln(mu_i) - mu_i with mu = N @ A is concave in N, so a
@@ -185,6 +187,19 @@ def _newton_polish(N, A, n, max_iter=200, gap_tol=1e-6):
     below its maximum. Stop when that is below gap_tol, i.e. when the fit is
     provably within 1e-6 in lnL of the optimum on the free set, and every
     component pinned at zero has a gradient pointing further negative (KKT).
+
+    Rank deficiency. With a ring-decomposed background, two components inside
+    the mask can be the same shape to a part in 1e8 - six inverse-Compton
+    rings in a bin with few photons, say. The Hessian is then singular, the
+    Newton step along the flat direction is arbitrarily large, and g.d/2 grows
+    with it. That decrement is not a gap: lnL does not change along a flat
+    direction, so the quadratic model that produced the number is meaningless
+    there. The step and the gap are therefore taken on the subspace where the
+    Hessian is conditioned better than `rcond` relative to its largest
+    eigenvalue, and the discarded rank is reported. Dropping a direction can
+    only lower the estimated gap, never raise lnL, so this cannot manufacture
+    a fit that is not there - and on a well-conditioned problem nothing is
+    dropped and the result is unchanged to the last bit.
     """
     s = A.sum(1)
     s = np.where(s > 0, s, 1.0)
@@ -199,25 +214,48 @@ def _newton_polish(N, A, n, max_iter=200, gap_tol=1e-6):
     gap = np.inf
     it = 0
     ok = False
+    rank_used = rank_full = 0
     for it in range(1, max_iter + 1):
         g = B @ (n / mu - 1.0)
         free = (x > 0) | (g > 0)
         if not free.any():
             ok = True; gap = 0.0; break
         W = n / (mu * mu)
-        Bf = B[free]
-        H = (Bf * W[None, :]) @ Bf.T               # minus the Hessian, PSD
-        gf = g[free]
-        try:
-            d = np.linalg.solve(H + 1e-12 * np.trace(H) * np.eye(len(gf)), gf)
-        except np.linalg.LinAlgError:
-            d = np.linalg.lstsq(H, gf, rcond=None)[0]
-        gap = 0.5 * float(gf @ d)
+        # A component sitting exactly at zero whose Newton direction points
+        # negative cannot move: it sets tmax = 0, the step is a no-op, the
+        # line search accepts the zero gain, and the iteration spins on an
+        # unchanged active set forever. Pin those and re-solve until the free
+        # set is one the step can actually move along. Each pass pins at least
+        # one component, so this terminates.
+        for _ in range(len(x) + 1):
+            Bf = B[free]
+            H = (Bf * W[None, :]) @ Bf.T           # minus the Hessian, PSD
+            gf = g[free]
+            w, V = np.linalg.eigh(H)
+            wmax = float(w.max()) if w.size else 0.0
+            use = w > rcond * wmax
+            rank_used, rank_full = int(use.sum()), int(w.size)
+            if not use.any():
+                d = np.zeros_like(gf)
+                gap = 0.0
+                break
+            gV = V[:, use].T @ gf
+            d = V[:, use] @ (gV / w[use])
+            gap = 0.5 * float(gV @ (gV / w[use]))
+            idx = np.where(free)[0]
+            stuck = idx[(x[idx] <= 0) & (d < 0)]
+            if stuck.size == 0:
+                break
+            free[stuck] = False
+            if not free.any():
+                break
+        if not free.any():
+            ok = True; gap = 0.0; break
         kkt = np.all(g[~free] <= 1e-8 * max(1.0, float(np.abs(g).max())))
+        step = np.zeros_like(x); step[free] = d
         if gap < gap_tol and kkt:
             ok = True
             break
-        step = np.zeros_like(x); step[free] = d
         # largest step that keeps every free parameter >= 0
         neg = step < 0
         tmax = float(np.min(-x[neg] / step[neg])) if neg.any() else np.inf
@@ -233,6 +271,10 @@ def _newton_polish(N, A, n, max_iter=200, gap_tol=1e-6):
                 improved = True
                 break
             t *= 0.5
+        if improved and not np.any(xn != x):
+            # accepted a step that moved nothing: no further progress is
+            # possible from here
+            improved = False
         if not improved:
             # no ascent possible along the Newton direction: at the optimum to
             # within floating point
@@ -240,7 +282,8 @@ def _newton_polish(N, A, n, max_iter=200, gap_tol=1e-6):
             break
         x, f, mu = xn, fn, mun
 
-    return x / s, {"iterations": it, "gap": float(gap), "converged": bool(ok)}
+    return x / s, {"iterations": it, "gap": float(gap), "converged": bool(ok),
+                   "rank": rank_used, "free_parameters": rank_full}
 
 
 def bin_templates(templates, e):
@@ -277,6 +320,9 @@ def fit(counts_cube, exposure_cube, templates, energies_gev, mask_cube=None,
         out["bins"].append({"energy_gev": float(energies_gev[e]),
                             "norms": {k: float(v) for k, v in norms.items()},
                             "lnL": lnL, "converged": bool(info["converged"]),
+                            "lnL_gap_bound": info["lnL_gap_bound"],
+                            "rank": info["rank"],
+                            "free_parameters": info["free_parameters"],
                             "iterations": info["iterations"]})
         out["lnL_total"] += lnL
     return out

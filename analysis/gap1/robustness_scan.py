@@ -17,6 +17,16 @@ apart, and a delta-AIC between them would measure the background, not them.
 Every signal is fitted against the same background (iso + diffuse + bubbles),
 one free normalisation per component per bin, so every model has the same
 number of parameters and delta-AIC = -2 delta-lnL throughout.
+
+--rings swaps the single all-sky template for Pohl22's ring decomposition at
+one level of the fit_rings ladder. That is the background sec 6.0 said these
+numbers need, so sec 6.1-6.5 are re-run through it. The run refuses to report
+a scan whose configuration cannot recover a signal put there on purpose:
+--control-flux-from names the level whose fitted normalisation sets the
+injected flux, and the admissibility test (injected TS >= 25, boosted gain
+>= 25, both fixed in configs/diffuse_freedom.yaml before any run) is printed
+and recorded first. A null from a background that cannot see a real signal is
+not a null.
 """
 
 import argparse
@@ -32,7 +42,8 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
-for p in (HERE, os.path.join(ROOT, "utils"), os.path.join(ROOT, "masks")):
+for p in (HERE, os.path.join(ROOT, "utils"), os.path.join(ROOT, "masks"),
+          os.path.join(ROOT, "analysis", "diffuse_freedom")):
     sys.path.insert(0, p)
 
 import fit_cubes as FC               # noqa: E402
@@ -41,6 +52,8 @@ import regrid as RG                  # noqa: E402
 import project_template as PT        # noqa: E402
 import hestia_to_template as H       # noqa: E402
 import ps_template as PS             # noqa: E402
+import fit_rings as FR               # noqa: E402
+import freedom as DF                 # noqa: E402
 
 GAMMAS = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
 
@@ -73,6 +86,16 @@ def main():
                          "gNFW and the fiducial HESTIA, for the Gap 4 cross-check")
     ap.add_argument("--emin", type=float, default=0.0)
     ap.add_argument("--emax", type=float, default=1e9)
+    ap.add_argument("--rings", default="",
+                    help="dir of pohl22_*.fits; swaps the single all-sky "
+                         "template for the ring decomposition")
+    ap.add_argument("--level", default="rings_free",
+                    help="which rung of the fit_rings ladder to use")
+    ap.add_argument("--control", default="vvv",
+                    help="template injected for the admissibility test")
+    ap.add_argument("--control-flux-from", default="gll_iem_v07",
+                    help="level whose fitted flux sets the injected flux")
+    ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--ps", action="store_true",
                     help="add the 4FGL point-source template to the background")
     a = ap.parse_args()
@@ -92,8 +115,17 @@ def main():
                                  e_lo=e_lo, e_hi=e_hi, iem=iem)
     flat = RG.normalise(np.ones((400, 400)))
     bub, _ = FC.load_template(os.path.join(T, "gap1_bubbles_fuzzy.fits"))
-    bg = [{"iso": flat, "iem": RG.normalise(iem[e]), "bubbles": bub}
-          for e in range(len(emid))]
+    nb = len(emid)
+    diffuse = [{"iem": RG.normalise(iem[e])} for e in range(nb)]
+    ladder = None
+    if a.rings:
+        ladder = FR.levels(FR.load_rings(a.rings, nb, emid), iem, nb)
+        if a.level not in ladder:
+            raise SystemExit(f"--level {a.level} not in {sorted(ladder)}")
+        diffuse = ladder[a.level]
+        print(f"diffuse model: {a.level}, {len(diffuse[0])} components "
+              f"({', '.join(sorted(diffuse[0]))})", flush=True)
+    bg = [{"iso": flat, "bubbles": bub, **diffuse[e]} for e in range(nb)]
     if a.ps:
         ps, psinfo = PS.build(a.catalog, e_lo, e_hi)
         for e in range(len(emid)):
@@ -120,6 +152,47 @@ def main():
             name = os.path.basename(f)[:-5]
             sig[name] = FC.load_template(f)[0]
     print(f"{len(sig)} signal templates", flush=True)
+
+    # ---- admissibility: can this configuration see a signal we put there?
+    admit = None
+    if a.rings:
+        ctrl = sig[a.control]
+        ref_diffuse = ladder[a.control_flux_from]
+        ref_bg = [{"iso": flat, "bubbles": bub, **ref_diffuse[e]}
+                  for e in range(nb)]
+        if a.ps:
+            for e in range(nb):
+                ref_bg[e]["ps"] = bg[e]["ps"]
+        ref = FL.fit(counts, exposure,
+                     [{**c, "sig": ctrl} for c in ref_bg], emid, mask)
+        ref_norms = [ref["bins"][e]["norms"]["sig"] for e in range(nb)]
+        inj_flux = float(sum(ref_norms) * float(ctrl.sum()))
+
+        here = FL.fit(counts, exposure, [{**c, "sig": ctrl} for c in bg],
+                      emid, mask)
+        norms = [{**here["bins"][e]["norms"], "sig": ref_norms[e]}
+                 for e in range(nb)]
+        rng = np.random.default_rng(a.seed)
+        simulated = DF.simulate(counts, exposure, bg, emid, norms, rng,
+                                extra=(ctrl,))
+        added = DF.simulate(counts, exposure, [{} for _ in range(nb)], emid,
+                            [{"sig": ref_norms[e]} for e in range(nb)], rng,
+                            extra=(ctrl,))
+        ts_obs, _ = DF._ts(counts, exposure, bg, emid, mask, ctrl)
+        ts_inj, _ = DF._ts(simulated, exposure, bg, emid, mask, ctrl)
+        ts_boost, _ = DF._ts(counts + added, exposure, bg, emid, mask, ctrl)
+        ok = ts_inj >= 25.0 and (ts_boost - ts_obs) >= 25.0
+        admit = {"control": a.control, "flux_from": a.control_flux_from,
+                 "injected_flux": inj_flux, "ts_observed": ts_obs,
+                 "ts_injected": ts_inj, "ts_boosted": ts_boost,
+                 "boosted_gain": ts_boost - ts_obs, "admissible": bool(ok)}
+        print(f"\nadmissibility, {a.control} injected at {inj_flux:.4e} "
+              f"ph cm^-2 s^-1 (the flux {a.control_flux_from} fits)")
+        print(f"  observed TS {ts_obs:8.1f}   injected-only TS {ts_inj:8.1f}"
+              f"   boosted {ts_boost:8.1f} (gain {ts_boost - ts_obs:+.1f})")
+        print(f"  -> {'ADMISSIBLE' if ok else 'NOT ADMISSIBLE: this background '
+                     'cannot recover a signal that is definitely there, so '
+                     'every TS below is uninterpretable'}\n", flush=True)
 
     t0 = time.time()
     base = FL.fit(counts, exposure, bg, emid, mask)
@@ -166,7 +239,7 @@ def main():
     m = mask[e].astype(bool)
     best_g = min((r for r in rows if r["template"].startswith("gnfw_")
                   and not r["template"].endswith("_th1")), key=lambda r: -r["lnL"])
-    keys = ["iem", "iso", "bubbles", "gnfw_g1.2", best_g["template"],
+    keys = [k for k in bg[0] if k not in ("ps",)] + ["gnfw_g1.2", best_g["template"],
             "hestia_G1.1_ang0", "vvv", "f98"]
     keys = [k for k in dict.fromkeys(keys) if k in {**bg[0], **sig}]
     lib = {**bg[e], **sig}
@@ -178,6 +251,9 @@ def main():
     cond = float(np.linalg.cond(G / np.outer(d, d)))
 
     summary = {"mask": a.mask, "kept_fraction": minfo["kept_fraction"],
+               "diffuse_model": a.level if a.rings else "gll_iem_v07",
+               "n_diffuse_components": len(diffuse[0]),
+               "admissibility": admit,
                "point_source_template": bool(a.ps),
                "ps_norm_per_bin": ([b["norms"]["ps"] for b in base["bins"]]
                                    if a.ps else None),
