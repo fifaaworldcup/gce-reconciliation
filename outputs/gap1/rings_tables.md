@@ -106,3 +106,117 @@ an empty cell.
 Vertical flattening still beats in-plane flattening, 764 against 643, the
 same ordering as on the single-template background. Both are a long way
 behind the stellar bulge.
+
+## Table R8. What flux was injected, and per-template recovery
+
+The flux injected for the admissibility test in Tables R2-R3 was **the flux
+that template itself fits against the single-template `gll_iem_v07`
+baseline** - not its own fitted flux at the level under test, and not VVV's.
+Those fluxes: VVV 6.3931e-08, gNFW 1.2 6.0292e-08, HESTIA 9.5463e-08
+ph cm^-2 s^-1, already within a factor 1.6 of one another.
+
+Repeated with **every template injected at one common flux and one common
+per-bin spectrum**, VVV's 6.3931e-08, so that differences in recovered TS
+are differences in sensitivity to morphology and nothing else.
+`rings_species`, Mask B + PS, 1-10 GeV.
+
+| injected template | observed TS | injected-only TS | boosted gain | admissible |
+|---|---|---|---|---|
+| `vvv` | 2151.7 | **255.2** | +1472 | yes |
+| `f98` | 1761.2 | **355.6** | +1637 | yes |
+| `hestia_G3.2_ang90` | 1263.2 | **81.8** | +566 | yes |
+| `hestia_G1.1_ang0` | 622.6 | **65.6** | +426 | yes |
+| `gnfw_g1.4` | 799.7 | **81.8** | +480 | yes |
+| `gnfw_g1.2` | 526.2 | **91.8** | +413 | yes |
+
+At identical flux the stellar bulges recover TS 255-356 and the dark-matter
+templates 66-92. **The pipeline is about three times more sensitive in TS to
+a bulge morphology than to a dark-matter one** - a factor 1.7 in flux, since
+TS goes as flux squared. Every template still clears the threshold of 25 by a
+wide margin, so an injected dark-matter signal of this brightness would have
+been detected; but the dAIC of +1626 between VVV and gNFW on the real data
+cannot be read as if the two were measured at equal sensitivity. Table R9
+settles what remains after that is accounted for.
+
+## Table R9. Template confusion: does the scan pick the true winner?
+
+Admissibility asks whether a signal would be *detected*. A model comparison
+claims something stronger - that the *right template* would be preferred. So:
+build a sky from `rings_species`'s own fitted background plus a known
+template, and run the whole 40-template ordering on it. The true winner is
+known by construction.
+
+| true sky | injected flux | truth's rank | best dark matter | best stellar | prefers |
+|---|---|---|---|---|---|
+| `vvv` (baseline flux) | 6.393e-08 | 1/40 | 227.4 | 255.2 | **stellar** |
+| `hestia_G3.2_ang90` (baseline flux) | 6.393e-08 | 1/40 | 81.8 | 65.0 | **dark matter** |
+| `gnfw_g1.2` (baseline flux) | 6.393e-08 | 6/40 | 94.2 | 81.6 | **dark matter** |
+| `vvv` (own fitted flux) | 2.148e-07 | 1/40 | 1834.7 | 2093.8 | **stellar** |
+| `hestia_G3.2_ang90` (own fitted flux) | 2.681e-07 | 1/40 | 1159.4 | 921.3 | **dark matter** |
+| `gnfw_g1.2` (own fitted flux) | 1.469e-07 | 2/40 | 462.9 | 359.2 | **dark matter** |
+
+Six for six on the morphology class, and the exact template first in four of
+six - in the two misses the templates above the truth are its own immediate
+neighbours (gNFW at adjacent gamma, and their top-hat-smoothed twins) within
+2.5 in TS, which is the degeneracy sec 6.2's correlation matrix already
+reports. **The pipeline is not biased towards the bulge: when the sky
+contains dark matter, the fit prefers dark matter.**
+
+One number is worth stating because it runs the other way. On a sky that
+truly contains VVV at its fitted flux, the best dark-matter template reaches
+1834.7 against VVV's 2093.8, a gap of 259. On the real data the gap is 888.
+The data discriminate **more** sharply than a simulated pure bulge does, so
+the ordering is not being manufactured by the dark-matter templates being
+handicapped - if anything they are doing worse on the sky than they can do
+against a bulge. Whether that is extra bulge-specific structure or a residual
+the bulge template happens to absorb is not something this test separates.
+
+## Table R10. The 1-3 GeV band alone, where the IC interpolation is safe
+
+Pohl's inverse-Compton maps carry stored planes at 1.32, 2.28, 4.05 and
+7.4 GeV. The 1-3 GeV window used here spans 1.0-2.37 GeV and brackets two
+stored planes, so it is genuine interpolation with no extrapolation - unlike
+the 3-10 and 10-50 GeV bins, where the top plane is exceeded.
+
+`rings_species`, Mask B + PS, 3 bins, mask keeps 79.9%.
+
+| template | TS | dAIC vs VVV |
+|---|---|---|
+| `vvv` | 1142.6 | -0.0 |
+| `f98` | 880.3 | +262.4 |
+| `hestia_G3.2_ang90` | 697.5 | +445.1 |
+| `hestia_G3.2_ang60` | 575.3 | +567.4 |
+| `hestia_G3.2_ang30` | 563.2 | +579.4 |
+| `hestia_G2.2_ang0` | 554.0 | +588.6 |
+
+VVV still wins, by dAIC +445 over the best of the 24 HESTIA templates, and
+all three controls are admissible in the band (VVV injected 103.1, HESTIA
+41.5, gNFW 55.1 at a common flux). **The IC interpolation is a footnote, not
+a driver**: the ordering in the cleanest band is the same ordering as in the
+full 1-10 GeV fit.
+
+## Table R11. Mask A under Pohl22
+
+| | kept | VVV | best HESTIA | gNFW 1.2 | anything admissible? |
+|---|---|---|---|---|---|
+| Mask A, sources masked | 8.7% | 43.9 | hestia_G3.2_ang30 30.0 | 7.4 | no |
+| Mask A, sources also modelled | 8.7% | 32.6 | hestia_G3.2_ang30 22.1 | 6.1 | no |
+
+Mask A masks **every** 4FGL source with a disc of radius r95 + 0.5 deg. With
+the real catalogue that is 715 sources, and at 1 GeV the discs overlap enough
+to leave **8.7%** of the ROI. (The self-test reports 75.6% because it uses a
+synthetic catalogue with a handful of sources - not a bug, but the self-test
+does not exercise the real mask.) Nothing is admissible: a signal injected at
+a common flux returns TS 6.4-18.8 against the threshold of 25. The baseline
+normalisation also runs away - the flux the `gll_iem_v07` fit reports under
+Mask A is 1.28e-06, twenty times the Mask B value, which is what an
+under-constrained fit on 8.7% of the pixels looks like.
+
+**So Mask A cannot localise the Macias-Di Mauro contradiction.** Dark matter
+does not appear under it - the ordering is the same, VVV 43.9 against the
+best HESTIA at 30.0 - but every number in it is uninterpretable. And Mask A
+is not Di Mauro's configuration in any case: he *models* point sources
+through Level-2 iterative source finding rather than masking them, which is
+what Mask B + PS approximates. The contradiction therefore localises to the
+pipeline rather than the mask, by elimination rather than by a positive test,
+and testing it properly needs Level-2 source finding - Gap 5's deliverable.

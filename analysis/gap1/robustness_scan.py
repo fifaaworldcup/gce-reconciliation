@@ -95,7 +95,23 @@ def main():
                     help="template injected for the admissibility test")
     ap.add_argument("--control-flux-from", default="gll_iem_v07",
                     help="level whose fitted flux sets the injected flux")
+    ap.add_argument("--flux-template", default="",
+                    help="inject at the flux THIS template fits, rather than "
+                         "the flux the control template fits. With every "
+                         "control injected at one common flux and one common "
+                         "per-bin spectrum, differences in recovered TS are "
+                         "differences in sensitivity to the morphology and "
+                         "nothing else. Default: the control itself.")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--simulate-sky", default="",
+                    help="run the whole ordering on a SIMULATED sky instead "
+                         "of the data: this level's own fitted background plus "
+                         "this template at the flux --flux-template fits. The "
+                         "sky then has a known winner, so the scan can be "
+                         "asked whether it picks it. Admissibility says a "
+                         "signal would be detected; this says the right "
+                         "template would be preferred, which is the claim a "
+                         "model comparison actually makes.")
     ap.add_argument("--control-only", action="store_true",
                     help="run the admissibility test and stop. The test asks "
                          "whether THIS background can recover THIS template "
@@ -164,6 +180,7 @@ def main():
     admit = None
     if a.rings:
         ctrl = sig[a.control]
+        fluxt = sig[a.flux_template] if a.flux_template else ctrl
         ref_diffuse = ladder[a.control_flux_from]
         ref_bg = [{"iso": flat, "bubbles": bub, **ref_diffuse[e]}
                   for e in range(nb)]
@@ -171,8 +188,14 @@ def main():
             for e in range(nb):
                 ref_bg[e]["ps"] = bg[e]["ps"]
         ref = FL.fit(counts, exposure,
-                     [{**c, "sig": ctrl} for c in ref_bg], emid, mask)
-        ref_norms = [ref["bins"][e]["norms"]["sig"] for e in range(nb)]
+                     [{**c, "sig": fluxt} for c in ref_bg], emid, mask)
+        # Rescale so the injected signal carries the flux template's photon
+        # flux per bin while having the control's morphology. Templates are
+        # normalised differently, so the normalisation has to be converted
+        # rather than copied.
+        scale = float(fluxt.sum()) / float(ctrl.sum())
+        ref_norms = [ref["bins"][e]["norms"]["sig"] * scale
+                     for e in range(nb)]
         inj_flux = float(sum(ref_norms) * float(ctrl.sum()))
 
         here = FL.fit(counts, exposure, [{**c, "sig": ctrl} for c in bg],
@@ -190,22 +213,65 @@ def main():
         ts_boost, _ = DF._ts(counts + added, exposure, bg, emid, mask, ctrl)
         ok = ts_inj >= 25.0 and (ts_boost - ts_obs) >= 25.0
         admit = {"control": a.control, "flux_from": a.control_flux_from,
+                 "flux_template": a.flux_template or a.control,
                  "injected_flux": inj_flux, "ts_observed": ts_obs,
                  "ts_injected": ts_inj, "ts_boosted": ts_boost,
                  "boosted_gain": ts_boost - ts_obs, "admissible": bool(ok)}
         print(f"\nadmissibility, {a.control} injected at {inj_flux:.4e} "
-              f"ph cm^-2 s^-1 (the flux {a.control_flux_from} fits)")
+              f"ph cm^-2 s^-1 -- the flux "
+              f"{a.flux_template or a.control} fits on "
+              f"{a.control_flux_from}")
         print(f"  observed TS {ts_obs:8.1f}   injected-only TS {ts_inj:8.1f}"
               f"   boosted {ts_boost:8.1f} (gain {ts_boost - ts_obs:+.1f})")
         print(f"  -> {'ADMISSIBLE' if ok else 'NOT ADMISSIBLE: this background '
                      'cannot recover a signal that is definitely there, so '
                      'every TS below is uninterpretable'}\n", flush=True)
 
+    if a.simulate_sky:
+        if a.simulate_sky not in sig:
+            raise SystemExit(f"--simulate-sky {a.simulate_sky} is not a "
+                             f"template")
+        truth = sig[a.simulate_sky]
+        fluxt = sig[a.flux_template] if a.flux_template else truth
+        ref_diffuse = ladder[a.control_flux_from] if a.rings else diffuse
+        ref_bg = [{"iso": flat, "bubbles": bub, **ref_diffuse[e]}
+                  for e in range(nb)]
+        if a.ps:
+            for e in range(nb):
+                ref_bg[e]["ps"] = bg[e]["ps"]
+        ref = FL.fit(counts, exposure,
+                     [{**c, "sig": fluxt} for c in ref_bg], emid, mask)
+        scale = float(fluxt.sum()) / float(truth.sum())
+        tn = [ref["bins"][e]["norms"]["sig"] * scale for e in range(nb)]
+        # the background the simulated sky is drawn from is THIS level's own
+        # fit to the data with the true signal in it, so the sky is one this
+        # level could have produced and the test is not a model mismatch
+        here = FL.fit(counts, exposure, [{**c, "sig": truth} for c in bg],
+                      emid, mask)
+        norms = [{**here["bins"][e]["norms"], "sig": tn[e]}
+                 for e in range(nb)]
+        rng = np.random.default_rng(a.seed)
+        counts = DF.simulate(counts, exposure, bg, emid, norms, rng,
+                             extra=(truth,))
+        sim_flux = float(sum(tn) * float(truth.sum()))
+        print(f"\nsimulated sky: {a.simulate_sky} at {sim_flux:.4e} "
+              f"ph cm^-2 s^-1 (the flux "
+              f"{a.flux_template or a.simulate_sky} fits on "
+              f"{a.control_flux_from}), on {a.level if a.rings else 'gll_iem_v07'}"
+              f"'s own fitted background. The true winner is "
+              f"{a.simulate_sky}.\n", flush=True)
+        admit = {**(admit or {}), "simulated_sky": a.simulate_sky,
+                 "simulated_flux": sim_flux}
+
     if a.control_only:
         os.makedirs(a.out, exist_ok=True)
-        with open(os.path.join(a.out, f"admissibility_{a.control}.json"),
+        tagname = a.control + (f"_at_{a.flux_template}" if a.flux_template
+                               and a.flux_template != a.control else "")
+        with open(os.path.join(a.out, f"admissibility_{tagname}.json"),
                   "w") as f:
             json.dump({"mask": a.mask, "ps": bool(a.ps),
+                       "kept_fraction_per_bin":
+                           [float(m.mean()) for m in mask],
                        "emin": a.emin, "emax": a.emax,
                        "diffuse_model": a.level if a.rings else "gll_iem_v07",
                        **(admit or {})}, f, indent=2)
@@ -270,6 +336,7 @@ def main():
     summary = {"mask": a.mask, "kept_fraction": minfo["kept_fraction"],
                "diffuse_model": a.level if a.rings else "gll_iem_v07",
                "n_diffuse_components": len(diffuse[0]),
+               "simulated_sky": a.simulate_sky or None,
                "admissibility": admit,
                "point_source_template": bool(a.ps),
                "ps_norm_per_bin": ([b["norms"]["ps"] for b in base["bins"]]
