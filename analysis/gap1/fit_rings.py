@@ -256,15 +256,18 @@ def main():
         # check on whether the model can see a signal it is given
         # the injection is at a fixed flux for every level, so the question
         # is simply whether the level can see it
-        kept = inj / max(obs, 1e-9)
+        # ratio of what the level recovers to what it sees. Meaningless once
+        # the observed TS is at the floor - the level is already inadmissible
+        # there, and a ratio against nothing is not a diagnostic.
+        kept = inj / obs if obs > 1.0 else float("nan")
         ok = inj >= 25.0 and gain >= 25.0
         rows.append({"level": name, "n_diffuse": r["n_diffuse"],
                      "observed_ts": obs, "injected_ts": inj,
                      "boosted_gain": gain, "injected_fraction_kept": kept,
                      "usable": ok})
+        ratio = f"{kept:8.0%}" if kept == kept else f"{'n/a':>8}"
         print(f"{name:14} {r['n_diffuse']:8d} {obs:9.1f} {inj:9.1f} "
-              f"{gain:9.1f} {kept:8.0%}  "
-              f"{'yes' if ok else 'NO'}")
+              f"{gain:9.1f} {ratio}  {'yes' if ok else 'NO'}")
     use = [r["observed_ts"] for r in rows if r["usable"]]
     spread = max(use) / max(min(use), 1e-9) if len(use) > 1 else float("nan")
     print(f"\nacross admissible levels the observed TS spans a factor of "

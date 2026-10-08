@@ -96,6 +96,13 @@ def main():
     ap.add_argument("--control-flux-from", default="gll_iem_v07",
                     help="level whose fitted flux sets the injected flux")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--control-only", action="store_true",
+                    help="run the admissibility test and stop. The test asks "
+                         "whether THIS background can recover THIS template "
+                         "at the flux the baseline found, so it has to be run "
+                         "once per template whose absence is being claimed - "
+                         "a background that can see the stellar bulge is not "
+                         "thereby shown to be able to see dark matter.")
     ap.add_argument("--ps", action="store_true",
                     help="add the 4FGL point-source template to the background")
     a = ap.parse_args()
@@ -193,6 +200,16 @@ def main():
         print(f"  -> {'ADMISSIBLE' if ok else 'NOT ADMISSIBLE: this background '
                      'cannot recover a signal that is definitely there, so '
                      'every TS below is uninterpretable'}\n", flush=True)
+
+    if a.control_only:
+        os.makedirs(a.out, exist_ok=True)
+        with open(os.path.join(a.out, f"admissibility_{a.control}.json"),
+                  "w") as f:
+            json.dump({"mask": a.mask, "ps": bool(a.ps),
+                       "emin": a.emin, "emax": a.emax,
+                       "diffuse_model": a.level if a.rings else "gll_iem_v07",
+                       **(admit or {})}, f, indent=2)
+        return
 
     t0 = time.time()
     base = FL.fit(counts, exposure, bg, emid, mask)
