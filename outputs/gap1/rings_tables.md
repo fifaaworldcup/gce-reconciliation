@@ -220,3 +220,87 @@ through Level-2 iterative source finding rather than masking them, which is
 what Mask B + PS approximates. The contradiction therefore localises to the
 pipeline rather than the mask, by elimination rather than by a positive test,
 and testing it properly needs Level-2 source finding - Gap 5's deliverable.
+
+## Table R12. The six diffuse-freedom splits, Mask B and Mask D
+
+`configs/diffuse_freedom.yaml`, fixed before any run. A split is usable as
+evidence only if it passes **both** criteria: it keeps at least half the
+injected signal the rigid split keeps (otherwise it is degenerate with the
+signal and cannot speak either way), and it still finds a signal added to
+the real data at a gain of at least 25 (otherwise a low observed TS from it
+means nothing). Recomputed with the converged fitter.
+
+### Mask B + PS, 1-10 GeV, keeps 85.9%, control VVV injected at 6.3931e-08 ph cm^-2 s^-1
+
+| split | extra params | observed TS | injected TS | boosted gain | injected kept | verdict |
+|---|---|---|---|---|---|---|
+| `rigid` | 0 | 203.1 | 184.3 | +585.0 | 100% | usable |
+| `ns` | 1 | 146.7 | 174.8 | +504.7 | 95% | usable |
+| `lat_outside` | 4 | 264.4 | 154.2 | +552.1 | 84% | usable |
+| `lat_inside` | 4 | 99.0 | 86.8 | +241.4 | 47% | **no** - degenerate with the signal |
+| `lat` | 3 | 15.4 | 144.2 | +238.9 | 78% | usable |
+| `lat_ns` | 7 | 8.7 | 137.2 | +203.8 | 74% | usable |
+
+Usable: `rigid`, `ns`, `lat_outside`, `lat`, `lat_ns`. Observed TS across them 8.7 to 264.4,
+a factor of 30.
+
+### Mask D + PS, 1-10 GeV, keeps 71.0%, control VVV injected at 1.8799e-08 ph cm^-2 s^-1
+
+| split | extra params | observed TS | injected TS | boosted gain | injected kept | verdict |
+|---|---|---|---|---|---|---|
+| `rigid` | 0 | 22.9 | 37.8 | +66.3 | 100% | usable |
+| `ns` | 1 | 4.6 | 33.4 | +38.5 | 88% | usable |
+| `lat_outside` | 4 | 79.9 | 36.5 | +91.7 | 97% | usable |
+| `lat_inside` | 4 | 8.9 | 10.7 | +26.7 | 28% | **no** - degenerate with the signal |
+| `lat` | 3 | 0.0 | 27.9 | +12.4 | 74% | **no** - cannot find an added signal |
+| `lat_ns` | 7 | 0.0 | 25.6 | +8.7 | 68% | **no** - cannot find an added signal |
+
+Usable: `rigid`, `ns`, `lat_outside`. Observed TS across them 4.6 to 79.9,
+a factor of 17.
+
+**The three that fail under Mask D, named, with their boosted gains:**
+`lat_inside` (gain +26.7) fails as **degenerate** - it keeps only 28% of the
+injected signal, so it absorbs what it is meant to measure. `lat` (gain
++12.4) and `lat_ns` (gain +8.7) are **not** degenerate - they keep 74% and
+68% - they fail because they cannot find a signal added to the real data.
+Those are different failures and the code used to print one label for both;
+fixed, and the reason is now in the JSON.
+
+Under Mask B only `lat_inside` fails, and marginally: it keeps 47% against a
+threshold of 50%. Note that under the *absolute* criterion the ring work
+uses - injected TS >= 25 rather than a fraction of the rigid split's - Mask
+B's `lat_inside` would pass at injected TS 86.8. The two criteria disagree on
+exactly that one cell, and the conventions should name which one governs.
+
+**So, for the conventions:** under Mask B + PS five of six splits are
+admissible; under Mask D + PS three of six are, and the three that fail are
+the ones that give the diffuse model latitude freedom at inner longitudes
+(`lat_inside`) or everywhere (`lat`, `lat_ns`).
+
+### What the fitter fix did to these numbers
+
+The verdicts are unchanged - the same splits are usable under each mask -
+but the magnitudes moved, and the headline factor with them.
+
+| | usable splits | observed TS range | factor |
+|---|---|---|---|
+| Mask B + PS, before | 5/6 | 3.8 - 305.6 | **80** |
+| Mask B + PS, after | 5/6 | 8.7 - 264.4 | **30** |
+| Mask D + PS, before | 3/6 | 1.7 - 79.3 | 46 |
+| Mask D + PS, after | 3/6 | 4.6 - 79.9 | 17 |
+
+Both extremes moved inward, which is what fixing an under-converged fit
+does: an unconverged fit understates lnL, and it understated it most where
+the model had the most freedom. **Section 6.0's 'factor of eighty' is a
+factor of thirty.** The conclusion it supports is unchanged - the background
+model still dominates the measurement, and the ring decomposition still
+narrows it further, to 11 - but the number itself has been quoted in the
+memo, the README and the mini-paper and needs correcting in all three.
+
+One loose end, stated rather than hidden: under Mask D the *injected* TS
+also moved a long way (rigid 8.6 to 37.8). Part of that is a small Mask D
+change between the runs (kept fraction 70.75% to 71.04%) and a 15% shift in
+the control flux, which together account for perhaps a third of it. I have
+not isolated the rest. The verdicts do not depend on it and the new numbers
+come from the current, converged code, but it is worth one hour before the
+memo is final.

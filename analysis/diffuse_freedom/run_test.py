@@ -87,7 +87,7 @@ def main():
         print(f"{r['split']:12} {r['extra_params']:6d} {r['observed_ts']:9.1f} "
               f"{r['injected_ts']:9.1f} {r['boosted_gain']:9.1f} "
               f"{r['injected_fraction_kept']:8.0%}  "
-              f"{'yes' if r['usable'] else 'no - degenerate'}")
+              f"{r.get('reason', 'usable' if r['usable'] else 'no')}")
     print(f"\n{v['note']}")
     out = {"mask": a.mask, "ps": bool(a.ps), "emin": a.emin, "emax": a.emax,
            "kept_fraction": float(minfo["kept_fraction"]),

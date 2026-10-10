@@ -246,11 +246,28 @@ def main():
         if not 0.8 < rs < 1.25:
             print("  FAIL residual scatter is not ~1 sigma"); ok = False
 
-        # 6. the mask was actually applied
+        # 6. the mask was actually applied. NOTE the catalogue here is 40
+        # synthetic sources, so this checks only that masking happens, not
+        # what the real mask does - with 4FGL-DR4 mask A keeps 8.7% of this
+        # ROI over 1-10 GeV and 0.4% in the lowest bin. That is checked
+        # separately, against the real catalogue, below.
         kf = rec["inputs"]["mask"]["kept_fraction"]
-        print(f"  mask A kept {kf:.1%} of the ROI")
+        print(f"  mask A kept {kf:.1%} of the ROI "
+              f"(40 synthetic sources, NOT the real catalogue)")
         if not 0.5 < kf < 0.999:
             print("  FAIL mask kept a suspicious fraction"); ok = False
+
+        # 7. the real mask, if the catalogue is on this machine
+        real = os.environ.get("GAP1_CATALOG", "")
+        if real and os.path.exists(real):
+            print("  real-catalogue mask audit:")
+            sys.path.insert(0, os.path.join(ROOT, "masks"))
+            import make_masks as MM
+            ok = MM.audit_check(real, list(map(float, emid))) and ok
+        else:
+            print("  mask A/C/D against the REAL catalogue were not exercised."
+                  "\n    Set GAP1_CATALOG=<4FGL file> to include them, or run"
+                  "\n    `python3 masks/make_masks.py --audit <file>`.")
 
         if not rec["models"]["hestia"]["all_bins_converged"]:
             print("  FAIL a bin did not converge"); ok = False

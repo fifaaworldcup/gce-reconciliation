@@ -183,11 +183,23 @@ def verdict(res, signal=None, usable_injected_frac=0.5, boosted_min_gain=25.0):
         inj = r["injected"][s]["ts"]
         gain = r["boosted"][s]["ts"] - obs
         keep_inj = inj / base_inj if base_inj > 0 else float("nan")
-        ok = keep_inj >= usable_injected_frac and gain >= boosted_min_gain
+        degenerate = not (keep_inj >= usable_injected_frac)
+        blind = not (gain >= boosted_min_gain)
+        ok = not (degenerate or blind)
+        # The two failures are different things and must not share a label.
+        # Degenerate: the split absorbs the signal, so it cannot be evidence
+        # either way. Blind: the split keeps the signal but cannot find one
+        # added to the real data, so a low observed TS from it means nothing.
+        reason = ("usable" if ok else
+                  "degenerate with the signal" if degenerate and not blind else
+                  "cannot find an added signal" if blind and not degenerate else
+                  "degenerate AND cannot find an added signal")
         rows.append({"split": name, "extra_params": r["extra_params"],
                      "observed_ts": obs, "injected_ts": inj,
                      "boosted_gain": gain,
-                     "injected_fraction_kept": keep_inj, "usable": ok})
+                     "injected_fraction_kept": keep_inj, "usable": ok,
+                     "degenerate": degenerate, "blind": blind,
+                     "reason": reason})
         if ok:
             usable.append(obs)
     if len(usable) > 1:

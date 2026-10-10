@@ -100,7 +100,10 @@ The first three aren't hypothetical — we hit them while building the templates
 
 ## 6. Preliminary Findings
 
-### 6.0 Our background model choice moves the detection by a factor of eighty
+### 6.0 Our background model choice moves the detection by a factor of thirty
+
+> **Corrected 2026-10-10.** The "factor of eighty" below was computed before the projected-Newton stall was fixed (§6.0b). With every split converged it is a **factor of thirty**: observed TS 8.7 to 264.4 across the five usable splits, not 3.8 to 305.6. Both extremes moved inward, which is what fixing an under-converged fit does — it understated lnL most where the model had the most freedom. The same five splits are usable and the conclusion is unchanged; only the number is wrong, and it is wrong in the memo and the mini-paper too. Mask D: factor 46 → 17, same three usable splits. Table R12 in `outputs/gap1/rings_tables.md` has both, before and after.
+
 
 **2026-09-28. This section supersedes the morphology conclusions in §6.1 to §6.5.**
 
@@ -171,6 +174,8 @@ On the single all-sky template the same data had HESTIA G2.1 *ahead* of VVV by �
 **The inverse-Compton interpolation is a footnote.** Pohl's IC maps carry stored planes at 1.32, 2.28, 4.05 and 7.4 GeV. Restricted to 1–2.37 GeV, which brackets two stored planes and extrapolates nowhere, the ordering is unchanged: VVV 1142.6, F98 880.3, best HESTIA 697.5, ΔAIC +445, with all three controls admissible in the band. The result does not live on the interpolation (Table R10).
 
 **Mask A cannot localise the Macias–Di Mauro contradiction.** Mask A masks every 4FGL source with an r95 + 0.5° disc; with the real catalogue's 715 sources the discs overlap and leave **8.7%** of the ROI at 1 GeV, the baseline normalisation runs away to twenty times the Mask B value, and nothing is admissible — injected TS 6.4 to 18.8 against the threshold of 25. Dark matter does not appear under it; the ordering is the same and every number in it is uninterpretable. Mask A is also not Di Mauro's configuration: he models point sources through Level-2 iterative source finding rather than masking them, which is what Mask B + PS approximates. The contradiction therefore localises to the pipeline rather than the mask — by elimination, not by a positive test — and settling it needs Level-2 source finding, which is Gap 5's (Table R11).
+
+**Two things for the results text.** The parametric boxy bulge is *better recovered* than the non-parametric one: injected at a common flux, F98 returns TS 355.6 against VVV's 255.2, so the template that wins on the data is not the template the pipeline is most sensitive to — which makes VVV's win on the sky harder to explain as a sensitivity effect, not easier. And the real mask is now audited: with 4FGL-DR4 over 1–10 GeV, Mask A keeps **8.7%** of the ROI (0.4% in the lowest bin, 21.4% in the highest), Mask C 8.6%, Mask D 71.0%, Mask B 85.9%. The self-test used to build its masks from 40 synthetic sources and assert only that 50–99.9% survived, so it never exercised the mask any result actually used; `masks/make_masks.py --audit <catalogue>` now does, the fit self-test calls it when `GAP1_CATALOG` is set, and it prints a warning naming what was *not* tested when it is not.
 
 **Still open.** The Macias configuration — adding Pohl's nuclear bulge — collapses the dark-matter templates to TS 22 and 12, reproducing his result, but `rings_free_NB` cannot recover an injected HESTIA (15.8) or gNFW (21.4) either, so it remains a loss of discriminating power rather than evidence, now confirmed with the dark-matter template injected rather than the bulge. The 18-component level fails every control. And the inverse-Compton maps carry only four stored energy planes, interpolated onto eight bins, so the six IC normalisations are not eight independent measurements each.
 

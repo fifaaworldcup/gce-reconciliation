@@ -342,6 +342,65 @@ def write(cube, path, which, catalog_path):
     return path
 
 
+# Expected kept fraction with the real catalogue, 1-10 GeV, 8 bins. Fixed here
+# so a change in the catalogue, the PSF table or a mask builder is caught by
+# the self-test rather than discovered in a result. Tolerance is wide enough
+# for a catalogue revision and narrow enough to catch a builder that stops
+# masking: audit() prints the measured value, so update these deliberately.
+REAL_EXPECTED = {"A": (0.05, 0.14), "B": (0.80, 0.92),
+                 "C": (0.04, 0.13), "D": (0.62, 0.80)}
+
+
+def audit(catalog_path, energies_gev=None, iem=None, e_lo=None, e_hi=None,
+          verbose=True):
+    """Kept fraction of every mask against the REAL catalogue, per energy.
+
+    The self-test below builds its masks from a handful of synthetic sources,
+    which is the right way to check that a builder masks what it should and
+    nothing else - but it is not the real mask. With 4FGL-DR4 there are of
+    order 700 sources in this ROI and at 1 GeV their 95%-containment discs
+    overlap enough that mask A keeps under a tenth of it. A test that never
+    sees the real catalogue cannot tell you that, and ours did not.
+
+    Returns {mask: {"per_bin": [...], "mean": float}}.
+    """
+    if energies_gev is None:
+        energies_gev = [float(np.sqrt(lo * hi)) for lo, hi in EBINS]
+    which = "ABCD" + ("E" if iem is not None else "")
+    out = {}
+    if verbose:
+        print(f"  catalogue {os.path.basename(catalog_path)}, "
+              f"{len(read_catalog(catalog_path)[0]):,} sources")
+        print(f"  {'mask':5s} {'mean':>7s}  per energy bin "
+              f"({', '.join(f'{e:.2f}' for e in energies_gev)} GeV)")
+    for w in which:
+        kw = {"iem": iem, "e_lo": e_lo, "e_hi": e_hi} if w == "E" else {}
+        cube = build_at_energies(catalog_path, w, energies_gev, **kw)
+        per = [float(m.mean()) for m in cube]
+        out[w] = {"per_bin": per, "mean": float(np.mean(per))}
+        if verbose:
+            print(f"  {w:5s} {out[w]['mean']:7.1%}  " +
+                  " ".join(f"{v:6.1%}" for v in per))
+    return out
+
+
+def audit_check(catalog_path, energies_gev=None, verbose=True):
+    """audit(), with the result asserted against REAL_EXPECTED."""
+    got = audit(catalog_path, energies_gev, verbose=verbose)
+    ok = True
+    for w, (lo, hi) in REAL_EXPECTED.items():
+        if w not in got:
+            continue
+        m = got[w]["mean"]
+        if not lo <= m <= hi:
+            print(f"  FAIL mask {w} keeps {m:.1%} of the real ROI, "
+                  f"expected {lo:.0%}-{hi:.0%}")
+            ok = False
+    if ok and verbose:
+        print("  real-catalogue kept fractions all within expectation")
+    return ok
+
+
 def selftest():
     ok = True
     ll, bb = grid()
@@ -440,9 +499,24 @@ def selftest():
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) == 1:
-        selftest()
-    else:
-        cat = sys.argv[1]
-        for w in "ABC":
-            print(write(build(cat, w), f"mask_{w.lower()}_wmap.fits", w, cat))
+    args = sys.argv[1:]
+    if args and args[0] == "--audit":
+        if len(args) < 2:
+            raise SystemExit("usage: make_masks.py --audit <catalogue.fit>")
+        raise SystemExit(0 if audit_check(args[1]) else 1)
+    if not args:
+        ok = selftest()
+        cat = os.environ.get("GAP1_CATALOG", "")
+        if cat and os.path.exists(cat):
+            print("\nreal catalogue audit (GAP1_CATALOG):")
+            ok = audit_check(cat) and ok
+        else:
+            print("\n  NOTE: the real mask was NOT exercised. The fractions "
+                  "above come from a\n        synthetic catalogue of three "
+                  "sources. Set GAP1_CATALOG, or run\n        "
+                  "`make_masks.py --audit <catalogue.fit>`, to test the mask "
+                  "that results use.")
+        raise SystemExit(0 if ok else 1)
+    cat = args[0]
+    for w in "ABC":
+        print(write(build(cat, w), f"mask_{w.lower()}_wmap.fits", w, cat))
