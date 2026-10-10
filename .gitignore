@@ -85,3 +85,8 @@ iem/
 *.h5
 *.hdf5
 *.npz
+
+# ring-model and J-factor outputs cited by the write-ups
+!outputs/gap1/rings_*/
+outputs/gap1/rings_*/*
+!outputs/gap1/rings_*/fit_rings.json

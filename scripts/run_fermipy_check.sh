@@ -9,6 +9,21 @@ source "$HOME/miniforge3/etc/profile.d/conda.sh" || exit 1
 conda activate fermi || exit 1
 
 # ---- 1. environment -------------------------------------------------------
+if ! python -c "from fermipy.gtanalysis import GTAnalysis" 2>/dev/null; then
+  echo "fermipy.gtanalysis will not load. Installing/repairing fermipy and"
+  echo "fermitools together so their versions match (one time, several"
+  echo "minutes)."
+  conda install -y -c conda-forge fermipy fermitools || {
+    echo "!!! fermipy install failed - stop and keep what it printed"
+    exit 1; }
+fi
+python - <<'EOF' || exit 1
+import fermipy
+print("fermipy", fermipy.__version__)
+from fermipy.gtanalysis import GTAnalysis          # the import that matters
+import pyLikelihood
+print("Science Tools import OK")
+EOF
 if ! python -c "import fermipy" 2>/dev/null; then
   echo "fermipy is not in the 'fermi' env yet. Installing it (one time,"
   echo "several minutes). If this fails, the check cannot run here."
@@ -56,6 +71,11 @@ rc=$?
 echo "================ finished $(date), exit $rc ================"
 echo
 if [ $rc -eq 0 ]; then
+  echo "Section 6.4 survives an independent fitter. Keep"
+  echo "fermipy_check_results.json."
+else
+  echo "Either the run failed or fermipy disagrees. Either way keep"
+  echo "fermipy_check.log and diagnose before touching section 6.4."
   echo "Section 6.4 survives an independent fitter. Send claude"
   echo "fermipy_check_results.json."
 else

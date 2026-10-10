@@ -100,6 +100,9 @@ def selftest():
 
     checks = []
 
+    hest_src = os.path.expanduser(
+        "~/muru_data/jf/density_projection_09_18_8192"
+        "_halo127000000000003_angle0.0_dm2_1deg.fits")
     hest_src = ("/home/claude/muru_data/jf/density_projection_09_18_8192"
                 "_halo127000000000003_angle0.0_dm2_1deg.fits")
     if os.path.exists(hest_src):
