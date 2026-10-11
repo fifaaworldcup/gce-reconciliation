@@ -179,6 +179,24 @@ On the single all-sky template the same data had HESTIA G2.1 *ahead* of VVV by �
 
 **Still open.** The Macias configuration — adding Pohl's nuclear bulge — collapses the dark-matter templates to TS 22 and 12, reproducing his result, but `rings_free_NB` cannot recover an injected HESTIA (15.8) or gNFW (21.4) either, so it remains a loss of discriminating power rather than evidence, now confirmed with the dark-matter template injected rather than the bulge. The 18-component level fails every control. And the inverse-Compton maps carry only four stored energy planes, interpolated onto eight bins, so the six IC normalisations are not eight independent measurements each.
 
+### 6.0c Level 2, and the last candidate explanation closes — 2026-10-11
+
+**Iterative source finding does not flip the ordering either, and it does not round off morphology.** Tables R13–R14.
+
+§6.0b left exactly one thing between us and a complete answer to Macias vs Di Mauro: he lets the fit add its own point sources and we mask a fixed catalogue. Mask A had already eliminated itself (it keeps 0.4% of the ROI in the lowest bin), so this was the last one standing.
+
+**The design choice was made in the open and run both ways**, because running it one way predetermines the answer. The *neutral* arm finds sources with no signal in the model, then fits every template against one common source list — equal parameter count, but the iteration has already absorbed what it can, so it is biased against any signal. The *joint* arm gives each hypothesis its own source search, which is what Di Mauro does, at the cost of different source counts, so it is compared on full AIC = 2k − 2lnL rather than ΔAIC = −2ΔlnL.
+
+Both arms put the stellar bulge first. Neutral: VVV 1018.2, F98 840.3, best HESTIA 567.8 (ΔAIC +450). Joint: VVV first, best gNFW +440, best HESTIA +605 — and **the gNFW hypotheses needed three extra point sources (13 against 10) to patch what their template could not fit, and lost anyway.** Level 2 roughly halves every TS (VVV 2151.7 → 1018.2) and leaves the ranking alone. One of the 12 sources it adds sits at l = −0.35°, b = +0.35° — on the Galactic Centre, which is the mechanism this test exists to catch. It eats part of the excess, and the ordering still holds.
+
+**H₀ᴮ answered, with its control.** A flattened HESTIA halo injected at 2.15×10⁻⁷ and run through the full iteration comes back ranked 1 of 40. The spherical gNFW control at matched flux also comes back ranked 1 of 40 — which is the half that makes the first half mean anything, since without it "the flattened one survived" is equally consistent with a pipeline that returns whatever it is given. **The iteration does not round off morphology.**
+
+**And it invents nothing.** On a sky with no signal and no sources beyond the background model, it adds **zero** sources and the best of all 40 templates reaches TS 5.3. So the 12 sources on the real sky are structure Pohl22 misses, not artefacts — the first real number for Gap 5's phantom question, from the other direction.
+
+**The honest limit.** This is a reimplementation of the procedure Di Mauro describes, not his pipeline. Ours adds 10–13 sources over a 40°×40° ROI in 1–10 GeV; his works over a larger region and a wider band and adds far more. A null here is evidence that source finding does not flip the ordering *in this configuration*, not proof that it cannot.
+
+**Where that leaves the disagreement.** Three candidate explanations have now been tested and none of them is it: the mask (Mask A has no sensitivity), the quantity (squaring a column map is shape-neutral, §3.1), and the pipeline (Level 2 does not reverse the ordering). What remains is the background itself — Di Mauro's ring model is not Pohl22 — and that is Gap 5's IEM fits, the one piece of the paper still outstanding.
+
 ### 6.1 Headline result
 
 > **Withdrawn 2026-09-28 (§6.0).** The correlation below is computed at one arbitrary point on a background-model range that moves the detection by a factor of eighty, and a flattened template is exactly what a rigid diffuse model recruits to fix its plane residual. Kept as written so the correction is visible. Re-run when a ring-decomposed IEM lands.

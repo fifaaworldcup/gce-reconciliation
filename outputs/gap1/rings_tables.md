@@ -304,3 +304,110 @@ the control flux, which together account for perhaps a third of it. I have
 not isolated the rest. The verdicts do not depend on it and the new numbers
 come from the current, converged code, but it is worth one hour before the
 memo is final.
+
+## Table R13. Level 2: iterative source finding instead of a fixed mask
+
+The last candidate explanation for Macias versus Di Mauro. He lets the fit
+add point sources; we mask a fixed catalogue. Mask A eliminated itself
+(Table R11), so this is what was left.
+
+One design choice decides the answer, so both ways were run. **neutral**:
+find sources with no signal in the model, then fit every template against
+that one common source list - equal parameter count, but the iteration has
+already had free rein to absorb the excess, so it is biased *against* any
+signal. **joint**: find sources with the candidate already in the model,
+one run per hypothesis, which is what Di Mauro does - each hypothesis gets
+its best shot, at the cost of different source counts, so the comparison
+uses the full AIC = 2k - 2lnL rather than dAIC = -2 dlnL.
+
+### neutral arm: 12 sources added, one common list
+
+| template | TS | dAIC vs VVV |
+|---|---|---|
+| `vvv` | 1018.2 | -0.0 |
+| `f98` | 840.3 | +177.9 |
+| `hestia_G3.2_ang90` | 567.8 | +450.3 |
+| `hestia_G3.1_ang60` | 515.1 | +503.0 |
+| `hestia_G2.2_ang90` | 473.8 | +544.4 |
+| `hestia_G2.2_ang0` | 466.6 | +551.6 |
+
+Sources found, in order (residual TS at the moment each was added):
+
+| source | l | b | residual TS | pass |
+|---|---|---|---|---|
+| src000 | -18.35 | +0.15 | 681 | 100 |
+| src001 | -3.65 | +1.15 | 324 | 100 |
+| src002 | -10.25 | +0.15 | 283 | 100 |
+| src003 | +17.35 | +2.45 | 203 | 100 |
+| src004 | +6.35 | +4.95 | 168 | 100 |
+| src005 | +18.85 | -0.35 | 138 | 100 |
+| src006 | -0.35 | +0.35 | 93 | 64 |
+| src007 | -3.05 | -2.25 | 84 | 64 |
+| src008 | +3.55 | +1.95 | 66 | 64 |
+| src009 | +14.95 | +9.25 | 63 | 36 |
+| src010 | -17.15 | -2.75 | 50 | 36 |
+| src011 | +16.85 | -1.85 | 44 | 36 |
+
+One of them, `src006`, sits at l = -0.35, b = +0.35 - on the Galactic
+Centre. That is the mechanism this test exists to catch: a point source
+placed on the excess eats it. It does, and the ordering still holds.
+
+### joint arm: one source search per hypothesis
+
+| hypothesis | sources added | free normalisations | lnL | AIC | dAIC |
+|---|---|---|---|---|---|
+| `vvv` | 10 | 152 | 554,484.95 | -1,108,665.89 | +0.0 |
+| `f98` | 10 | 152 | 554,354.82 | -1,108,405.63 | +260.3 |
+| `gnfw_g1.4` | 13 | 176 | 554,288.99 | -1,108,225.98 | +439.9 |
+| `gnfw_g1.2` | 13 | 176 | 554,235.08 | -1,108,118.16 | +547.7 |
+| `hestia_G3.2_ang90` | 10 | 152 | 554,182.35 | -1,108,060.69 | +605.2 |
+| `hestia_G2.2_ang90` | 10 | 152 | 554,092.06 | -1,107,880.11 | +785.8 |
+
+**Both arms put the stellar bulge first.** The neutral arm gives VVV 1018.2
+against 567.8 for the best of the 24 HESTIA templates, dAIC +450, and that
+is the arm biased against a signal. The joint arm, where every hypothesis
+runs its own source search, puts VVV ahead of the best dark-matter template
+by +605 on full AIC - and the gNFW hypotheses needed **three extra point
+sources** (13 against 10) to patch what their template could not fit, and
+lost anyway.
+
+**So Level 2 is not the explanation either.** Within this implementation,
+iterative source finding does not reverse the ordering; it lowers every TS
+by roughly half (VVV 2151.7 to 1018.2) and leaves the ranking alone.
+
+The honest limit: this is a reimplementation of the procedure Di Mauro
+describes, not his pipeline. Ours adds 10-13 sources over a 40x40 deg ROI
+in 1-10 GeV; his works over a larger region and a wider band and adds far
+more. A null from our version is evidence that source finding does not
+flip the ordering *here*, not proof that his does not flip it *there*.
+
+## Table R14. What Level 2 does to a morphology, and what it invents
+
+Three simulated skies, each built from `rings_species`'s own fitted
+background, run through the full iteration and then the 40-template
+ordering.
+
+| simulated sky | injected flux | sources added | winner | truth's rank |
+|---|---|---|---|---|
+| flattened HESTIA G3.2 90 deg | 2.1477e-07 | **1** | `hestia_G3.2_ang90` at TS 465.9 | 1/40 |
+| spherical gNFW 1.2 | 2.1477e-07 | **1** | `gnfw_g1.2` at TS 378.3 | 1/40 |
+| nothing at all | 0.0000e+00 | **0** | `hestia_G3.2_ang90` at TS 5.3 | n/a |
+
+**The iteration does not round off morphology.** A flattened halo injected
+at 2.15e-07 comes back as itself, ranked 1 of 40 - and the spherical
+control at matched flux also comes back as itself, which is the half that
+makes the first half mean anything. Without it, 'the flattened one survived'
+would be equally consistent with a pipeline that returns whatever it is
+given.
+
+**And it invents nothing.** On a sky with no signal and no sources beyond
+the background model, the iteration adds **zero** sources and the best of
+all 40 templates reaches TS 5.3. The 12 sources it finds on the real sky
+are therefore structure the ring model misses, not an artefact of the
+method - which is also the first real number for Gap 5's phantom question.
+
+One observation worth carrying: the iteration adds 12 sources to the real
+sky and 0-1 to a simulated one drawn from the same background. The
+simulated skies are drawn from the model, so by construction they contain
+nothing the model cannot describe. The gap between 12 and 0 is a measure of
+how much real structure Pohl22 still misses.
