@@ -411,3 +411,92 @@ sky and 0-1 to a simulated one drawn from the same background. The
 simulated skies are drawn from the model, so by construction they contain
 nothing the model cannot describe. The gap between 12 and 0 is a measure of
 how much real structure Pohl22 still misses.
+
+## Table R15. The Mask D injected-TS discrepancy, closed
+
+Flagged in Table R12: recomputing the diffuse-freedom splits with the
+converged fitter moved Mask D's injected TS from 8.6 to 37.8 for the rigid
+split, which a small mask change and a 15% control-flux shift could not
+explain. Afeefa asked for it closed or documented. It is closed.
+
+**It is the fitter bug, and Mask D is the configuration most exposed to**
+**it.** The stall needed a component sitting at exactly zero whose Newton
+direction points negative. Under Mask D the signal normalisation is driven
+to exactly zero in **three of eight bins**; under Mask B, in one.
+
+| bin | E GeV | Mask B + PS, pinned at zero | Mask D + PS, pinned at zero |
+|---|---|---|---|
+| 0 | 1.15 | bubbles | bubbles, **sig** |
+| 1 | 1.54 | bubbles | bubbles |
+| 2 | 2.05 | bubbles | - |
+| 3 | 2.74 | - | - |
+| 4 | 3.65 | - | - |
+| 5 | 4.87 | - | - |
+| 6 | 6.49 | - | **sig** |
+| 7 | 8.66 | **sig** | **sig** |
+
+The simulated sky for each split is built from that split's own fitted
+normalisations. A stalled fit therefore produced a wrong sky, and the
+injected TS measured on it was wrong - suppressed, and suppressed across
+every split, which is what the old Mask D table shows (injected TS 7.6 to
+9.4 for all six splits, against 25.6 to 37.8 now). The 15% control-flux
+change has the same cause: the flux is the sum of the fitted signal
+normalisations, and three of them were being solved at a point the
+iteration never reached.
+
+Mask B's injected TS moved by 1.4% over the same fix (181.7 to 184.3),
+which is the control on this explanation: one pinned bin, almost no change;
+three pinned bins, a factor of four.
+
+A hypothesis that was tested and is wrong, recorded so nobody retests it:
+the old run was **not** secretly using what is now Mask E. Mask E + PS
+keeps 86.7% of the ROI against the old run's 70.75%, so the relabel of
+2026-09-27 is not involved.
+
+## Table R16. What Level 2 found, cross-matched against 4FGL
+
+`analysis/level2/source_record.py`. Every mechanical column is filled in;
+`verdict` and `note` are left for a human. PSF evaluated at 1.15 GeV, the
+lowest bin, where it is widest - so 'inside the PSF' is the generous
+reading and anything called uncatalogued here is uncatalogued at every
+energy.
+
+| source | l | b | residual TS | nearest 4FGL | sep deg | inside 95% PSF |
+|---|---|---|---|---|---|---|
+| `src000` | -18.35 | 0.15 | 681.1 | 4FGL J1651.7-4359  | 0.145 | yes |
+| `src001` | -3.65 | 1.15 | 324.0 | 4FGL J1732.5-3131  | 0.148 | yes |
+| `src002` | -10.25 | 0.15 | 282.7 | 4FGL J1718.0-3726  | 0.03 | yes |
+| `src003` | 17.35 | 2.45 | 202.8 | 4FGL J1813.4-1246  | 0.106 | yes |
+| `src004` | 6.35 | 4.95 | 167.8 | 4FGL J1741.9-2054  | 0.088 | yes |
+| `src005` | 18.85 | -0.35 | 137.7 | 4FGL J1826.1-1256  | 0.295 | yes |
+| `src006` **(Galactic Centre)** | -0.35 | 0.35 | 92.7 | 4FGL J1744.9-2905  | 0.34 | yes |
+| `src007` | -3.05 | -2.25 | 83.9 | 4FGL J1746.8-3239  | 0.082 | yes |
+| `src008` | 3.55 | 1.95 | 66.1 | 4FGL J1745.7-2506  | 0.259 | yes |
+| `src009` | 14.95 | 9.25 | 62.6 | 4FGL J1744.4-1135  | 0.176 | yes |
+| `src010` | -17.15 | -2.75 | 50.0 | 4FGL J1709.7-4429  | 0.256 | yes |
+| `src011` | 16.85 | -1.85 | 44.3 | 4FGL J1829.4-1500c | 0.326 | yes |
+
+**All twelve fall inside the 95% PSF containment radius of a catalogued
+4FGL source, and ten of the twelve within 0.3 degrees.** Level 2 is
+rediscovering sources that are already known, not inventing new ones. With
+the null-sky result in Table R14 - zero sources added to a sky containing
+none - that is two independent statements that the iteration does not
+produce phantoms, and the first hard number for Gap 5's phantom question.
+
+Why it adds them at all, given that Mask B + PS already *models* the
+catalogue: the fitted point-source normalisation comes out at 0.76 to 0.92
+rather than 1.0 in every bin (sec 6.2). The template under-predicts those
+sources, and the iteration tops them up at the same positions. That is a
+statement about our point-source spectral integration, not about the sky.
+
+`src006` at l = -0.35, b = +0.35 matches 4FGL J1744.9-2905 at 0.34 deg -
+a catalogued Galactic Centre source. So the source that sits on the excess
+and eats part of it is a real one, which makes the ordering surviving it a
+stronger result than if it had been a phantom.
+
+The judgement left for a reviewer is therefore thinner than expected: there
+are no uncatalogued candidates to adjudicate. What is still worth a human
+is whether any of the twelve is a *different* source from its match rather
+than the same one re-found, and `src011`'s match being a `c`-flagged
+source (4FGL J1829.4-1500c, flagged in the catalogue as possibly
+confused with interstellar emission) is the one place that matters.

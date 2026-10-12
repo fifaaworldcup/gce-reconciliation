@@ -1,0 +1,13 @@
+source,l_deg,b_deg,residual_TS,pass_threshold,order_added,nearest_4fgl,nearest_4fgl_sep_deg,nearest_4fgl_class,nearest_4fgl_ts,inside_psf68,inside_psf95,nearest_is_extended,deg_from_roi_edge,near_roi_edge_1deg,on_galactic_centre_1deg,verdict,note
+src000,-18.35,0.15,681.1,100,1,4FGL J1651.7-4359 ,0.145,,127.7,True,True,False,1.65,False,False,,
+src001,-3.65,1.15,324.0,100,2,4FGL J1732.5-3131 ,0.148,PSR,12018.2,True,True,False,16.35,False,False,,
+src002,-10.25,0.15,282.7,100,3,4FGL J1718.0-3726 ,0.03,snr,918.9,True,True,False,9.75,False,False,,
+src003,17.35,2.45,202.8,100,4,4FGL J1813.4-1246 ,0.106,PSR,15428.6,True,True,False,2.65,False,False,,
+src004,6.35,4.95,167.8,100,5,4FGL J1741.9-2054 ,0.088,PSR,13525.8,True,True,False,13.65,False,False,,
+src005,18.85,-0.35,137.7,100,6,4FGL J1826.1-1256 ,0.295,PSR,12574.0,True,True,False,1.15,False,False,,
+src006,-0.35,0.35,92.7,64,7,4FGL J1744.9-2905 ,0.34,unk,99.1,True,True,False,19.65,False,True,,
+src007,-3.05,-2.25,83.9,64,8,4FGL J1746.8-3239 ,0.082,PSR,1527.1,True,True,False,16.95,False,False,,
+src008,3.55,1.95,66.1,64,9,4FGL J1745.7-2506 ,0.259,unk,44.0,True,True,False,16.45,False,False,,
+src009,14.95,9.25,62.6,36,10,4FGL J1744.4-1135 ,0.176,MSP,3212.0,True,True,False,5.05,False,False,,
+src010,-17.15,-2.75,50.0,36,11,4FGL J1709.7-4429 ,0.256,PSR,186080.2,True,True,False,2.85,False,False,,
+src011,16.85,-1.85,44.3,36,12,4FGL J1829.4-1500c,0.326,,16.8,True,True,False,3.15,False,False,,

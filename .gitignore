@@ -92,3 +92,5 @@ outputs/gap1/rings_*/*
 !outputs/gap1/rings_*/fit_rings.json
 !outputs/gap1/muru_match_tables.md
 !outputs/gap1/rings_tables.md
+!outputs/gap1/l2_source_record.csv
+!outputs/gap1/gap1_results_for_gap7.csv
