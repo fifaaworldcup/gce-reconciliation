@@ -28,7 +28,7 @@ if ! python -c "import fermipy" 2>/dev/null; then
   echo "fermipy is not in the 'fermi' env yet. Installing it (one time,"
   echo "several minutes). If this fails, the check cannot run here."
   conda install -y -c conda-forge fermipy || {
-    echo "!!! fermipy install failed - stop and tell claude what it printed"
+    echo "!!! fermipy install failed - stop and report what it printed"
     exit 1; }
 fi
 python -c "import fermipy; print('fermipy', fermipy.__version__)" || exit 1
@@ -76,10 +76,10 @@ if [ $rc -eq 0 ]; then
 else
   echo "Either the run failed or fermipy disagrees. Either way keep"
   echo "fermipy_check.log and diagnose before touching section 6.4."
-  echo "Section 6.4 survives an independent fitter. Send claude"
+  echo "Section 6.4 survives an independent fitter. Report the output"
   echo "fermipy_check_results.json."
 else
-  echo "Either the run failed or fermipy disagrees. Either way send claude"
+  echo "Either the run failed or fermipy disagrees. Either way report it"
   echo "fermipy_check.log - do not edit section 6.4 yourself."
 fi
 exit $rc
