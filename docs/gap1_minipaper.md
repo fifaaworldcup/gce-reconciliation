@@ -75,6 +75,14 @@ All templates normalized to unit integral over the ROI and convolved with the en
 
 ---
 
+### 3.1 J-factor against squared column
+
+The HESTIA maps as published are `dm2`, the square of the projected column. Abazajian, Kumar & Macias (arXiv:2609.34155) object that the annihilation morphology is ∫ρ² ds, squared before projection, not after. Two things follow, and both are now settled against the simulation's own particle data.
+
+Squaring a finished column map cannot change its shape. The axis ratio in Muru et al. is the min/max singular value of the pixels above a fraction of the map's peak, and `{m² ≥ f·max(m²)}` is the same set of pixels as `{m ≥ √f·max(m)}`. So q(m², f) = q(m, √f) identically: `dm2` and `dm` are one family of shapes with the levels relabelled, and the squaring adds no morphological information.
+
+The genuine quantity differs, and by a small and consistent amount. Building ∫ρ² ds from the particles — local density per particle from its 32nd neighbour, floored at the 220 pc softening, integrated along each sight line in the same angular cone used for the column — gives an annihilation map **flatter than the squared column by Δq = −0.032 ± 0.020 at the 50% isophote, the same sign in 22 of 24 galaxy–angle combinations**, and −0.041 ± 0.016 under a disc orientation 47° away, so the result is frame-independent. The squared column over-rounds the halo by about 0.03–0.04 in axis ratio: negligible against the background-model systematic that dominates every GCE morphology measurement, not negligible against the precision such measurements are quoted to.
+
 ## 4. Expected Results and Interpretation
 
 | Outcome | Level 1 | Level 2 | Injection test | Interpretation |

@@ -4,7 +4,7 @@
 
 > Macias and Di Mauro use the same bulge templates and the same gas maps and reach opposite conclusions: NFW² at 17.6σ dropping to 2.4σ once the X-bulge and nuclear bulge are included, against TS 8×10²–1.5×10⁴ for dark matter with NB and BB included. The difference between them is residuals, 30–40% against ≤10%.
 >
-> This test reproduces that disagreement inside a single pipeline, on one dataset, with one set of templates. **A defensible change in how much the interstellar model is allowed to bend moves a detection by a factor of eighty.** No difference in data, templates, mask or event selection is required.
+> This test reproduces that disagreement inside a single pipeline, on one dataset, with one set of templates. **A defensible change in how much the interstellar model is allowed to bend moves a detection by a factor of thirty.** (Eighty before the projected-Newton stall was fixed on 2026-10-08; the same five splits remain usable and both extremes moved inward. Table R12 in `outputs/gap1/rings_tables.md` has the before-and-after, and §7 below the Mask D companion.) No difference in data, templates, mask or event selection is required.
 
 ---
 

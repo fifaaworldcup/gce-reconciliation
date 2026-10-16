@@ -58,20 +58,39 @@ EXTRA = {"dust": "pohl22_dust_pos.fits", "loopI": "pohl22_loopI.fits"}
 BULGES = {"nb": "pohl22_nb.fits", "bb": "pohl22_bb.fits"}
 
 
-def load_rings(d, nbins):
-    """{name: [plane per energy bin]} for every Pohl22 component."""
+def load_rings(d, nbins, energies=None):
+    """{name: [plane per energy bin]} for every Pohl22 component.
+
+    The gas and dust maps are energy-independent column densities, so one
+    plane serves every bin. The inverse-Compton maps are not: they carry
+    Pohl's own energy grid, written into the regridded files as EBINS. Those
+    are interpolated in log-log onto the counts cube's bin energies, the same
+    way read_iem handles gll_iem_v07.
+
+    That interpolation adds no information - an IC component is whatever its
+    stored planes say, however many bins we ask for - so an IC normalisation
+    fitted in two adjacent bins between the same pair of stored planes is not
+    two independent measurements of it.
+    """
     out = {}
     for tag, stem in SPECIES.items():
         for f in sorted(glob.glob(os.path.join(d, stem + "*.fits"))):
-            a = np.asarray(fits.getdata(f), float)
+            with fits.open(f) as hd:
+                a = np.asarray(hd[0].data, float)
+                ebins = hd[0].header.get("EBINS", "")
             name = os.path.basename(f)[len("pohl22_"):-len(".fits")]
-            if a.ndim == 3:
-                if a.shape[0] != nbins:
-                    raise SystemExit(f"{name} has {a.shape[0]} planes, "
-                                     f"cube has {nbins} bins")
+            if a.ndim != 3:
+                out[name] = [a] * nbins
+            elif a.shape[0] == nbins:
                 out[name] = [a[e] for e in range(nbins)]
             else:
-                out[name] = [a] * nbins
+                grid = [float(x) for x in str(ebins).split(",") if x.strip()]
+                if energies is None or len(grid) != a.shape[0]:
+                    raise SystemExit(
+                        f"{name} has {a.shape[0]} planes, cube has {nbins} "
+                        f"bins, and EBINS is {ebins!r} - cannot place it in "
+                        f"energy")
+                out[name] = [FC._log_interp_cube(a, grid, e) for e in energies]
     for tag, fn in list(EXTRA.items()) + list(BULGES.items()):
         f = os.path.join(d, fn)
         if os.path.exists(f):
@@ -166,7 +185,7 @@ def main():
         for e in range(nb):
             base[e]["ps"] = ps_cube[e]
 
-    rings = load_rings(a.rings, nb)
+    rings = load_rings(a.rings, nb, emid)
     print(f"mask {a.mask}{'+PS' if a.ps else ''} keeps "
           f"{minfo['kept_fraction']:.1%}; {nb} bins {a.emin:g}-{a.emax:g} GeV; "
           f"{counts.sum():,.0f} photons")
@@ -237,15 +256,18 @@ def main():
         # check on whether the model can see a signal it is given
         # the injection is at a fixed flux for every level, so the question
         # is simply whether the level can see it
-        kept = inj / max(obs, 1e-9)
+        # ratio of what the level recovers to what it sees. Meaningless once
+        # the observed TS is at the floor - the level is already inadmissible
+        # there, and a ratio against nothing is not a diagnostic.
+        kept = inj / obs if obs > 1.0 else float("nan")
         ok = inj >= 25.0 and gain >= 25.0
         rows.append({"level": name, "n_diffuse": r["n_diffuse"],
                      "observed_ts": obs, "injected_ts": inj,
                      "boosted_gain": gain, "injected_fraction_kept": kept,
                      "usable": ok})
+        ratio = f"{kept:8.0%}" if kept == kept else f"{'n/a':>8}"
         print(f"{name:14} {r['n_diffuse']:8d} {obs:9.1f} {inj:9.1f} "
-              f"{gain:9.1f} {kept:8.0%}  "
-              f"{'yes' if ok else 'NO'}")
+              f"{gain:9.1f} {ratio}  {'yes' if ok else 'NO'}")
     use = [r["observed_ts"] for r in rows if r["usable"]]
     spread = max(use) / max(min(use), 1e-9) if len(use) > 1 else float("nan")
     print(f"\nacross admissible levels the observed TS spans a factor of "

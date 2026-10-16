@@ -47,6 +47,18 @@ Four properties of these files, each of which corrupts the template silently if 
 
 Code: `analysis/gap1/hestia_to_template.py` (reader, regridder, shape statistics) and `analysis/gap1/project_template.py` (analytic gNFW builder and geometry self-tests). Both self-test with no data present.
 
+**The particle file names are swapped within each pair.** The six Arrow files are named `HESTIA_{sim}_8192_G{xy}_minimal_particles.arrow`, and the file named `G11` holds the halo sitting at G1.2's AHF centre; G31/G32 likewise, 850+ kpc apart. `reduce.py` ignores the names and identifies each file by matching its dark-matter centroid to the AHF centres in the data readme — `whichcentre.py` prints the match. The *map* files carry the simulation and halo ID inside their names and map to G-labels the same way Muru's own `scripts/plot_6_galaxy_projections.jl` groups them, so §6.1's per-galaxy split does not come from the renamed particle files. It also cannot be checked: §3 of `docs/muru_conventions.md` shows his 24 maps correlate with each other at mean r = 0.81 in shape and 0.966 raw, so no map-level test can establish which halo is which. The ordering rests on his filenames.
+
+### 3.1 J-factor against squared column: the Comment, answered
+
+The published HESTIA maps are `dm2`, the square of the projected column, and the maps our fits use are those. Abazajian, Kumar & Macias (arXiv:2609.34155) object that this is not the annihilation morphology, which is ∫ρ² ds with the squaring done before projection. They are right twice over, and the size of the error is now measured.
+
+The first half is exact. Muru's axis ratio is the min/max singular value of the pixels at or above a fraction of the map's peak (`notebooks/azimuthal_analysis_erebos.jl`). The set `{m² ≥ f·max(m²)}` *is* the set `{m ≥ √f·max(m)}`, so q(m², f) = q(m, √f) identically: squaring a finished column map does not produce a new morphology, it relabels the level sequence. Under his estimator `dm2` and `dm` are the same one-parameter family of shapes, verified to the last bit in `muru_match.selftest()`. Whatever squaring the column is doing, it is not adding morphological information.
+
+The second half is a measurement. We built the real thing from the particle data he supplied — local density at each dark-matter particle from its 32nd nearest neighbour, floored at the 220 pc softening, then Σ mᵢρᵢ along each sight line in the same angular cone that gives Σ mᵢ for the column, so both carry the same geometry and the comparison isolates the squaring. Over six galaxies and four viewing angles at the 50% isophote, **the J-factor map is flatter than the squared column by q(J) − q(col²) = −0.032 ± 0.020, the same sign in 22 of 24 cases**; under a disc normal 47° away it is −0.041 ± 0.016, the same sign in 24 of 24. The result does not depend on the frame, which is what makes it quotable while the frame itself is unresolved (§3 of the memo).
+
+So the squared column over-rounds the halo, by about 0.03–0.04 in q. That is below the scatter of any current GCE morphology measurement and well below the factor-of-eighty background systematic in §6.0, so no conclusion in the HESTIA paper turns on it. It is not below the precision a q measurement is quoted to, so templates built from `dm2` should not be used to claim a flattening to better than about 0.05, and Gap 4 and Gap 7 should build from ∫ρ² ds directly now that the particle data are in hand. `analysis/gap1/muru_match.py`, `docs/muru_conventions.md`.
+
 ### Analysis steps specific to this gap
 
 1. **Two analysis levels on identical data.** *Level 1* — single pass, source list fixed. *Level 2* — iterative source-finding replicating Di Mauro (2026): fit → residual TS map → add sources above threshold → refit, with thresholds and stopping rule fixed in `configs/` in advance and applied identically to every template.
@@ -88,7 +100,10 @@ The first three aren't hypothetical — we hit them while building the templates
 
 ## 6. Preliminary Findings
 
-### 6.0 Our background model choice moves the detection by a factor of eighty
+### 6.0 Our background model choice moves the detection by a factor of thirty
+
+> **Corrected 2026-10-10.** The "factor of eighty" below was computed before the projected-Newton stall was fixed (§6.0b). With every split converged it is a **factor of thirty**: observed TS 8.7 to 264.4 across the five usable splits, not 3.8 to 305.6. Both extremes moved inward, which is what fixing an under-converged fit does — it understated lnL most where the model had the most freedom. The same five splits are usable and the conclusion is unchanged; only the number is wrong, and it is wrong in the memo and the mini-paper too. Mask D: factor 46 → 17, same three usable splits. Table R12 in `outputs/gap1/rings_tables.md` has both, before and after.
+
 
 **2026-09-28. This section supersedes the morphology conclusions in §6.1 to §6.5.**
 
@@ -127,9 +142,50 @@ The direct axis-ratio fit makes the same point from the other side. Running the 
 
 **And the test is itself a deliverable.** §2 frames this project around the Macias–Di Mauro contradiction: the same templates and gas maps giving opposite conclusions, with residuals of 30–40% in one case and ≤10% in the other. Table 11 is that disagreement reproduced inside one pipeline, and it says the disagreement does not need different data or different templates — a defensible change in how much the background may bend is enough to move a detection by eighty. Any team quoting a TS should run it. It takes a counts cube, a diffuse model and the templates under test, and needs nothing specific to Gap 1. Splits live in `configs/diffuse_freedom.yaml`, fixed before any run and identical for every template, on the same footing as `configs/level2.yaml`.
 
+### 6.0b Pohl22 re-run, 2026-10-08 — the answer flips, and it is now controlled
+
+**The stellar bulge wins, and the background could have seen dark matter if it were there.**
+
+This is the re-run §6.0 asked for: the single all-sky interstellar template replaced by Pohl22's gas-based ring decomposition, every section from 6.1 to 6.5 recomputed through it, and an injection control run for each template whose absence is being claimed. Tables R1–R7 in `outputs/gap1/rings_tables.md`; code `analysis/gap1/robustness_scan.py --rings`.
+
+**First, a bug.** Every ring fit was reporting `converged=False`, including the one in §6.9. The cause was in the fitter, not the data: a component sitting exactly at zero whose Newton direction points negative sets the maximum step to zero, the line search accepts a step that moves nothing, and the iteration spins on a frozen active set until it hits the cap. With one template it never happened; with sixteen it happened in the two highest-energy bins. Fixed — all eight bins now converge in 7–8 Newton steps with a summed lnL gap bound of 6×10⁻⁷, against 0.30 before, and `lnL` is bit-identical wherever it already converged. This is also what produced the impossible negative injected TS at 18 components. Per-bin `lnL_gap_bound` and `rank` are now in every output, so "converged" is a number rather than a flag.
+
+**Second, the controls, which decide what may be reported.** Admissibility turns out to be **per template**, which the old single control hid. On `rings_free` at Mask B + PS, a signal injected at the flux the baseline fit finds comes back at TS 82.9 for VVV, 33.8 for HESTIA and **23.6 for gNFW** — the same configuration passes the pre-registered threshold of 25 for two template classes and fails it for the third. A gNFW null read off that level would have been §6.9's mistake a second time. Under Mask D nothing is admissible once the background is ring-decomposed, and Mask A keeps 8.7% of the ROI and has no power at all. **Mask B + PS is the only usable configuration, and `rings_species` the most free level admissible for every template** (Tables R2, R3).
+
+**The result.** At `rings_species`, Mask B + PS, 1–10 GeV, with every template passing its own control:
+
+| template | TS | ΔAIC vs VVV |
+|---|---|---|
+| **VVV** | **2151.7** | — |
+| F98 (the other stellar bulge) | 1761.2 | +390 |
+| best of 24 HESTIA | 1263.2 | +888 |
+| gNFW γ = 1.2 | 526.2 | +1626 |
+
+On the single all-sky template the same data had HESTIA G2.1 *ahead* of VVV by ΔAIC −58. The ordering is reversed by the background model, and it reverses the moment the diffuse emission is allowed to follow the gas rather than one fixed map — already at five components. **H₀ᴬ is rejected on this background**: morphology does separate the stellar bulge from every dark-matter template we have, and the separation is not an artefact of the background being unable to see dark matter, because it demonstrably can (gNFW injected at the baseline flux returns TS 134.7 here).
+
+**The background systematic shrinks with it.** Across admissible levels the observed TS spans a factor of 11, against the factor of eighty §6.0 found with geometric latitude splits. Gas astronomy is a much tighter constraint on diffuse freedom than our arbitrary bands were, which is what §6.0 predicted.
+
+**What this does to the earlier sections.** §6.1's correlation is gone: on this background the published recipe gives ρ = −0.19 (p 0.37) at Mask B and +0.06 (p 0.77) at Mask D, and the alternatives reach at best +0.46 at p 0.03 in one cell out of six looks. §6.2's ordering is reversed as above. §6.3's masks are settled by the controls rather than by their TS. §6.4 keeps the 1–3 GeV peak — VVV 1629, best HESTIA 968 — and the 0.5–1 GeV band detects nothing at all for any template, which is an empty cell, not a null. §6.5's triaxial ordering survives in direction, vertical flattening over in-plane at 764 against 643, with both far behind the bulge.
+
+**The injection flux, stated plainly, and what it costs.** The flux injected for every admissibility test is the flux that template itself fits against the single-template `gll_iem_v07` baseline — VVV 6.39×10⁻⁸, gNFW 6.03×10⁻⁸, HESTIA 9.55×10⁻⁸ ph cm⁻² s⁻¹, already within a factor 1.6 of each other. Repeated with everything injected at one common flux and one common spectrum, the stellar bulges recover TS 255–356 and the dark-matter templates 66–92: **the pipeline is about three times more sensitive in TS to a bulge morphology than to a dark-matter one**, a factor 1.7 in flux. Every template still clears 25 by a wide margin, so a dark-matter signal of that brightness would have been seen — but the ΔAIC of +1626 is not a comparison at equal sensitivity, and should not be quoted as one (Table R8).
+
+**So the ordering was tested directly: does the fit pick the right template when the answer is known?** Build a sky from `rings_species`'s own fitted background plus a known template, then run the whole 40-template ordering on it. Six skies — VVV, HESTIA G3.2 90°, gNFW 1.2, each at the baseline flux and again at the flux it actually fits — and the fit recovers the correct **morphology class six times out of six**, with the exact template ranked first in four of six; in the two misses the templates above it are its own neighbours in γ within 2.5 of TS. **The pipeline is not biased towards the bulge: when the sky contains dark matter, the fit prefers dark matter** (Table R9). One number runs the other way and is worth stating: on a sky that truly contains VVV at its fitted flux the best dark-matter template reaches 1835 against VVV's 2094, a gap of 259, while on the real data the gap is 888. The data discriminate more sharply than a simulated pure bulge does, so the ordering is not being produced by the dark-matter templates being handicapped.
+
+**The inverse-Compton interpolation is a footnote.** Pohl's IC maps carry stored planes at 1.32, 2.28, 4.05 and 7.4 GeV. Restricted to 1–2.37 GeV, which brackets two stored planes and extrapolates nowhere, the ordering is unchanged: VVV 1142.6, F98 880.3, best HESTIA 697.5, ΔAIC +445, with all three controls admissible in the band. The result does not live on the interpolation (Table R10).
+
+**Mask A cannot localise the Macias–Di Mauro contradiction.** Mask A masks every 4FGL source with an r95 + 0.5° disc; with the real catalogue's 715 sources the discs overlap and leave **8.7%** of the ROI at 1 GeV, the baseline normalisation runs away to twenty times the Mask B value, and nothing is admissible — injected TS 6.4 to 18.8 against the threshold of 25. Dark matter does not appear under it; the ordering is the same and every number in it is uninterpretable. Mask A is also not Di Mauro's configuration: he models point sources through Level-2 iterative source finding rather than masking them, which is what Mask B + PS approximates. The contradiction therefore localises to the pipeline rather than the mask — by elimination, not by a positive test — and settling it needs Level-2 source finding, which is Gap 5's (Table R11).
+
+**Two things for the results text.** The parametric boxy bulge is *better recovered* than the non-parametric one: injected at a common flux, F98 returns TS 355.6 against VVV's 255.2, so the template that wins on the data is not the template the pipeline is most sensitive to — which makes VVV's win on the sky harder to explain as a sensitivity effect, not easier. And the real mask is now audited: with 4FGL-DR4 over 1–10 GeV, Mask A keeps **8.7%** of the ROI (0.4% in the lowest bin, 21.4% in the highest), Mask C 8.6%, Mask D 71.0%, Mask B 85.9%. The self-test used to build its masks from 40 synthetic sources and assert only that 50–99.9% survived, so it never exercised the mask any result actually used; `masks/make_masks.py --audit <catalogue>` now does, the fit self-test calls it when `GAP1_CATALOG` is set, and it prints a warning naming what was *not* tested when it is not.
+
+**Still open.** The Macias configuration — adding Pohl's nuclear bulge — collapses the dark-matter templates to TS 22 and 12, reproducing his result, but `rings_free_NB` cannot recover an injected HESTIA (15.8) or gNFW (21.4) either, so it remains a loss of discriminating power rather than evidence, now confirmed with the dark-matter template injected rather than the bulge. The 18-component level fails every control. And the inverse-Compton maps carry only four stored energy planes, interpolated onto eight bins, so the six IC normalisations are not eight independent measurements each.
+
 ### 6.1 Headline result
 
 > **Withdrawn 2026-09-28 (§6.0).** The correlation below is computed at one arbitrary point on a background-model range that moves the detection by a factor of eighty, and a flattened template is exactly what a rigid diffuse model recruits to fix its plane residual. Kept as written so the correction is visible. Re-run when a ring-decomposed IEM lands.
+
+> **Third withdrawal, 2026-10-08.** Re-run on the Pohl22 ring decomposition (§6.0b), the correlation is ρ = −0.19 (p 0.37) under the published recipe. It is not being re-reported. Written up as a sensitivity study in `docs/gap1_61_sensitivity.md`.
+
+> **Second withdrawal, 2026-10-06 — the shape statistic is not robust either.** ρ moves from −0.65 to +0.46 with the isophote alone, on the same maps against the same fits: +0.656 at 5% of peak on the uncropped map (as published), +0.268 at the same level on the cropped ROI, +0.463 at 10%, −0.251 at 50% where Muru himself measures, −0.653 at 2% where every level set has reached the ROI edge. Letting q vary per viewing angle instead of per galaxy drops it to +0.217. Within a single galaxy, across its four angles, ρ is +0.4, +0.4, +0.4, −0.4, −0.2, 0.0. The correlation is the between-galaxy spread of six numbers and the honest n is 6, where p = 0.07. Afeefa's four-way run at 5% of peak: squared column / current reconstruction +0.428 (p 0.037), J-factor / current +0.047, squared column / matched +0.223, J-factor / matched −0.062. None reproduces +0.73. `docs/muru_conventions.md` §4.
 
 **The Fermi data select a flattening, and do not care where it comes from.**
 
