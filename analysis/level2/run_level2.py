@@ -95,7 +95,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ccube", required=True)
     ap.add_argument("--expcube", required=True)
-    ap.add_argument("--iem", required=True)
+    ap.add_argument("--iem", default="",
+                    help="single diffuse cube; needed unless --components")
+    ap.add_argument("--components", default="",
+                    help="folder of diffuse cubes, one free norm each (gap 5)")
+    ap.add_argument("--label", default="",
+                    help="diffuse model name for the output")
     ap.add_argument("--catalog", required=True)
     ap.add_argument("--rings", default="")
     ap.add_argument("--level", default="rings_species")
@@ -112,6 +117,8 @@ def main():
                          "morphology can be compared with what went in")
     ap.add_argument("--flux-template", default="")
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--checkpoint", action="store_true",
+                    help="save progress in --out so a killed run resumes")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -123,13 +130,31 @@ def main():
     emid = np.sqrt(e_lo * e_hi)
     nb = len(emid)
     exposure, _ = FC.read_expcube(a.expcube, emid, chdr)
-    iem, _ = FC.read_iem(a.iem, emid)
+    comp_cubes = {}
+    if a.components:
+        files = sorted(glob.glob(os.path.join(a.components, "*.fits")))
+        if not files:
+            raise SystemExit(f"no .fits cubes in {a.components}")
+        for f in files:
+            comp_cubes[os.path.basename(f)[:-5]] = FC.read_iem(f, emid)[0]
+    if a.iem:
+        iem, _ = FC.read_iem(a.iem, emid)
+    elif comp_cubes:
+        # only mask E needs this
+        iem = sum(comp_cubes.values())
+    else:
+        raise SystemExit("need --iem or --components")
     mask, minfo = FC.build_masks(a.catalog, emid, a.mask,
                                  e_lo=e_lo, e_hi=e_hi, iem=iem)
     flat = RG.normalise(np.ones(counts.shape[1:]))
     bub, _ = FC.load_template(os.path.join(T, "gap1_bubbles_fuzzy.fits"))
 
     diffuse = [{"iem": RG.normalise(iem[e])} for e in range(nb)]
+    if comp_cubes:
+        if a.rings:
+            raise SystemExit("--components and --rings are alternatives")
+        diffuse = [{f"iem_{k}": RG.normalise(np.maximum(c[e], 0.0))
+                    for k, c in comp_cubes.items()} for e in range(nb)]
     if a.rings:
         ladder = FR.levels(FR.load_rings(a.rings, nb, emid), iem, nb)
         diffuse = ladder[a.level]
@@ -139,10 +164,13 @@ def main():
         for e in range(nb):
             bg[e]["ps"] = ps[e]
 
+    model_name = a.label or (os.path.basename(os.path.normpath(a.components))
+                             if comp_cubes else
+                             (a.level if a.rings else "gll_iem_v07"))
     sig = signal_library(T, os.path.join(T, "gnfw_scan"))
     print(f"mask {a.mask}{'+PS' if a.ps else ''} keeps "
           f"{minfo['kept_fraction']:.1%}; {nb} bins {a.emin:g}-{a.emax:g} GeV; "
-          f"background {a.level if a.rings else 'gll_iem_v07'} "
+          f"background {model_name} "
           f"({len(bg[0])} components); {len(sig)} templates", flush=True)
 
     # optional simulated sky with a known morphology in it
@@ -184,14 +212,18 @@ def main():
     t0 = time.time()
     rows, record = [], {"arm": a.arm, "mask": a.mask, "ps": bool(a.ps),
                         "emin": a.emin, "emax": a.emax,
-                        "diffuse_model": a.level if a.rings else "gll_iem_v07",
+                        "diffuse_model": model_name,
+                        "n_diffuse_components": len(diffuse[0]),
                         "kept_fraction": minfo["kept_fraction"],
                         "stopping_rule": cfg, "simulated_sky": truth_info,
                         "seed": a.seed}
 
     if a.arm == "neutral":
         print("finding sources with NO signal in the model", flush=True)
-        comps, fit0, found = L2.run(counts, exposure, bg, emid, mask, cfg)
+        ck = os.path.join(a.out, "ckpt_neutral_sources.json") if a.checkpoint else None
+        comps, fit0, found = L2.run(counts, exposure, bg, emid, mask, cfg, checkpoint=ck)
+        rows_ck = os.path.join(a.out, "ckpt_neutral_rows.json")
+        done = json.load(open(rows_ck)) if (a.checkpoint and os.path.exists(rows_ck)) else {}
         k0 = n_params(comps, nb)
         print(f"\n{len(found)} sources added; background lnL "
               f"{fit0['lnL_total']:,.2f}; {k0} free normalisations "
@@ -200,6 +232,9 @@ def main():
             ("name", "residual_ts", "l", "b", "pass", "index"), f))
             for f in found]
         for i, (name, t) in enumerate(sig.items(), 1):
+            if name in done:
+                rows.append(done[name])
+                continue
             c = [{**comps[e], "sig": t} for e in range(nb)]
             r = FL.fit(counts, exposure, c, emid, mask)
             rows.append({"template": name, "lnL": r["lnL_total"],
@@ -210,14 +245,25 @@ def main():
                          "max_lnL_gap": max(b["lnL_gap_bound"] for b in r["bins"])})
             print(f"  [{i:2d}/{len(sig)}] {name:22s} TS {rows[-1]['TS']:9.1f}",
                   flush=True)
+            if a.checkpoint:
+                done[name] = rows[-1]
+                json.dump(done, open(rows_ck + ".tmp", "w"))
+                os.replace(rows_ck + ".tmp", rows_ck)
     else:
         want = [s for s in a.joint_templates.split(",") if s]
+        rows_ck = os.path.join(a.out, "ckpt_joint_rows.json")
+        done = json.load(open(rows_ck)) if (a.checkpoint and os.path.exists(rows_ck)) else {}
         for i, name in enumerate(want, 1):
+            if name in done:
+                rows.append(done[name])
+                continue
             t1 = time.time()
             print(f"\n[{i}/{len(want)}] finding sources WITH {name} in the model",
                   flush=True)
             bgs = [{**bg[e], "sig": sig[name]} for e in range(nb)]
-            comps, fit, found = L2.run(counts, exposure, bgs, emid, mask, cfg)
+            ck = (os.path.join(a.out, f"ckpt_joint_{name}_sources.json")
+                  if a.checkpoint else None)
+            comps, fit, found = L2.run(counts, exposure, bgs, emid, mask, cfg, checkpoint=ck)
             k = n_params(comps, nb)
             rows.append({"template": name, "lnL": fit["lnL_total"],
                          "n_sources": len(found), "n_params": k,
@@ -230,6 +276,10 @@ def main():
             print(f"  {name}: {len(found)} sources, lnL {fit['lnL_total']:,.2f}, "
                   f"k {k}, AIC {rows[-1]['AIC']:,.2f} "
                   f"({time.time() - t1:.0f}s)", flush=True)
+            if a.checkpoint:
+                done[name] = rows[-1]
+                json.dump(done, open(rows_ck + ".tmp", "w"))
+                os.replace(rows_ck + ".tmp", rows_ck)
         best = min(r["AIC"] for r in rows)
         for r in rows:
             r["dAIC_vs_best"] = r["AIC"] - best
@@ -260,7 +310,7 @@ def main():
                        "point_source_template": bool(a.ps),
                        "kept_fraction": minfo["kept_fraction"],
                        "emin": a.emin, "emax": a.emax,
-                       "diffuse_model": a.level if a.rings else "gll_iem_v07",
+                       "diffuse_model": model_name,
                        "n_diffuse_components": len(diffuse[0]),
                        "level": 2, "n_sources": len(found),
                        "simulated_sky": truth_info,

@@ -1,0 +1,130 @@
+# Gap 5: the Cholis et al. (2022) models through the Level 2 pipeline.
+#
+# Fixed before any Family 2 model is fitted. Applied identically to every
+# model. Changing it between two runs that get compared would create the
+# IEM dependence this gap exists to measure.
+#
+# The Level 2 stopping rule lives in configs/level2.yaml and is not repeated
+# here. File paths go on the command line.
+
+seed: 42
+
+selection:
+  rule: >-
+    greedy, largest sum of distances to the chosen set, started from the six
+    Table II models (Hussain). Audited in analysis/gap5/iem_selection_audit.py:
+    4 distinct ISRF/gas/B-field setups among the 12, and the library's vA = 50
+    and dv_c/dz = 200 extremes sit only in the six seeds.
+  status: provisional, re-selection pending the full Table VIII
+  ids: [5, 7, 17, 19, 22, 25, 27, 30, 51, 52, 53, 56]
+  roman: {5: V, 7: VII, 17: XVII, 19: XIX, 22: XXII, 25: XXV, 27: XXVII,
+          30: XXX, 51: LI, 52: LII, 53: LIII, 56: LVI}
+  # Table II of the paper. Run alongside the 12 when their maps are in hand:
+  # they hold the extremes and two of the paper's five best fits (X, XV).
+  anchors: [1, 2, 3, 6, 10, 15]
+  # re-selection (analysis/gap5/select_models.py, table viii rebuilt from the
+  # 80 galdef files). amended 2026-10-19 before any family 2 fit: "every gas
+  # configuration at least once" is impossible with 12 (the library has 27),
+  # so every VALUE of each gas setting (X_CO model, HI map, HII model) and
+  # both source profiles must appear, then farthest-point fills the rest.
+  reselected: [I, II, III, VI, X, XV, LXVII, IX, XXVII, XXXIX, XLV, XXVI]
+  original: [V, VII, XVII, XIX, XXII, XXV, XXVII, XXX, LI, LII, LIII, LVI]
+  # both sets are run (23 models, XXVII is in both) and judged separately
+
+families:            # by ISRF, gas, source profile, B-field. Not 12 independent draws.
+  A: [17, 19, 22, 25, 27, 30]   # ISRF 0.7,0.7,1 | gas 9,4,1 | Pul/Pul | B 025200010
+  B: [5, 7, 53]                 # ISRF 1.4,1.4,1 | gas 0,5,2 | Pul/SNR | B 200040050
+  C: [51, 52]                   # ISRF 1.4,1.4,1 | gas 9,5,1 | Pul/SNR | B 200030050
+  D: [56]                       # ISRF 1,1,1     | gas 0,5,2 | Pul/SNR | B 050100020
+
+descriptors:         # strings, so the B-field codes keep their leading zeros
+  5:  {zL: "10",  D0: "10",   delta: "0.33", vA: "32.2", dvc_dz: "0",   alpha_p: "1.7, 2.39",  alpha_e: "1.6, 2.33", Np_Ne: "1, 2.66",   ISRF: "1.4, 1.4, 1", gas_H2_HI_HII: "0, 5, 2", SN_Se: "Pul/SNR", B_field: "200040050"}
+  7:  {zL: "10",  D0: "8",    delta: "0.33", vA: "0",    dvc_dz: "0",   alpha_p: "1.4, 1.8",   alpha_e: "1.4, 2.3",  Np_Ne: "1.3, 3.33", ISRF: "1.4, 1.4, 1", gas_H2_HI_HII: "0, 5, 2", SN_Se: "Pul/SNR", B_field: "200040050"}
+  17: {zL: "5.6", D0: "4.85", delta: "0.4",  vA: "24",   dvc_dz: "1",   alpha_p: "2, 2.25",    alpha_e: "1.6, 2.3",  Np_Ne: "5.8, 2",    ISRF: "0.7, 0.7, 1", gas_H2_HI_HII: "9, 4, 1", SN_Se: "Pul/Pul", B_field: "025200010"}
+  19: {zL: "6",   D0: "6.5",  delta: "0.33", vA: "30",   dvc_dz: "0",   alpha_p: "2.04, 2.41", alpha_e: "1.6, 2.43", Np_Ne: "5.8, 2",    ISRF: "0.7, 0.7, 1", gas_H2_HI_HII: "9, 4, 1", SN_Se: "Pul/Pul", B_field: "025200010"}
+  22: {zL: "5.5", D0: "5.5",  delta: "0.37", vA: "30",   dvc_dz: "2.5", alpha_p: "2, 2.38",    alpha_e: "1.6, 2.43", Np_Ne: "5.8, 2",    ISRF: "0.7, 0.7, 1", gas_H2_HI_HII: "9, 4, 1", SN_Se: "Pul/Pul", B_field: "025200010"}
+  25: {zL: "5.7", D0: "3.9",  delta: "0.45", vA: "25.7", dvc_dz: "6",   alpha_p: "1.99, 2.36", alpha_e: "1.6, 2.43", Np_Ne: "5.8, 2",    ISRF: "0.7, 0.7, 1", gas_H2_HI_HII: "9, 4, 1", SN_Se: "Pul/Pul", B_field: "025200010"}
+  27: {zL: "6",   D0: "3.1",  delta: "0.5",  vA: "23",   dvc_dz: "9",   alpha_p: "2.02, 2.38", alpha_e: "1.6, 2.43", Np_Ne: "5.8, 2",    ISRF: "0.7, 0.7, 1", gas_H2_HI_HII: "9, 4, 1", SN_Se: "Pul/Pul", B_field: "025200010"}
+  30: {zL: "3",   D0: "2.67", delta: "0.4",  vA: "22",   dvc_dz: "3",   alpha_p: "2.08, 2.41", alpha_e: "1.6, 2.43", Np_Ne: "5.8, 2",    ISRF: "0.7, 0.7, 1", gas_H2_HI_HII: "9, 4, 1", SN_Se: "Pul/Pul", B_field: "025200010"}
+  51: {zL: "6",   D0: "2",    delta: "0.33", vA: "0",    dvc_dz: "60",  alpha_p: "1.6, 2.3",   alpha_e: "1.6, 2.26", Np_Ne: "1.5, 5.9",  ISRF: "1.4, 1.4, 1", gas_H2_HI_HII: "9, 5, 1", SN_Se: "Pul/SNR", B_field: "200030050"}
+  52: {zL: "6",   D0: "2",    delta: "0.33", vA: "0",    dvc_dz: "100", alpha_p: "1.6, 2.3",   alpha_e: "1.6, 2.26", Np_Ne: "1.5, 5.9",  ISRF: "1.4, 1.4, 1", gas_H2_HI_HII: "9, 5, 1", SN_Se: "Pul/SNR", B_field: "200030050"}
+  53: {zL: "10",  D0: "8",    delta: "0.33", vA: "32.2", dvc_dz: "100", alpha_p: "1.4, 1.8",   alpha_e: "1.4, 2.3",  Np_Ne: "1.3, 3.33", ISRF: "1.4, 1.4, 1", gas_H2_HI_HII: "0, 5, 2", SN_Se: "Pul/SNR", B_field: "200040050"}
+  56: {zL: "6",   D0: "40",   delta: "0.33", vA: "0",    dvc_dz: "0",   alpha_p: "1.89, 2.1",  alpha_e: "1.4, 2.1",  Np_Ne: "2, 1.1",    ISRF: "1, 1, 1",     gas_H2_HI_HII: "0, 5, 2", SN_Se: "Pul/SNR", B_field: "050100020"}
+
+references:          # same component format, same code path
+  gll_iem_v07: Family 1
+  pohl22_rings_species: Gap 1 background
+
+iem:
+  source: Zenodo record 6423495 (GCE_TEMPLATES_ZENODO_FILES_v3.zip)
+  layout: components     # pi0, bremss, ics, each free; convert_iem.py
+  converted_dir: outputs/gap5/components
+  model_dir_name: cholis_{roman}
+
+analysis:
+  masks: [B, D]          # B primary. A has no admissible split; C = A at GeV
+  ps: true
+  bubbles: fuzzy
+  primary_energy: [1.0, 10.0]                 # gap1_ccube.fits, as Gap 1 Level 2
+  secondary_energy: [[0.5, 3.0], [3.0, 50.0]] # gap1_ccube_full.fits
+  arms: [neutral, joint]   # neutral first: it picks the extra joint templates
+  joint_templates: [vvv, f98, gnfw_g1.2, gnfw_g1.4, hestia_G3.2_ang90, hestia_G2.2_ang90]
+  # amended 2026-10-19, before any Family 2 model was run: the list above is
+  # Gap 1's, i.e. the halos that were best under Pohl22. Under gll_iem_v07 a
+  # different halo is best and the joint arm never saw it. So the joint arm
+  # also gets the best HESTIA and best gNFW of that model's own neutral arm
+  # (highest lnL, equal k), whatever the model.
+  joint_add_best_of_neutral: ["hestia_*", "gnfw_*"]
+  # amended 2026-10-19 after cholis_I and cholis_V had started (their joint
+  # arms keep the full list): under the Cholis models Level 2 adds ~20 sources
+  # and each joint template costs 7-8 min, ~100 min a model. The verdict is
+  # the CLASS of the lowest-AIC template, so the joint arm only needs the
+  # bulge pair plus the best gNFW and best HESTIA of the neutral arm.
+  joint_templates_family2: [vvv, f98]
+
+admissibility:       # Level 1, per model and mask. Same test as Gap 1's ring work
+  controls: [gnfw_g1.2, vvv]
+  flux_from: gll_iem_v07      # inject at the flux the control fits under Family 1,
+                              # same mask, so every model faces the same signal
+  ts_injected_min: 25
+  boosted_gain_min: 25
+
+ladder:              # q of the excess at Level 1, against Di Mauro's r = 1.10 +- 0.05
+  q_min: 0.10           # amended 2026-10-19 from 0.30: under Pohl22 the profile
+                         # still rises at 0.30. Before any Family 2 run
+  q_max: 1.40
+  q_step: 0.05
+  energy: [1.0, 10.0]
+
+controls:            # direct injection: does the true template win under this model?
+  # chosen by rule, before any result: the lowest-numbered model of each family
+  models: [5, 17, 51, 56]
+  inject: [gnfw_g1.2, vvv, "null"]
+  mask: B
+  arm: joint
+
+decision_rule:
+  classes:              # name patterns
+    bulge: [vvv, f98]
+    spherical: ["gnfw_*"]
+    flattened: ["hestia_*"]
+  primary: {mask: B, energy: [1.0, 10.0], arm: joint}
+  verdict: class of the lowest-AIC template
+  decisive_dAIC: 10      # best of winning class vs best of the next class
+  gap1_verdict: bulge
+  detected_ts_min: 25    # neutral-arm TS of the winning template
+  competitive: >-
+    penalty = (best AIC under this model) - (best AIC under any Family 2 model).
+    A flip counts only if penalty < |AIC of the winner - AIC of the best bulge
+    template| under the same model.
+  h0_rejected_if: >-
+    any model that is admissible and competitive gives a decisive non-bulge
+    verdict, or loses the excess (winner TS < 25)
+  report: per model and per family; nothing is dropped from the table
+
+validation:
+  # pohl22_rings_species through --components must give back Gap 1 Level 2
+  pohl22_joint_maskB:
+    vvv: {lnL: 554484.945, n_sources: 10}
+    gnfw_g1.2: {lnL: 554235.082, n_sources: 13}
+    tolerance_lnL: 0.01
