@@ -1,0 +1,13 @@
+background,injected,recovered,recovered_class,pass,margin_to_next_class,n_sources,true_class_behind_by
+V,gnfw_g1.2,gnfw_g1.1,spherical,True,20.5,0,
+V,vvv,f98,bulge,True,34.9,0,
+V,null,nothing,,True,0.5,0,
+XVII,gnfw_g1.2,hestia_G3.2_ang60,flattened,False,1.0,0,2.9
+XVII,vvv,f98,bulge,True,11.5,0,
+XVII,null,nothing,,True,0.0,0,
+LI,gnfw_g1.2,gnfw_g1.2,spherical,True,16.5,0,
+LI,vvv,vvv,bulge,True,2.2,0,
+LI,null,nothing,,True,0.5,0,
+LVI,gnfw_g1.2,gnfw_g1.4,spherical,True,21.5,0,
+LVI,vvv,f98,bulge,True,32.6,0,
+LVI,null,nothing,,True,2.2,0,

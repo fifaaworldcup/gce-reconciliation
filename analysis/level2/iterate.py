@@ -98,8 +98,16 @@ def _blocked(ll, bb, found, min_sep, edge):
     return block
 
 
+def _save(path, found, pix):
+    import json
+    tmp = path + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump([list(x) + list(p) for x, p in zip(found, pix)], f)
+    os.replace(tmp, path)
+
+
 def run(counts, exposure, background, energies, mask=None, config=None,
-        verbose=True):
+        verbose=True, checkpoint=None):
     """Iterate. `background` is the component set BEFORE any new sources:
     one dict, or one dict per energy bin. Returns (components, fit, found)."""
     cfg = config or load_config()
@@ -107,10 +115,26 @@ def run(counts, exposure, background, energies, mask=None, config=None,
     comps = ([dict(background) for _ in energies]
              if isinstance(background, dict) else [dict(b) for b in background])
 
+    found, pix = [], []
+    if checkpoint and os.path.exists(checkpoint):
+        # picks up after a restart: put back the sources already found
+        import json
+        for row in json.load(open(checkpoint)):
+            name, i, j = row[0], int(row[6]), int(row[7])
+            for e in range(len(energies)):
+                comps[e][name] = point_source_map(i, j)
+            found.append(tuple(row[:6]))
+            pix.append((i, j))
+        if verbose:
+            print(f"    resumed with {len(found)} sources from {os.path.basename(checkpoint)}",
+                  flush=True)
     fit = FL.fit(counts, exposure, comps, energies, mask)
-    found = []
+    done_pass = found[-1][4] if found else None
     for thresh in cfg["passes"]:
-        for _ in range(int(cfg["max_sources_per_pass"])):
+        if done_pass is not None and thresh > done_pass:
+            continue
+        already = sum(1 for f in found if f[4] == int(thresh))
+        for _ in range(int(cfg["max_sources_per_pass"]) - already):
             ts = residual_ts_map(counts, exposure, comps, energies, fit, mask)
             ts = np.where(_blocked(ll, bb, found, cfg["min_separation_deg"],
                                    cfg["edge_margin_deg"]), 0.0, ts)
@@ -136,6 +160,9 @@ def run(counts, exposure, background, energies, mask=None, config=None,
             fit = FL.fit(counts, exposure, comps, energies, mask, x0=x0)
             found.append((name, float(ts[i, j]), float(ll[i, j]), float(bb[i, j]),
                           int(thresh), len(found) + 1))
+            pix.append((int(i), int(j)))
+            if checkpoint:
+                _save(checkpoint, found, pix)
             if verbose:
                 print(f"    + {name} at l={ll[i, j]:+.2f} b={bb[i, j]:+.2f} "
                       f"residual TS {ts[i, j]:.0f} (pass {thresh})", flush=True)

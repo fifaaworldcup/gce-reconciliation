@@ -304,3 +304,199 @@ the control flux, which together account for perhaps a third of it. I have
 not isolated the rest. The verdicts do not depend on it and the new numbers
 come from the current, converged code, but it is worth one hour before the
 memo is final.
+
+## Table R13. Level 2: iterative source finding instead of a fixed mask
+
+The last candidate explanation for Macias versus Di Mauro. He lets the fit
+add point sources; we mask a fixed catalogue. Mask A eliminated itself
+(Table R11), so this is what was left.
+
+One design choice decides the answer, so both ways were run. **neutral**:
+find sources with no signal in the model, then fit every template against
+that one common source list - equal parameter count, but the iteration has
+already had free rein to absorb the excess, so it is biased *against* any
+signal. **joint**: find sources with the candidate already in the model,
+one run per hypothesis, which is what Di Mauro does - each hypothesis gets
+its best shot, at the cost of different source counts, so the comparison
+uses the full AIC = 2k - 2lnL rather than dAIC = -2 dlnL.
+
+### neutral arm: 12 sources added, one common list
+
+| template | TS | dAIC vs VVV |
+|---|---|---|
+| `vvv` | 1018.2 | -0.0 |
+| `f98` | 840.3 | +177.9 |
+| `hestia_G3.2_ang90` | 567.8 | +450.3 |
+| `hestia_G3.1_ang60` | 515.1 | +503.0 |
+| `hestia_G2.2_ang90` | 473.8 | +544.4 |
+| `hestia_G2.2_ang0` | 466.6 | +551.6 |
+
+Sources found, in order (residual TS at the moment each was added):
+
+| source | l | b | residual TS | pass |
+|---|---|---|---|---|
+| src000 | -18.35 | +0.15 | 681 | 100 |
+| src001 | -3.65 | +1.15 | 324 | 100 |
+| src002 | -10.25 | +0.15 | 283 | 100 |
+| src003 | +17.35 | +2.45 | 203 | 100 |
+| src004 | +6.35 | +4.95 | 168 | 100 |
+| src005 | +18.85 | -0.35 | 138 | 100 |
+| src006 | -0.35 | +0.35 | 93 | 64 |
+| src007 | -3.05 | -2.25 | 84 | 64 |
+| src008 | +3.55 | +1.95 | 66 | 64 |
+| src009 | +14.95 | +9.25 | 63 | 36 |
+| src010 | -17.15 | -2.75 | 50 | 36 |
+| src011 | +16.85 | -1.85 | 44 | 36 |
+
+One of them, `src006`, sits at l = -0.35, b = +0.35 - on the Galactic
+Centre. That is the mechanism this test exists to catch: a point source
+placed on the excess eats it. It does, and the ordering still holds.
+
+### joint arm: one source search per hypothesis
+
+| hypothesis | sources added | free normalisations | lnL | AIC | dAIC |
+|---|---|---|---|---|---|
+| `vvv` | 10 | 152 | 554,484.95 | -1,108,665.89 | +0.0 |
+| `f98` | 10 | 152 | 554,354.82 | -1,108,405.63 | +260.3 |
+| `gnfw_g1.4` | 13 | 176 | 554,288.99 | -1,108,225.98 | +439.9 |
+| `gnfw_g1.2` | 13 | 176 | 554,235.08 | -1,108,118.16 | +547.7 |
+| `hestia_G3.2_ang90` | 10 | 152 | 554,182.35 | -1,108,060.69 | +605.2 |
+| `hestia_G2.2_ang90` | 10 | 152 | 554,092.06 | -1,107,880.11 | +785.8 |
+
+**Both arms put the stellar bulge first.** The neutral arm gives VVV 1018.2
+against 567.8 for the best of the 24 HESTIA templates, dAIC +450, and that
+is the arm biased against a signal. The joint arm, where every hypothesis
+runs its own source search, puts VVV ahead of the best dark-matter template
+by +605 on full AIC - and the gNFW hypotheses needed **three extra point
+sources** (13 against 10) to patch what their template could not fit, and
+lost anyway.
+
+**So Level 2 is not the explanation either.** Within this implementation,
+iterative source finding does not reverse the ordering; it lowers every TS
+by roughly half (VVV 2151.7 to 1018.2) and leaves the ranking alone.
+
+The honest limit: this is a reimplementation of the procedure Di Mauro
+describes, not his pipeline. Ours adds 10-13 sources over a 40x40 deg ROI
+in 1-10 GeV; his works over a larger region and a wider band and adds far
+more. A null from our version is evidence that source finding does not
+flip the ordering *here*, not proof that his does not flip it *there*.
+
+## Table R14. What Level 2 does to a morphology, and what it invents
+
+Three simulated skies, each built from `rings_species`'s own fitted
+background, run through the full iteration and then the 40-template
+ordering.
+
+| simulated sky | injected flux | sources added | winner | truth's rank |
+|---|---|---|---|---|
+| flattened HESTIA G3.2 90 deg | 2.1477e-07 | **1** | `hestia_G3.2_ang90` at TS 465.9 | 1/40 |
+| spherical gNFW 1.2 | 2.1477e-07 | **1** | `gnfw_g1.2` at TS 378.3 | 1/40 |
+| nothing at all | 0.0000e+00 | **0** | `hestia_G3.2_ang90` at TS 5.3 | n/a |
+
+**The iteration does not round off morphology.** A flattened halo injected
+at 2.15e-07 comes back as itself, ranked 1 of 40 - and the spherical
+control at matched flux also comes back as itself, which is the half that
+makes the first half mean anything. Without it, 'the flattened one survived'
+would be equally consistent with a pipeline that returns whatever it is
+given.
+
+**And it invents nothing.** On a sky with no signal and no sources beyond
+the background model, the iteration adds **zero** sources and the best of
+all 40 templates reaches TS 5.3. The 12 sources it finds on the real sky
+are therefore structure the ring model misses, not an artefact of the
+method - which is also the first real number for Gap 5's phantom question.
+
+One observation worth carrying: the iteration adds 12 sources to the real
+sky and 0-1 to a simulated one drawn from the same background. The
+simulated skies are drawn from the model, so by construction they contain
+nothing the model cannot describe. The gap between 12 and 0 is a measure of
+how much real structure Pohl22 still misses.
+
+## Table R15. The Mask D injected-TS discrepancy, closed
+
+Flagged in Table R12: recomputing the diffuse-freedom splits with the
+converged fitter moved Mask D's injected TS from 8.6 to 37.8 for the rigid
+split, which a small mask change and a 15% control-flux shift could not
+explain. Afeefa asked for it closed or documented. It is closed.
+
+**It is the fitter bug, and Mask D is the configuration most exposed to**
+**it.** The stall needed a component sitting at exactly zero whose Newton
+direction points negative. Under Mask D the signal normalisation is driven
+to exactly zero in **three of eight bins**; under Mask B, in one.
+
+| bin | E GeV | Mask B + PS, pinned at zero | Mask D + PS, pinned at zero |
+|---|---|---|---|
+| 0 | 1.15 | bubbles | bubbles, **sig** |
+| 1 | 1.54 | bubbles | bubbles |
+| 2 | 2.05 | bubbles | - |
+| 3 | 2.74 | - | - |
+| 4 | 3.65 | - | - |
+| 5 | 4.87 | - | - |
+| 6 | 6.49 | - | **sig** |
+| 7 | 8.66 | **sig** | **sig** |
+
+The simulated sky for each split is built from that split's own fitted
+normalisations. A stalled fit therefore produced a wrong sky, and the
+injected TS measured on it was wrong - suppressed, and suppressed across
+every split, which is what the old Mask D table shows (injected TS 7.6 to
+9.4 for all six splits, against 25.6 to 37.8 now). The 15% control-flux
+change has the same cause: the flux is the sum of the fitted signal
+normalisations, and three of them were being solved at a point the
+iteration never reached.
+
+Mask B's injected TS moved by 1.4% over the same fix (181.7 to 184.3),
+which is the control on this explanation: one pinned bin, almost no change;
+three pinned bins, a factor of four.
+
+A hypothesis that was tested and is wrong, recorded so nobody retests it:
+the old run was **not** secretly using what is now Mask E. Mask E + PS
+keeps 86.7% of the ROI against the old run's 70.75%, so the relabel of
+2026-09-27 is not involved.
+
+## Table R16. What Level 2 found, cross-matched against 4FGL
+
+`analysis/level2/source_record.py`. Every mechanical column is filled in;
+`verdict` and `note` are left for a human. PSF evaluated at 1.15 GeV, the
+lowest bin, where it is widest - so 'inside the PSF' is the generous
+reading and anything called uncatalogued here is uncatalogued at every
+energy.
+
+| source | l | b | residual TS | nearest 4FGL | sep deg | inside 95% PSF |
+|---|---|---|---|---|---|---|
+| `src000` | -18.35 | 0.15 | 681.1 | 4FGL J1651.7-4359  | 0.145 | yes |
+| `src001` | -3.65 | 1.15 | 324.0 | 4FGL J1732.5-3131  | 0.148 | yes |
+| `src002` | -10.25 | 0.15 | 282.7 | 4FGL J1718.0-3726  | 0.03 | yes |
+| `src003` | 17.35 | 2.45 | 202.8 | 4FGL J1813.4-1246  | 0.106 | yes |
+| `src004` | 6.35 | 4.95 | 167.8 | 4FGL J1741.9-2054  | 0.088 | yes |
+| `src005` | 18.85 | -0.35 | 137.7 | 4FGL J1826.1-1256  | 0.295 | yes |
+| `src006` **(Galactic Centre)** | -0.35 | 0.35 | 92.7 | 4FGL J1744.9-2905  | 0.34 | yes |
+| `src007` | -3.05 | -2.25 | 83.9 | 4FGL J1746.8-3239  | 0.082 | yes |
+| `src008` | 3.55 | 1.95 | 66.1 | 4FGL J1745.7-2506  | 0.259 | yes |
+| `src009` | 14.95 | 9.25 | 62.6 | 4FGL J1744.4-1135  | 0.176 | yes |
+| `src010` | -17.15 | -2.75 | 50.0 | 4FGL J1709.7-4429  | 0.256 | yes |
+| `src011` | 16.85 | -1.85 | 44.3 | 4FGL J1829.4-1500c | 0.326 | yes |
+
+**All twelve fall inside the 95% PSF containment radius of a catalogued
+4FGL source, and ten of the twelve within 0.3 degrees.** Level 2 is
+rediscovering sources that are already known, not inventing new ones. With
+the null-sky result in Table R14 - zero sources added to a sky containing
+none - that is two independent statements that the iteration does not
+produce phantoms, and the first hard number for Gap 5's phantom question.
+
+Why it adds them at all, given that Mask B + PS already *models* the
+catalogue: the fitted point-source normalisation comes out at 0.76 to 0.92
+rather than 1.0 in every bin (sec 6.2). The template under-predicts those
+sources, and the iteration tops them up at the same positions. That is a
+statement about our point-source spectral integration, not about the sky.
+
+`src006` at l = -0.35, b = +0.35 matches 4FGL J1744.9-2905 at 0.34 deg -
+a catalogued Galactic Centre source. So the source that sits on the excess
+and eats part of it is a real one, which makes the ordering surviving it a
+stronger result than if it had been a phantom.
+
+The judgement left for a reviewer is therefore thinner than expected: there
+are no uncatalogued candidates to adjudicate. What is still worth a human
+is whether any of the twelve is a *different* source from its match rather
+than the same one re-found, and `src011`'s match being a `c`-flagged
+source (4FGL J1829.4-1500c, flagged in the catalogue as possibly
+confused with interstellar emission) is the one place that matters.

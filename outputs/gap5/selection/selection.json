@@ -1,0 +1,80 @@
+{
+ "reselected": [
+  "I",
+  "II",
+  "III",
+  "VI",
+  "X",
+  "XV",
+  "LXVII",
+  "IX",
+  "XXVII",
+  "XXXIX",
+  "XLV",
+  "XXVI"
+ ],
+ "original": [
+  "V",
+  "VII",
+  "XVII",
+  "XIX",
+  "XXII",
+  "XXV",
+  "XXVII",
+  "XXX",
+  "LI",
+  "LII",
+  "LIII",
+  "LVI"
+ ],
+ "log": [
+  [
+   "I",
+   "anchor"
+  ],
+  [
+   "II",
+   "anchor"
+  ],
+  [
+   "III",
+   "anchor"
+  ],
+  [
+   "VI",
+   "anchor"
+  ],
+  [
+   "X",
+   "anchor"
+  ],
+  [
+   "XV",
+   "anchor"
+  ],
+  [
+   "LXVII",
+   "covers xco=10, hi=2, hii=3"
+  ],
+  [
+   "IX",
+   "covers hi=3, src_nuc=SNR"
+  ],
+  [
+   "XXVII",
+   "farthest point, nearest chosen at 2.21"
+  ],
+  [
+   "XXXIX",
+   "farthest point, nearest chosen at 1.65"
+  ],
+  [
+   "XLV",
+   "farthest point, nearest chosen at 1.60"
+  ],
+  [
+   "XXVI",
+   "farthest point, nearest chosen at 1.53"
+  ]
+ ]
+}
