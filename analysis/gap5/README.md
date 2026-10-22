@@ -17,6 +17,7 @@ The mini-paper is `docs/gap5_minipaper.md`.
 | `run_gap5.py` | driver: level1, admit, q, l2, controls per model/mask/energy |
 | `summarise_gap5.py` | table + verdict from the pre-registered rule |
 | `iem_selection_audit.py` | audit of the 12-model selection |
+| `export_tables.py` | flat CSVs: `gap5_models.csv`, `gap5_fits.csv`, `gap5_controls.csv`, `level2_sources.csv`, and `outputs/gap7/covariance_input.csv` |
 
 `analysis/level2/run_level2.py` gained `--components DIR` (one free
 normalisation per cube in DIR), `--label` and `--checkpoint`. `iterate.run`
@@ -55,6 +56,7 @@ python analysis/gap5/run_gap5.py --ccube $D/gap1_ccube.fits \
     --models refs,family2 --steps level1,admit,q,l2
 python analysis/gap5/run_gap5.py ... --models family2 --masks B --steps controls
 python analysis/gap5/summarise_gap5.py
+python analysis/gap5/export_tables.py
 ```
 
 Outputs go to `outputs/gap5/<model>/<mask>/<emin>-<emax>/` (not committed).

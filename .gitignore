@@ -104,3 +104,13 @@ outputs/gap5/*
 outputs/gap5/selection/*
 !outputs/gap5/selection/table_viii.csv
 !outputs/gap5/selection/selection.json
+!outputs/gap5/gap5_models.csv
+!outputs/gap5/gap5_fits.csv
+!outputs/gap5/gap5_controls.csv
+!outputs/gap5/level2_sources.csv
+
+# gap 7 reads this
+!outputs/gap7/
+outputs/gap7/*
+!outputs/gap7/covariance_input.csv
+!outputs/gap7/README.md
