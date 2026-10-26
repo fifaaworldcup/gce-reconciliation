@@ -334,6 +334,7 @@ def main():
     cond = float(np.linalg.cond(G / np.outer(d, d)))
 
     summary = {"mask": a.mask, "kept_fraction": minfo["kept_fraction"],
+               "emin": float(e_lo[0]), "emax": float(e_hi[-1]),
                "diffuse_model": a.level if a.rings else "gll_iem_v07",
                "n_diffuse_components": len(diffuse[0]),
                "simulated_sky": a.simulate_sky or None,
