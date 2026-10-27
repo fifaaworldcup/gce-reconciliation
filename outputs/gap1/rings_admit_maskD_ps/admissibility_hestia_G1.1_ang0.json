@@ -1,0 +1,15 @@
+{
+  "mask": "D",
+  "ps": true,
+  "emin": 1.0,
+  "emax": 10.0,
+  "diffuse_model": "rings_free",
+  "control": "hestia_G1.1_ang0",
+  "flux_from": "gll_iem_v07",
+  "injected_flux": 2.6326109614843758e-08,
+  "ts_observed": 48.801524192560464,
+  "ts_injected": 9.710237329709344,
+  "ts_boosted": 78.42938668257557,
+  "boosted_gain": 29.627862490015104,
+  "admissible": false
+}

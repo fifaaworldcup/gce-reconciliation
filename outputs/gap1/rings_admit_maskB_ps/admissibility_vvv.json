@@ -1,0 +1,15 @@
+{
+  "mask": "B",
+  "ps": true,
+  "emin": 1.0,
+  "emax": 10.0,
+  "diffuse_model": "rings_free",
+  "control": "vvv",
+  "flux_from": "gll_iem_v07",
+  "injected_flux": 6.393136767814547e-08,
+  "ts_observed": 793.9937928456347,
+  "ts_injected": 82.91705485607963,
+  "ts_boosted": 1299.2603743895888,
+  "boosted_gain": 505.2665815439541,
+  "admissible": true
+}
