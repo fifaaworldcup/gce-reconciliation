@@ -90,6 +90,9 @@ def main():
         if not d or model == "_reference":
             continue
         arm = arm.replace("l2_", "")
+        adm = load(run_dir.parent / "admit.json")
+        adm_ts = (round(min(c["ts_injected"] for c in adm["controls"].values()), 1)
+                  if adm else "")
         best = min(aic(r) for r in d["rows"])
         vvv = next((aic(r) for r in d["rows"] if r["template"] == "vvv"), None)
         gn = [aic(r) for r in d["rows"] if cls(r["template"]) == "spherical"]
@@ -103,12 +106,12 @@ def main():
                 ref = REFS.get(model)
                 emin, emax = d["emin"], d["emax"]
                 gap7.append({
-                    "result_id": f"gap5_mask{mask}ps_{model}_L2{arm}_{r['template']}_{erange}GeV",
+                    "result_id": f"gap5_mask{mask}ps_{model}_L2{arm}_{r['template']}_{erange.replace('.', 'p')}GeV",
                     "gap": 5, "mask": mask, "point_source_template": d.get("ps", True),
                     "iem_family": ref if ref else 3, "diffuse_model": model,
                     "n_diffuse_components": d.get("n_diffuse_components"), "level": 2,
                     "simulated_sky": "", "n_sources_added": r["n_sources"],
-                    "energy_bin": f"{erange}GeV", "emin_gev": emin, "emax_gev": emax,
+                    "energy_bin": f"{erange.replace('.', 'p')}GeV", "emin_gev": emin, "emax_gev": emax,
                     "template": r["template"], "template_class": GAP7_CLASS.get(cls(r["template"]), ""),
                     "halo": r["template"].split("_")[1] if r["template"].startswith("hestia_") else "",
                     "view_angle": r["template"].split("ang")[1] if "_ang" in r["template"] else "",
@@ -118,8 +121,11 @@ def main():
                     "signal_photons": "", "converged": r.get("converged"),
                     "max_lnL_gap_bound": r.get("max_lnL_gap", ""),
                     "mask_kept_fraction": d.get("kept_fraction"),
-                    "admissible": srows.get(model, {}).get("admissible", "") if (mask, erange) == ("B", "1-10") else "",
-                    "control_injected_ts": "", "control_template": "",
+                    # Gap 5's pre-registered rule is per background, not per
+                    # template: both the gNFW and the VVV control must pass
+                    "admissible": adm["admissible"] if adm else "",
+                    "control_injected_ts": adm_ts,
+                    "control_template": "+".join(adm["controls"]) if adm else "",
                     "status": "OK" if arm == "joint" else "OK_common_source_list",
                     "source_run": f"gap5_l2_{arm}", "git_commit": commit, "export_date": today,
                     "arm": arm, "iem_set": ("reference" if ref else

@@ -1,0 +1,26 @@
+{
+  "mask": "B",
+  "ps": true,
+  "kept_fraction_per_bin": [
+    0.7616687417030334,
+    0.8032500147819519,
+    0.8332062363624573,
+    0.8594937324523926,
+    0.8804687261581421,
+    0.8989812731742859,
+    0.912918746471405,
+    0.9242749810218811
+  ],
+  "emin": 1.0,
+  "emax": 10.0,
+  "diffuse_model": "rings_free",
+  "control": "gnfw_g1.1_th1",
+  "flux_from": "gll_iem_v07",
+  "flux_template": "gnfw_g1.1_th1",
+  "injected_flux": 4.888925384803641e-08,
+  "ts_observed": 19.133340760832652,
+  "ts_injected": 24.790553300175816,
+  "ts_boosted": 59.08997687394731,
+  "boosted_gain": 39.956636113114655,
+  "admissible": false
+}

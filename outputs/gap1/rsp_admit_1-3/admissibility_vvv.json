@@ -1,0 +1,21 @@
+{
+  "mask": "B",
+  "ps": true,
+  "kept_fraction_per_bin": [
+    0.7616687417030334,
+    0.8032500147819519,
+    0.8332062363624573
+  ],
+  "emin": 1.0,
+  "emax": 3.0,
+  "diffuse_model": "rings_species",
+  "control": "vvv",
+  "flux_from": "gll_iem_v07",
+  "flux_template": "vvv",
+  "injected_flux": 4.427671816780276e-08,
+  "ts_observed": 1142.6354366806336,
+  "ts_injected": 103.10502792196348,
+  "ts_boosted": 1959.927562310826,
+  "boosted_gain": 817.2921256301925,
+  "admissible": true
+}

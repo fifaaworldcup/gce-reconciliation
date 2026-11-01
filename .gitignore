@@ -114,3 +114,7 @@ outputs/gap5/selection/*
 outputs/gap7/*
 !outputs/gap7/covariance_input.csv
 !outputs/gap7/README.md
+# per-template injection controls behind the admissible column
+!outputs/gap1/*_admit_*/
+outputs/gap1/*_admit_*/*
+!outputs/gap1/*_admit_*/admissibility_*.json

@@ -60,14 +60,18 @@ RUNS = {
     "rings_scan_maskA":    dict(iem=2, status="NOT_ADMISSIBLE_mask_keeps_8.7pct"),
     "rsp_scan_maskA":      dict(iem=2, status="NOT_ADMISSIBLE_mask_keeps_8.7pct"),
     "rsp_scan_maskA_ps":   dict(iem=2, status="NOT_ADMISSIBLE_mask_keeps_8.7pct"),
-    "rsp_scan_1-3":        dict(iem=2, status="OK"),
+    # --emin 1 --emax 3 on the 1-10 GeV cube keeps whole bins only: 1.00-2.37
+    "rsp_scan_1-3":        dict(iem=2, status="OK", energy=(1.0, 2.371)),
     "rings_eb_0_5-1":     dict(iem=2, status="OK_EMPTY_no_detection_any_template"),
     "rings_eb_1-3":       dict(iem=2, status="OK"),
     "rings_eb_3-10":      dict(iem=2, status="OK"),
     "rings_eb_10-50":     dict(iem=2, status="OK"),
     "rings_tri_maskB_ps": dict(iem=2, status="OK"),
-    # Level 2 iterative source finding, one common source list
-    "l2_neutral_maskB_ps": dict(iem=2, status="OK", level=2),
+    # Level 2 iterative source finding, one common source list. Its
+    # admissibility is the Level 1 control on the same background, mask and
+    # energy range (the Gap 5 rule)
+    "l2_neutral_maskB_ps": dict(iem=2, status="OK", level=2,
+                                admit_from="rsp_admit_maskB_ps"),
     # single all-sky template - superseded, kept so the change is visible
     "scan_maskB_ps":      dict(iem=1, status="WITHDRAWN_see_section_6.0_rigid_IEM"),
     "scan_maskA":         dict(iem=1, status="WITHDRAWN_see_section_6.0_rigid_IEM"),
@@ -108,18 +112,66 @@ def template_class(name):
     return "other"
 
 
-def admissibility(outdir, template):
-    """Did this configuration pass its own injection control for this
-    template? Falls back to the run's single control, then to unknown."""
-    for d in (outdir, outdir.replace("_scan", "_admit").replace("scan_", "admit_")):
-        f = os.path.join(d, f"admissibility_{template}.json")
-        if os.path.exists(f):
-            a = json.load(open(f))
-            return a["admissible"], a["ts_injected"], a["control"]
+def energy_range(name, S):
+    """robustness_scan.py takes --emin/--emax but never wrote them to
+    scan.json, so read them from the run name. Every unnamed run is 1-10 GeV
+    (gap1_ccube.fits); *_all is the whole 0.5-50 GeV cube."""
+    if S.get("emin") is not None and S.get("emax") is not None:
+        return float(S["emin"]), float(S["emax"])
+    m = re.search(r"_b?(\d+(?:_\d+)?)-(\d+(?:_\d+)?)(?:_|$)", name)
+    if m:
+        return (float(m.group(1).replace("_", ".")),
+                float(m.group(2).replace("_", ".")))
+    if name.endswith("_all"):
+        return 0.5, 50.0
+    return 1.0, 10.0
+
+
+def _read_admit(d, template):
+    f = os.path.join(d, f"admissibility_{template}.json")
+    if os.path.exists(f):
+        a = json.load(open(f))
+        return a["admissible"], a["ts_injected"], a["control"]
+    return None
+
+
+def admissibility(outdir, template, admit_from=None):
+    """Did this configuration pass an injection control for this template?
+
+    1. the template's own control, in the run or its *_admit_* directory
+    2. a control of the same class (gnfw, hestia, bulge) in those directories;
+       if there are several, all of them must pass
+    3. the run's own control, again only if it is the same class
+
+    A control of another class says nothing: a background that recovers an
+    injected bulge has not been shown to recover a halo. Before 2026-10-26 the
+    run's VVV control was applied to every template, which marked mask D's
+    gNFW rows admissible when the gNFW control fails there.
+    """
+    dirs = [outdir, outdir.replace("_scan", "_admit").replace("scan_", "admit_")]
+    if admit_from:
+        dirs.insert(0, os.path.join(os.path.dirname(outdir), admit_from))
+    for d in dirs:
+        a = _read_admit(d, template)
+        if a:
+            return a
+    cls = template_class(template)
+    same = []
+    for d in dirs:
+        for f in sorted(glob.glob(os.path.join(d, "admissibility_*.json"))):
+            t = os.path.basename(f)[len("admissibility_"):-len(".json")]
+            if template_class(t) == cls:
+                same.append(_read_admit(d, t))
+        if same:
+            break
+    if same:
+        bad = [x for x in same if not x[0]]
+        pick = min(bad or same, key=lambda x: x[1])
+        return (not bad), pick[1], pick[2]
     js = os.path.join(outdir, "scan.json")
     if os.path.exists(js):
         a = (json.load(open(js)) or {}).get("admissibility")
-        if a:
+        if a and template_class(a["control"]) == cls:
             return a["admissible"], a["ts_injected"], a["control"]
     return "", "", ""
 
@@ -142,7 +194,7 @@ def main():
         else:
             meta = dict(iem=0, status="UNCLASSIFIED_run_not_in_export_manifest")
         S = json.load(open(js))
-        lo, hi = float(S.get("emin", 1.0)), float(S.get("emax", 10.0))
+        lo, hi = meta.get("energy") or energy_range(name, S)
         mask = S["mask"] + ("ps" if S.get("point_source_template") else "")
         # robustness_scan writes simulated_sky as a template name or null;
         # run_level2 writes a dict with the name and the injected flux
@@ -155,7 +207,7 @@ def main():
         best_gnfw = max(gn, key=lambda r: r["lnL"])["lnL"] if gn else None
         for k, r in g.items():
             m = _HESTIA.match(k)
-            adm, inj, ctl = admissibility(path, k)
+            adm, inj, ctl = admissibility(path, k, meta.get("admit_from"))
             rows.append({
                 "result_id": f"gap1_mask{mask}_iem{meta['iem']}_"
                              f"{S.get('diffuse_model', 'gll_iem_v07')}_"
@@ -187,11 +239,18 @@ def main():
                 "source_run": name, "git_commit": c, "export_date": today,
             })
     missing = [k for k in RUNS if k not in found_dirs]
-    seen, uniq = set(), []
+    # two runs can share a configuration (eb_scan_b1-10 and scan_maskB_ps
+    # are both gll, mask B + PS, 1-10 GeV, from different cubes). Keep both
+    # and say which is which; dropping one silently is how the mask B Pohl22
+    # scan went missing from this file before.
+    count = {}
     for r in rows:
-        if r["result_id"] in seen:
-            continue
-        seen.add(r["result_id"]); uniq.append(r)
+        count[r["result_id"]] = count.get(r["result_id"], 0) + 1
+    uniq = []
+    for r in rows:
+        if count[r["result_id"]] > 1:
+            r["result_id"] += f"_{r['source_run']}"
+        uniq.append(r)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(uniq[0]))

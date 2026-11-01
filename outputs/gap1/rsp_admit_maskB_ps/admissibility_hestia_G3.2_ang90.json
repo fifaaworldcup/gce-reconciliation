@@ -1,0 +1,15 @@
+{
+  "mask": "B",
+  "ps": true,
+  "emin": 1.0,
+  "emax": 10.0,
+  "diffuse_model": "rings_species",
+  "control": "hestia_G3.2_ang90",
+  "flux_from": "gll_iem_v07",
+  "injected_flux": 7.398133808658477e-08,
+  "ts_observed": 1263.1965671870857,
+  "ts_injected": 139.94070085987914,
+  "ts_boosted": 2079.3558762101457,
+  "boosted_gain": 816.1593090230599,
+  "admissible": true
+}

@@ -1,0 +1,26 @@
+{
+  "mask": "B",
+  "ps": true,
+  "kept_fraction_per_bin": [
+    0.7616687417030334,
+    0.8032500147819519,
+    0.8332062363624573,
+    0.8594937324523926,
+    0.8804687261581421,
+    0.8989812731742859,
+    0.912918746471405,
+    0.9242749810218811
+  ],
+  "emin": 1.0,
+  "emax": 10.0,
+  "diffuse_model": "rings_free",
+  "control": "hestia_G3.1_ang90",
+  "flux_from": "gll_iem_v07",
+  "flux_template": "hestia_G3.1_ang90",
+  "injected_flux": 7.402860299512012e-08,
+  "ts_observed": 45.41384603199549,
+  "ts_injected": 21.180849061580375,
+  "ts_boosted": 139.71286797407083,
+  "boosted_gain": 94.29902194207534,
+  "admissible": false
+}

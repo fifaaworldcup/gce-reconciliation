@@ -13,6 +13,7 @@ df = df[
     & df["gap"].eq(5)
     & df["mask"].eq("B")
     & df["arm"].eq("neutral")
+    & df["energy_bin"].eq("1-10GeV")
 ].copy()
 
 df["S"] = pd.to_numeric(df["dAIC_vs_best_gnfw"], errors="coerce")
