@@ -118,3 +118,4 @@ outputs/gap7/*
 !outputs/gap1/*_admit_*/
 outputs/gap1/*_admit_*/*
 !outputs/gap1/*_admit_*/admissibility_*.json
+!outputs/gap1/l2_source_crossmatch_dr4.csv
