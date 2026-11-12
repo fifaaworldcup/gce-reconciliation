@@ -1,0 +1,13 @@
+source,l_deg,b_deg,residual_TS,order_added,status,n_dr4_within_0p3deg,dr4_name,sep_deg,dr4_class,dr4_type,dr4_assoc,dr4_flux1000_ph_cm2_s,dr4_signif,dr4_extended,on_galactic_centre_1deg,near_roi_edge_1deg,reason
+src000,-18.35,0.15,681.1,1,uncertain,2,4FGL J1651.7-4359,0.145,,unassociated,,3.892e-09,11.3,False,False,False,"2 DR4 sources within 0.3 deg: 4FGL J1651.7-4359 (0.145 deg, unassociated, F1000=3.89e-09); 4FGL J1653.2-4349 (0.179 deg, unassociated, F1000=5.61e-09)"
+src001,-3.65,1.15,324.0,2,match,1,4FGL J1732.5-3131,0.148,PSR,pulsar,PSR J1732-3131,3.387e-08,109.6,False,False,False,
+src002,-10.25,0.15,282.7,3,match,1,4FGL J1718.0-3726,0.028,snr,supernova remnant,SNR G349.7+00.2,5.416e-09,30.3,False,False,False,
+src003,17.35,2.45,202.8,4,match,1,4FGL J1813.4-1246,0.106,PSR,pulsar,PSR J1813-1246,2.773e-08,124.2,False,False,False,
+src004,6.35,4.95,167.8,5,match,1,4FGL J1741.9-2054,0.088,PSR,pulsar,PSR J1741-2054,1.660e-08,116.3,False,False,False,
+src005,18.85,-0.35,137.7,6,match,1,4FGL J1826.1-1256,0.295,PSR,pulsar,PSR J1826-1256,5.441e-08,112.1,False,False,False,
+src006,-0.35,0.35,92.7,7,uncertain,0,4FGL J1744.9-2905,0.34,unk,unknown-type association,NVSS J174456-290614,6.756e-09,10.0,False,True,False,"nearest DR4 source is just outside 0.3 deg: 4FGL J1744.9-2905 (0.340 deg, unknown-type association, F1000=6.76e-09)"
+src007,-3.05,-2.25,83.9,8,match,1,4FGL J1746.8-3239,0.081,PSR,pulsar,PSR J1746-3239,7.946e-09,39.1,False,False,False,
+src008,3.55,1.95,66.1,9,match,1,4FGL J1745.7-2506,0.26,unk,unknown-type association,1RXS J174535.1-250440,1.070e-09,6.6,False,False,False,
+src009,14.95,9.25,62.6,10,match,1,4FGL J1744.4-1135,0.175,MSP,millisecond pulsar,PSR J1744-1134,5.710e-09,56.7,False,False,False,
+src010,-17.15,-2.75,50.0,11,match,1,4FGL J1709.7-4429,0.256,PSR,pulsar,PSR J1709-4429,1.978e-07,431.4,False,False,False,
+src011,16.85,-1.85,44.3,12,uncertain,0,4FGL J1829.4-1500c,0.326,,unassociated,,4.348e-10,4.1,False,False,False,"nearest DR4 source is just outside 0.3 deg: 4FGL J1829.4-1500c (0.326 deg, unassociated, F1000=4.35e-10)"
