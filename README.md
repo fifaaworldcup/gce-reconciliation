@@ -1,86 +1,92 @@
-## GCE Reconciliation Project
+# GCE Reconciliation
 
-Yo guys, welcome to the central repository for the GCE (Galactic Center Excess) Reconciliation Project.
+**Code and analysis accompanying the manuscript:**
 
-**Important:** This repository houses the code skeleton and shared architecture. For the complete, agreed-upon parameters, statistical methods, and dataset cuts, **the canonical source is the shared Google Doc (Project Conventions)**. For convenience, the full content of those conventions is also replicated in this README.
-
----
-
-## Start here: the diffuse-freedom test
-
-**`docs/diffuse_freedom_test.md`.** Macias and Di Mauro use the same bulge
-templates and the same gas maps and reach opposite conclusions about dark
-matter. That disagreement is reproduced here inside one pipeline on one
-dataset: a defensible change in how much the interstellar model is allowed to
-bend moves a detection from TS 3.8 to 306, with injection controls showing the
-test is not simply eating the signal.
-
-It is a shared module, `analysis/diffuse_freedom/`, meant to be run by every
-gap. Splits are fixed in `configs/diffuse_freedom.yaml` before any run and
-applied identically to every template, on the same footing as
-`configs/level2.yaml`.
-
-Two constraints from it that belong in the Conventions:
-
-* Mask D with a single-template IEM has almost no sensitivity and Mask A has
-  none at all, so Gap 1 cannot use either until a ring-decomposed IEM is
-  loaded. Gap 5 can, its IEMs are ring-decomposed by construction. Gaps 4 and
-  7 inherit it.
-* Daylan et al. 2016 define the axis ratio as the reciprocal of Di Mauro's and
-  Cholis's. Pooling them without inverting Daylan manufactures a trend.
-
-## Where the large data comes from
-
-Raw Fermi products and the external IEM libraries are not committed.
-`docs/data_provenance.md` says what each one is, where it comes from and
-whether it is reproducible, downloadable or unavailable.
+> *A Quantitative Reconciliation of Conflicting Galactic Center Excess Inferences*
+> A. Anwar, O. Pernica, P. Ravichandran, H. Dalal, T. Shen
 
 ---
 
-## Directory Structure & What Goes Where
+## ⚠️ Status
 
-Right now, folders are empty (containing only hidden `.gitkeep` files to preserve the structure on GitHub). As work progresses, use the following layout:
+- **The manuscript is not yet on arXiv.**
+- **It has not been published or peer reviewed.**
 
-* **`analysis/`**: Contains subdirectories for each gap team (`gap1`, `gap4`, `gap5`, `gap7`). Place all team-specific Python scripts, Jupyter notebooks, and local `README.md` files (following the Mini-Paper template) inside your designated folder.
-* **`configs/`**: Stores YAML configuration files for pipeline runs. Your local `paths.yaml` configuration file will live here.
-* **`data/`**: The designated location for your raw Fermi-LAT data. This folder is ignored by Git, ensuring heavy datasets stay strictly on your local machine or cluster.
-* **`docs/`**: Shared documentation, reference papers, and notes.
-* **`iem/`**: Interstellar Emission Model files (GALPROP, McDermott extreme library, Galp21/Pohl22) and associated helper scripts.
-* **`masks/`**: Shared mask definitions (Mask A, B, and C) and code for generating them.
-* **`outputs/`**: Local destination for all generated results (FITS, HDF5, CSV) and logs. Ignored by Git.
-* **`templates/`**: Shared spatial templates (gNFW, HESTIA, VVV, etc.). Fermi Bubbles templates (sharp and fuzzy variants) are stored inside `templates/bubbles/`.
-* **`utils/`**: Shared utility scripts. (`psf.py`) is for shape measurement, SBI inputs, and plots. It is not used for fitting, since Fermipy handles PSF convolution automatically via gtsrcmaps.
-
-
+Nothing here should be treated as a citable result yet. When the
+manuscript is posted to arXiv, this section will be updated with the arXiv
+identifier.
 
 ---
 
-## Getting Started: Local Setup
+## What this repository is
 
-Because raw datasets and heavy outputs are not tracked by Git, every team member must configure their local environment after cloning.
+This is the analysis code for a paper that studies the **Galactic Center
+Gamma-Ray Excess (GCE)** — an unexplained excess of GeV gamma rays from the
+inner Galaxy — and asks a narrow question:
 
-### 1. Clone the Repository
+> **How much of the disagreement in the literature is caused by analysis
+> choices, rather than by the data?**
+
+The paper does not argue for dark matter, millisecond pulsars, or background
+mismodeling. It measures how the inferred result moves when the analysis
+choices are varied.
+
+The two conclusions reported in the manuscript are:
+
+1. **The excess is robustly detected.** It is recovered under all 25
+   interstellar emission models (IEMs) tested.
+2. **Its morphology is not robust.** The preferred spatial template changes
+   with the IEM. Most of the variation in the stellar-bulge templates is
+   attributable to the choice of IEM.
+
+---
+
+## What this repository is **not**
+
+- It is **not** a published result. There is no arXiv ID or DOI yet.
+- It is **not** a general-purpose Fermi-LAT pipeline. It is the code that
+  produced one paper.
+- It is **not** a data repository. Fermi-LAT data and the large external IEM
+  libraries are **not** included here; see *Data* below.
+- It is **not** complete. Folders are being filled in as the paper is
+  finalized.
+
+---
+
+## Repository layout
+
+The structure below is the intended layout. **Folders marked "(pending)" are
+not yet fully populated.**
+
+| Folder | Purpose | Status |
+|---|---|---|
+| `analysis/` | Gap 1, Gap 5, Gap 7 pipelines; Level 2 source finding | pending |
+| `configs/` | Analysis configuration files and pre-registered thresholds | pending |
+| `iem/` | Interstellar emission model interfaces | pending |
+| `masks/` | Mask definitions and mask audit tool | pending |
+| `templates/` | Spatial templates (gNFW, HESTIA, VVV, F98, bar) | pending |
+| `docs/` | Notes on data provenance and each analysis component | pending |
+| `outputs/` | Derived products (not tracked by Git) | not tracked |
+| `utils/` | Shared helper code | pending |
+
+---
+
+## Data and external dependencies
+
+This repository does **not** contain raw data. To run the code you will need
+to obtain, separately:
+
+- **Fermi-LAT data** — public, from the
+  [Fermi Science Support Center](https://fermi.gsfc.nasa.gov/ssc/data/access/).
+- **Interstellar emission models** — e.g. the Cholis et al. GALDEF library
+  (Zenodo record 6423495) and the Fermi diffuse model `gll_iem_v07`.
+- **HESTIA dark matter maps and particle data** — provided by the HESTIA
+  authors; see `docs/` once populated.
+- **Template maps** — VVV bulge, F98, Galactic bar; see `docs/`.
+
+Local paths are not committed. Once `configs/` is populated, copy the
+template path file and edit it for your machine:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/gce-reconciliation.git
-cd gce-reconciliation
-```
-
-### 2. Configure Local Paths
-
-Do not hard-code absolute file paths (such as `/Users/name/Desktop/...`) in your analysis scripts.
-
-* Navigate to the `configs/` folder.
-* Duplicate `paths_template.yaml` and rename the copy to `paths.yaml`.
-* Update `paths.yaml` with the absolute paths pointing to your local Fermi data, IEM models, and output directories.
-* *Note: `paths.yaml` is intentionally ignored by Git to prevent overwriting teammates' local configurations.*
-
-### 3. Link Your Data
-
-Place your Fermi-LAT data directly in the `data/` folder, or create a symlink pointing to where the data is stored on your machine.
-
-### 4. Reference the Google Doc
-The full Project Conventions and Mini-Paper Template are in the Google Doc. Always check the Google Doc for any updates.
-
-All the best for all of us! 
-
+cp configs/paths_template.yaml configs/paths.yaml
+# then edit configs/paths.yaml
